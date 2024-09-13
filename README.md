@@ -8,6 +8,6 @@ This repo contains my write ups, solutions and related content to the war games 
 
 ## War games
 
-|  Name  |                     Link                     | Solved |
-| :----: | :------------------------------------------: | :----: |
-| Bandit | [](https://overthewire.org/wargames/bandit/) |   ✔    |
+|  Name  |                          Link                          | Solved |
+| :----: | :----------------------------------------------------: | :----: |
+| Bandit | [Click here](https://overthewire.org/wargames/bandit/) |   ✔    |

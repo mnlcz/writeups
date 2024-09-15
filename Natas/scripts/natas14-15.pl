@@ -6,7 +6,7 @@ use MIME::Base64 'encode_base64';
 
 my $num = 14;
 my $user = "natas" . ($num + 1);
-my @lines = path('Pwds.txt')->lines_utf8;
+my @lines = path('../Pwds.txt')->lines_utf8;
 my $pass = $lines[$num];
 
 my $url = "http://$user.natas.labs.overthewire.org/";

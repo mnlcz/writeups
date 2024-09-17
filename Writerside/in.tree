@@ -8,7 +8,7 @@
     <toc-element topic="Home.topic"/>
     <toc-element topic="OverTheWire.topic">
         <toc-element topic="Bandit.topic"/>
-        <toc-element topic="Natas.md"/>
+        <toc-element topic="Natas.topic"/>
     </toc-element>
     <toc-element topic="HackTheBox.topic"/>
     <toc-element topic="TryHackMe.topic"/>

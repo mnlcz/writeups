@@ -1,0 +1,1584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       id="Natas" title="Natas">
+
+    <title>
+        Natas
+    </title>
+    <chapter title="Level 00" id="level-00">
+        <p>Understand general workflow of the room. Natas war room does not use ssh like Bandit, instead it uses web
+            pages. Each
+            webpage's URL is provided by the instructions. The goal is to find the password to the next room.</p>
+        <list>
+            <li>Because this is the first room, the password is provided with the instructions.</li>
+            <li>Follow the instructions to find the next room's password.</li>
+        </list>
+        <chapter title="Inspecting the page" id="inspecting-the-page">
+            <p>The instructions for this game are vague, it only says to look for it on the website. If the user looks
+                at the html for
+                the page, there is a line commented that looks like this:</p>
+
+            <code-block lang="html">
+                &lt;!--The password for natas1 is PASSWORD_REDACTED --&gt;
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Level 00 to Level 01" id="level-00-to-level-01">
+        <p>Using the password from the last room, the user can log in into the website. The instructions are the same,
+            find the
+            next password somewhere in the webpage.</p>
+        <list>
+            <li>Inspect the page.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Force inspect element on page" id="force-inspect-element-on-page">
+            <p>The website has blocked the use of right click. In order to enter devtools the user can use the key F12.
+                Then, the only
+                thing left is to find the password in the html.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 01 to Level 02" id="level-01-to-level-02">
+        <p>Use credentials to log in and inspect the html.</p>
+        <list>
+            <li>Inspect the page.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Image manipulation" id="image-manipulation">
+            <p>The html does not contain a comment with the password. Instead, it contains an image that has a size of 1
+                px by 1 px.
+                After following the resource of the image, the user should take a look at the url:</p>
+
+            <code-block lang="html">
+                http://natas2.natas.labs.overthewire.org/files/pixel.png
+            </code-block>
+            <p>The <code>files</code> directory can contain some extra resources other than the image. After changing
+                the URL to view that
+                directory, the user will find another resource, a text file. This text file contains the password for
+                the next room.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 02 to Level 03" id="level-02-to-level-03">
+        <p>Same as always, inspect the page and find the password.</p>
+        <list>
+            <li>Inspect the page.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Web crawlers" id="web-crawlers">
+            <p>The key to this room is to pay attention to the comment left on the html:</p>
+
+            <code-block lang="html">
+
+                &lt;div id=&quot;content&quot;&gt;
+                    There is nothing on this page
+                    &lt;!-- No more information leaks!!
+                    Not even Google will find it this time... --&gt;
+                &lt;/div&gt;
+            </code-block>
+            <p>The part that talks about Google it's a hint about a specific technology called web crawlers (aka web
+                spiders or web
+                robots).</p>
+            <tldr>
+                <p>
+                    Scripts or programs that systematically browse and retrieve information from the web.
+                </p>
+            </tldr>
+            <p>There is a convention that users follow to guide these crawlers, mainly for providing information about
+                what sites the
+                crawlers cannot index. The convention is to provide these guidelines in a file called
+                <code>robots.txt</code>, in the root of the
+                page. In this particular case it will be:</p>
+
+            <code-block lang="html">
+                http://natas3.natas.labs.overthewire.org/robots.txt
+            </code-block>
+            <p>There the user can see what parts of the website the creator don't want indexed by crawlers. Going there
+                will give the
+                user the password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 03 to Level 04" id="level-03-to-level-04">
+        <p>This room forces the user into understanding basic http requests.</p>
+        <list>
+            <li>Understand how the page works and what it wants the user to do.</li>
+            <li>Understand how http requests work.</li>
+            <li>Intercept the request and change the correct things to get the password.</li>
+        </list>
+        <chapter title="Intercept http request" id="intercept-http-request">
+            <p>This page welcomes the user with a message saying:</p>
+
+            <code-block lang="text">
+                Access disallowed.
+                You are visiting from http://natas4.natas.labs.overthewire.org/
+                while authorized users should come only from
+                &quot;http://natas5.natas.labs.overthewire.org/&quot;
+            </code-block>
+            <p>The user has to make use of the program Burp Suite to intercept the http request and change the host.</p>
+            <p>If the user starts the interceptor and refreshes the website, the request will look like this:</p>
+            <code-block lang="http" src="otw/natas/03-04.get.http"/>
+            <p>The relevant value here is the <code>Referer</code>, if the user changes it accordingly to what the page
+                wants, the password will
+                appear.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 04 to Level 05" id="level-04-to-level-05">
+        <p>This time the page welcomes the user with a message that says it is not logged in.</p>
+        <list>
+            <li>Inspect the website.</li>
+            <li>Maybe intercept the request and inspect the headers.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Intercepting the request" id="intercepting-the-request">
+            <p>If the user intercepts the http request, the information that it gets looks like this:</p>
+            <code-block lang="http" src="otw/natas/04-05.get.http"/>
+            <p>Modifying the value <code>loggedin</code> to <code>1</code> will allow the user to get the password after
+                letting the request go.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 05 to Level 06" id="level-05-to-level-06">
+        <p>This time the user is welcomed with a form, a single textbox asking for &quot;input secret&quot;.</p>
+        <list>
+            <li>Find how the page works and what it wants the user to do.</li>
+            <li>Inspect the code using the button presented by the page.</li>
+            <li>Somehow get the correct input secret or bypass the check.</li>
+        </list>
+        <chapter title="Logic behind the form" id="logic-behind-the-form">
+            <p>After inspecting the source code, a particular part of it stands out:</p>
+            <code-block lang="php" src="otw/natas/04-05.index.php"/>
+            <p>What does this code do?:</p>
+            <list>
+                <li><code>include &quot;includes/secret.inc&quot;;</code>: imports the file that defines the value of
+                    <code>$secret</code>.
+                </li>
+                <li><code>if(array_key_exists(&quot;submit&quot;, $_POST))</code>: checks if the user submitted the
+                    form.
+                </li>
+                <li><code>if($secret == $_POST['secret'])</code>: check if the value imported earlier matches the one
+                    taken from the form
+                    named <code>secret</code>.
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Finding the password" id="finding-the-password">
+            <p>If the user pays attention to the previous php snippet, the correct value for the secret comes from a
+                file
+                called <code>secret.inc</code> in path <code>includes/</code>. Going to this location in the website:
+            </p>
+
+            <code-block lang="http">
+                http://natas6.natas.labs.overthewire.org/includes/secret.inc
+            </code-block>
+            <p>Gives the user a blank page. But entering the developer tools (F12) or opening the source code view
+                (CTRL+u) shows the
+                user the following:</p>
+
+            <code-block lang="php">
+                &lt;?
+                $secret = &quot;SECRET_REDACTED&quot;;
+                ?&gt;
+            </code-block>
+            <p>Using this secret in the form will allow the user to get the password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 06 to Level 07" id="level-06-to-level-07">
+        <p>The page gives the user two links: home and about.</p>
+        <list>
+            <li>Understand what the page wants the user to do.</li>
+            <li>Inspect relevant information (html, source code, resources).</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Inspection 06" id="inspection-06">
+            <p>Looking at the html, a particular comment stands out:</p>
+
+            <code-block lang="html">
+                &lt;?--
+hint: password for webuser natas8 is in /etc/natas_webpass/natas8 
+--&gt;
+            </code-block>
+            <p>Trying out the home and about links show the user that the url changes:</p>
+
+            <code-block lang="http">
+                http://natas7.natas.labs.overthewire.org/index.php?page=home
+            </code-block>
+            <p>Changing the value of <code>page=</code> to something different gives the user the following message:</p>
+
+            <code-block lang="text">
+                Warning: include(test): failed to open stream:
+                No such file or directory in /var/www/natas/natas7/index.php
+            </code-block>
+        </chapter>
+        <chapter title="Getting the password for natas8" id="getting-the-password-for-natas8">
+            <p>If the user remembers the comment in the html and the error message received while playing with the url,
+                it will be no
+                surprise that combining both things will give result in the password:</p>
+
+            <code-block lang="http">
+                .../index.php?page=/etc/natas_webpass/natas8
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Level 07 to Level 08" id="level-07-to-level-08">
+        <p>This room welcomes the user with the same form as level 05 to 06.</p>
+        <list>
+            <li>Inspect all resources.</li>
+            <li>Understand what the page wants from the user.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Inspection 07" id="inspection-07">
+            <chapter title="Source code" id="source-code">
+                <p>Inspection via
+                    <shortcut>CTRL+U</shortcut>
+                    gives no relevant information. Neither does devtools. Inspection via the link given by the page
+                    has this relevant code snippet:
+                </p>
+                <code-block lang="php" src="otw/natas/07-08.index.php"/>
+                <tldr>
+                    <p>
+                        Encodes the secret using base64, reverses it and converts it from binary to hex.
+                    </p>
+                </tldr>
+            </chapter>
+        </chapter>
+        <chapter title="Writing a decoder" id="writing-a-decoder">
+            <p>With the logic of the encoding method, the user can easily write the inverse. Here is the python
+                version:</p>
+
+            <code-block lang="python">
+                import base64, binascii
+
+                encoded_secret = &quot;3d3d516343746d4d6d6c315669563362&quot;
+                hex_decoded = binascii.unhexlify(encoded_secret)
+                reversed_str = hex_decoded[::-1]
+                secret = base64.b64decode(reversed_str).decode('utf-8')
+                print(secret)
+            </code-block>
+            <p>Using the value given by the decoder will allow the user to get the next password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 08 to Level 09" id="level-08-to-level-09">
+        <p>This page welcomes the user with a form: &quot;Find words containing&quot;.</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect the resources.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 08" id="testing-form-08">
+            <p>It appears the form returns all the words that contain the text the user typed.</p>
+            <list>
+                <li>It does not work with symbols.</li>
+                <li>It does not work with numbers.</li>
+                <li>It changes the value <code>needle=</code> in the URL.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 08" id="inspection-08">
+            <p>The devtools and source view don't have any relevant information. Using the source code viewer provided
+                by the page
+                gives the user the following relevant code:</p>
+            <code-block lang="php" src="otw/natas/08-09.index.php"/>
+            <p>Thoughts:</p>
+            <list>
+                <li>The variable <code>$key</code> takes the value from the url, specifically from the
+                    <code>needle</code> param.
+                </li>
+                <li>The variable <code>$key</code> is used in a <code>grep</code> command with the
+                    <emphasis>ignore case</emphasis>
+                    flag.
+                </li>
+                <li>It looks like it takes the words from a file named <code>dictionary.txt</code>.</li>
+            </list>
+            <p>The file <code>dictionary.txt</code> can be inspected by:</p>
+
+            <code-block lang="http">
+                http://natas9.natas.labs.overthewire.org/dictionary.txt
+            </code-block>
+        </chapter>
+        <chapter title="Research 08" id="research-08">
+            <list>
+                <li>It appears the <code>passthru()</code> function in php is dangerous and normally should be disabled
+                    in <code>php.ini</code>.
+                </li>
+                <li>The usage of <code>passthru()</code> gives the user the chance to inject php code in the <code>needle=</code>
+                    param.
+                </li>
+            </list>
+        </chapter>
+        <chapter title="PHP code injection 08" id="php-code-injection-08">
+            <p>In a normal scenario the url looks like this:</p>
+
+            <code-block lang="http">
+                http://natas9.natas.labs.overthewire.org/?needle=example
+            </code-block>
+            <p>To inject php code the user has to add semicolons <code>;</code> to &quot;finish&quot; the
+                <code>grep</code> execution that runs on the server.</p>
+
+            <code-block lang="http">
+                http://natas9.natas.labs.overthewire.org/?needle=;ls;
+            </code-block>
+            <p>The previous example runs <code>ls</code> on the server. The backend <code>grep</code> will end up
+                looking like this:</p>
+
+            <code-block lang="bash">
+                grep -i ;ls; dictionary.txt
+            </code-block>
+        </chapter>
+        <chapter title="Getting password for natas10" id="getting-password-for-natas10">
+            <p>The user has to remember some information given by OverTheWire at the beginning:</p>
+            <tip>
+                <p>All passwords are also stored in /etc/natas_webpass/. E.g. the password for natas5 is stored in the
+                    file
+                    /etc/natas_webpass/natas5 and only readable by natas4 and natas5.</p>
+            </tip>
+            <p>With this information and the power to inject php code, the user can easily get to that location and grab
+                the password.</p>
+
+            <code-block lang="http">
+                .../?needle=;cat%20/etc/natas_webpass/natas10;
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Level 09 to Level 10" id="level-09-to-level-10">
+        <p>The page is similar to the last one. This time it has a new message that says &quot;<emphasis>For security
+            reasons, we now filter on
+            certain characters
+        </emphasis>&quot;.
+        </p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect resources.</li>
+            <li>Try injecting php code.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Inspection 09" id="inspection-09">
+            <p>The relevant information once again is given by the source viewer provided by the page:</p>
+            <code-block lang="php" src="otw/natas/09-10.index.php"/>
+            <p>Thoughts:</p>
+            <list>
+                <li>It looks like now it checks for presence of semicolon and symbols used for code injection.</li>
+                <li>Even though it checks for symbols, it's still using <code>passthru()</code>.</li>
+            </list>
+        </chapter>
+        <chapter title="PHP code injection 09" id="php-code-injection-09">
+            <p>After some failed attempts, turns out the regex is unavoidable. So user will have to work with the fact
+                that <code>$key</code> will
+                reach the <code>grep</code> as a regular string.</p>
+            <p>User can research about <code>grep</code>, tldr: it can accept multiple files as haystack.</p>
+
+            <code-block lang="bash">
+                grep -i NEEDLE HAYSTACK1 HAYSTACK2
+            </code-block>
+            <p>With this information, the new strategy is now to use <code>grep</code> to user's benefit. User knows
+                that no matter what one of
+                the files that <code>grep</code> is going to use as haystack is <code>dictionary.txt</code>, the other
+                haystack could be the file that
+                contains the password for natas11:</p>
+
+            <code-block lang="bash">
+                grep -i SOMETHING /etc/natas_webpass/natas11 dictionary.txt
+            </code-block>
+            <p>The last thing to do is to put some character that will match with the password, this is trial and
+                error.</p>
+
+            <code-block lang="bash">
+                grep -i a /etc/natas_webpass/natas11 dictionary.txt
+            </code-block>
+            <p>The input to the field would be this:</p>
+
+            <code-block lang="text">
+                a /etc/natas_webpass/natas11
+            </code-block>
+            <p>If it matches the user will see in the output the password, plus the matches from
+                <code>dictionary.txt</code>.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Level 10 to Level 11" id="level-10-to-level-11">
+        <p>This page welcomes the user with a message saying that cookies are protected with XOR encryption and a form
+            that wants a
+            color in hex code.</p>
+        <list>
+            <li>Test form.</li>
+            <li>Inspect resources.</li>
+            <li>Understand the meaning of the message.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 10" id="testing-form-10">
+            <p>It looks like the relevant information is the only cookie being stored. Here are some tests:</p>
+            <table>
+                <tr>
+                    <td>Color</td>
+                    <td>Cookie</td>
+                </tr>
+                <tr>
+                    <td>#ffffff</td>
+                    <td>HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GIjEJAyIxTRg%3D</td>
+                </tr>
+                <tr>
+                    <td>#111111</td>
+                    <td>HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GdWZeVHVmTRg%3D</td>
+                </tr>
+                <tr>
+                    <td>#AAAAAA</td>
+                    <td>HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GBRYuJAUWTRg%3D</td>
+                </tr>
+                <tr>
+                    <td>#D1AB59</td>
+                    <td>HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1GAGYuJ3FuTRg%3D</td>
+                </tr>
+            </table>
+            <p>The majority of the cookie stays the same, it looks like the color only affects this part:</p>
+
+            <code-block lang="text">
+                HmYkBwozJw4WNyAAFyB1VUcqOE1JZjUIBis7ABdmbU1G[_-_-_-]TRg%3D
+            </code-block>
+        </chapter>
+        <chapter title="Inspection 10" id="inspection-10">
+            <p>This time the php code available in the view source link provided has a fair amount of lines. The logic
+                can be divided
+                into the following actions:</p>
+            <code-block lang="php" src="otw/natas/10-11.index.php" include-lines="3-9"/>
+            <chapter title="Loading the data" id="loading-the-data">
+                <p>The loading of the data takes place in the following function:</p>
+                <code-block lang="php" src="otw/natas/10-11.index.php" include-lines="24-37"/>
+                <tldr>
+                    <p>There has to be a cookie named <code>data</code>.</p>
+                    <p>Decode the cookie with base64, encrypt it with <code>xor_encrypt</code> and decode it with
+                        <code>json</code>.
+                    </p>
+                    <p>If the result is an array with keys <code>bgcolor</code> and <code>showpassword</code> check
+                        if the color is valid.
+                    </p>
+                    <p>If the color is valid, updates the value of <code>bgcolor</code> and
+                        <code>showpassword</code>.
+                    </p>
+                </tldr>
+            </chapter>
+            <chapter title="xor encryption" id="xor-encryption">
+                <p>Here is the definition:</p>
+                <code-block lang="php" src="otw/natas/10-11.index.php" include-lines="11-22"/>
+            </chapter>
+            <chapter title="Saving the data" id="saving-the-data">
+                <p>The saving of the data follows this logic:</p>
+                <code-block lang="php" src="otw/natas/10-11.index.php" include-lines="39-41"/>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 10" id="resolution-10">
+            <chapter title="Getting the key" id="getting-the-key">
+                <p>The first thing to achieve is getting the value of the key. To do this, user should first focus on
+                    this particular line
+                    of code from the <code>saveDate()</code> function:</p>
+
+                <code-block lang="php">
+                    base64_encode(xor_encrypt(json_encode($d)))
+                </code-block>
+                <p>User can separate the whole process into two sides that will eventually converge. See it like
+                    this:</p>
+
+                <code-block lang="mermaid" src="otw/natas/10-11.diagram.mermaid"/>
+                <p>Let's put an example. Consider the following scenario:</p>
+
+                <code-block lang="php" src="otw/natas/10-11.resolution.php" include-lines="14,15"/>
+                <p>After applying the corresponding transformation for each one:</p>
+
+                <code-block lang="php">
+                    $json_encode = '{
+                        &quot;showpassword&quot;:&quot;no&quot;,
+                        &quot;bgcolor&quot;:&quot;#ffffff&quot;
+                    }';
+                    $base64_decode = &quot;something non human readable&quot;;
+                </code-block>
+                <p>Here the user has to stop and think about the xor operation. Following this example, making XOR
+                    between <code>{</code>
+                    and <code>$key[0]</code> will result in <code>s</code>:</p>
+                <list>
+                    <li><code>'&quot;' ^ $key[1] = 'o'</code></li>
+                    <li><code>'s' ^ $key[2] = 'm'</code></li>
+                    <li>And so on.</li>
+                </list>
+                <p>Considering that the XOR transformation applied twice returns the original (in other words, the
+                    opposite of the
+                    operation is just applying it again). User can algebraically manipulate the previous operation into
+                    getting the value of
+                    a particular index of <code>$key</code>. Like this:</p>
+                <list>
+                    <li><code>$key[0] = '{' ^ 's'</code></li>
+                    <li><code>$key[1] = '&quot;' ^ 'o'</code></li>
+                </list>
+                <p>With this information, user can create a quick PHP script that cracks the key:</p>
+                <code-block lang="php" src="otw/natas/10-11.resolution.php" include-lines="1-11"/>
+                <p>The output will be:</p>
+
+                <code-block lang="text">
+                    eDWoeDWoeDWoeDWoeDWoeDWoeDWoeDWoeDWoeDWoe
+                </code-block>
+                <p>Considering the repetitions, the key should be <code>eDWo</code>. A quick way to check if the value
+                    is correct:</p>
+                <p>First, change the value of <code>$key</code> in the encryptor:</p>
+                <compare type="left-right">
+                    <code-block lang="php">
+                        function xor_encrypt($in) {
+                        $key = '&lt;censored&gt;';
+                        // ...
+                        }
+                    </code-block>
+                    <code-block lang="php">
+                        function xor_encrypt($in) {
+                        $key = 'eDWo';
+                        // ...
+                        }
+                    </code-block>
+                </compare>
+                <p>Then, cycle through the transformations until reaching the middle and compare values:</p>
+                <code-block lang="php" src="otw/natas/10-11.resolution.php" include-lines="13-22"/>
+            </chapter>
+            <chapter title="Getting the correct cookie" id="getting-the-correct-cookie">
+                <p>With the key, the user can now easily traverse the <code>loadData()</code> process backwards in order
+                    to get the correct cookie.</p>
+                <list type="decimal">
+                    <li>Creating the array that will end up showing the password.</li>
+                    <li>Encode with json.</li>
+                    <li>Encrypt with XOR.</li>
+                    <li>Encode with base64.</li>
+                </list>
+                <code-block lang="php" src="otw/natas/10-11.resolution.php" include-lines="24-29"/>
+                <p>With the cookie the user can make use of it either with Burp Suite or with devtools and grab the
+                    password.</p>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 11 to Level 12" id="level-11-to-level-12">
+        <p>This time the user is welcomed with the instructions of uploading a <code>.jpeg</code> of up to 1KB. The page
+            provides two buttons:
+            one for browsing the filesystem and other for uploading the file.</p>
+        <list>
+            <li>Test the uploader.</li>
+            <li>Inspect the resources.</li>
+            <li>Find what needs to be done.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing the uploader 11" id="testing-the-uploader-11">
+            <list>
+                <li>Not uploading anything shows an error.</li>
+                <li>Uploading any file changes its name and forces its extension to <code>.jpg</code>.</li>
+                <li>The uploaded file can be seen following the provided link. The resource is at <code>/upload/new_name.jpg</code>.
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 11" id="inspection-11">
+            <chapter title="HTML inspection 11" id="html-inspection-11">
+                <p>The html inspection shows two odd lines with <code>type=&quot;hidden</code>:</p>
+
+                <code-block lang="html" src="otw/natas/11-12.index.html"/>
+                <p>The <code>.jpg</code> changes each time the user refreshes the page.</p>
+            </chapter>
+            <chapter title="PHP inspection 11" id="php-inspection-11">
+                <p>The PHP inspection shows, as usual, a fair amount of functions. The flow of execution looks something
+                    like:</p>
+                <list type="decimal">
+                    <li>Checks if superglobal <code>$_POST</code> contains the key <code>filename</code>.</li>
+                    <li>If it does not contain that key, it randomly generates a filename with extension
+                        <code>.jpg</code> as seen previously.
+                    </li>
+                    <li>If it contains that key, randomly generates a path using multiple functions. It ends up looking
+                        like <code>upload/random_string.filename_ext</code>.
+                    </li>
+                    <li>If file isn't too big and passes <code>move_uploaded_file()</code> the file gets uploaded.</li>
+                </list>
+            </chapter>
+        </chapter>
+        <chapter title="Random path creation logic" id="random-path-creation-logic">
+            <p>The path creation uses 3 functions:</p>
+            <tabs>
+                <tab title="genRandomString" id="genrandomstring">
+                    <code-block lang="php" src="otw/natas/11-12.index.php" include-lines="3-13"/>
+                    <tip>
+                        Generates a string of length 10, using lowercase letters and numbers.
+                    </tip>
+                </tab>
+                <tab title="makeRandomPath" id="makerandompath">
+                    <code-block lang="php" src="otw/natas/11-12.index.php" include-lines="15-21"/>
+                    <tip>
+                        Generates a path that follows this format:
+                        <path>$dir/random_string.$ext</path>
+                        while file doesn't exist.
+                    </tip>
+                </tab>
+                <tab title="makeRandomPathFromFilename" id="makerandompathfromfilename">
+                    <code-block lang="php" src="otw/natas/11-12.index.php" include-lines="23-26"/>
+                    <note>
+                        The file given as parameter is only used for its extension. The function <code>pathinfo</code>
+                        with the option <code>PATHINFO_EXTENSION</code> ignores everything except the extension.
+                    </note>
+                    <tip>
+                        The function returns a path that follows the format
+                        <path>$dir/random_string/$ext</path>
+                    </tip>
+                </tab>
+            </tabs>
+        </chapter>
+        <chapter title="Resolution 11" id="resolution-11">
+            <p>Taking into consideration that no matter what file the user uploads it always ends up being a
+                <code>.jpg</code>, and remembering
+                that the only place this is defined is in the html, the user can try manipulating this resource on the
+                frontend to see
+                what happens.</p>
+
+            <code-block lang="html">
+                &lt;input
+                        type=&quot;hidden&quot;
+                        name=&quot;filename&quot;
+                        value=&quot;t2sgjbtabr.php&quot;&gt;
+            </code-block>
+            <p>After submitting the user gets a message that says:</p>
+            <tip>
+                <p>The file <code>upload/96omfk74zs.php</code> has been uploaded.</p>
+            </tip>
+            <p>And following the link opens the file and interpretes the php code inside. With this information, the
+                user can write the
+                following:</p>
+            <code-block lang="php" src="otw/natas/11-12.resolution.php" include-lines="3,4"/>
+            <p>Thoughts:</p>
+            <list>
+                <li><code>$out</code>: gets the result of running the shell command.</li>
+                <li><code>echo ...</code>: makes it visible on the web page.</li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Level 12 to Level 13" id="level-12-to-level-13">
+        <p>The website looks almost like the previous one, the only difference is that this time it has a message saying
+            it only
+            accepts image files.</p>
+        <list>
+            <li>Test the uploader.</li>
+            <li>Inspect the resources.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing the uploader 12" id="testing-the-uploader-12">
+            <list>
+                <li>Uploading a php file doesn't seem to work.</li>
+                <li>Changing the file extension on the html doesn't work either.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 12" id="inspection-12">
+            <chapter title="HTML inspection 12" id="html-inspection-12">
+                <p>The html doesn't seem to contain relevant information. Changing the file extension there does not
+                    affect how the backend
+                    gets the file.</p>
+            </chapter>
+            <chapter title="PHP inspection 12" id="php-inspection-12">
+                <p>There seems to be the same functions as previous room.</p>
+                <list>
+                    <li><code>getRandomString()</code>: has the same implementation.</li>
+                    <li><code>makeRandomPath($dir, $ext)</code>: has the same implementation.</li>
+                    <li><code>makeRandomPathFromFilename($dir, $fn)</code>: has the same implementation.</li>
+                </list>
+                <p>What changes is the implementation of the <code>if</code> statement that comes before the <code>move_uploaded_file()</code>:
+                </p>
+                <code-block lang="php" src="otw/natas/12-13.index.php" include-lines="3-15"/>
+                <p>This particular statement is in charge of blocking the user uploads if the file is not an image:</p>
+                <code-block lang="php" src="otw/natas/12-13.index.php" include-lines="11-13"/>
+                <p>After doing some research about that function, what ended up catching my attention was this:</p>
+                <tip>
+                    <p><code>exif_imagetype()</code> reads the first bytes of an image and checks its signature.</p>
+                </tip>
+                <p>A possible strategy could be changing the first bytes of the <code>.php</code> file and tricking the
+                    function into considering an
+                    image.</p>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 12" id="resolution-12">
+            <chapter id="more-info-about-exif-imagetype-and-how-to-bypass-it">
+                <title>
+                    More info about <code>exif_imagetype</code> and how to bypass it
+                </title>
+                <p>Doing more research about the <code>exif_imagetype()</code> function gave me the following info:</p>
+                <list>
+                    <li>In order to determine if a file is an image,
+                        <control>it reads the first 8 bytes</control>
+                        .
+                    </li>
+                    <li>The logic behind the functions does not care about the file extension.</li>
+                    <li>The algorithm checks for a valid image data in addition to the headers.</li>
+                </list>
+                <p>Some examples of the first bytes:</p>
+                <table>
+                    <tr>
+                        <td>TYPE</td>
+                        <td>BYTES</td>
+                        <td>ASCII</td>
+                    </tr>
+                    <tr>
+                        <td>JPEG</td>
+                        <td><code>FF D8 FF</code></td>
+                        <td><code>ÿØÿ</code></td>
+                    </tr>
+                    <tr>
+                        <td>PNG</td>
+                        <td><code>89 50 4E 47 0D 0A 1A 0A</code></td>
+                        <td><code>‰PNG\r\n\x1A\n</code></td>
+                    </tr>
+                    <tr>
+                        <td>GIF</td>
+                        <td><code>47 49 46 38</code></td>
+                        <td><code>GIF8</code></td>
+                    </tr>
+                </table>
+            </chapter>
+            <chapter title="Masking the PHP file" id="masking-the-php-file">
+                <p>Steps to follow:</p>
+                <list type="decimal">
+                    <li>Add image headers.</li>
+                    <li>Add valid image data.</li>
+                    <li>Append the php code.</li>
+                    <li>Test it.</li>
+                </list>
+                <p>Final product:</p>
+                <code-block lang="php" src="otw/natas/12-13.resolution.php" include-lines="3-28"/>
+            </chapter>
+            <chapter title="Testing the fake image on the website" id="testing-the-fake-image-on-the-website">
+                <p>It works:</p>
+                <code-block lang="html">
+                    The file `upload/4emxs1rgq2.php` has been uploaded.
+                </code-block>
+                <p>And the execution shows:</p>
+
+                <code-block lang="html">
+                    �PNG  IHDR���IDATx�c```This is a PHP file.
+                </code-block>
+            </chapter>
+            <chapter title="Adding the real code" id="adding-the-real-code">
+                <p>Lastly, change the php code to look for natas14's password.</p>
+                <compare type="top-bottom">
+                    <code-block lang="php" src="otw/natas/12-13.resolution.php" include-lines="15-17"/>
+                    <code-block lang="php" src="otw/natas/12-13.resolution.php" include-lines="30-33"/>
+                </compare>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 13 to Level 14" id="level-13-to-level-14">
+        <p>This time the page contains a form asking for user and password. It also contains the usual link that allows
+            the user to
+            see a part of the source code.</p>
+        <list>
+            <li>Try the form.</li>
+            <li>Inspect the resources.</li>
+            <li>Find end goal.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 13" id="testing-form-13">
+            <p>Some basic tests:</p>
+            <list>
+                <li>Blank submission: <code>Access denied!</code>.</li>
+                <li>Blank user submission: <code>Access denied!</code>.</li>
+                <li>Blank password submission: <code>Access denied!</code>.</li>
+                <li>Random data: <code>Access denied!</code>.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 13" id="inspection-13">
+            <chapter title="HTML inspection 13" id="html-inspection-13">
+                <p>Relevant code:</p>
+                <code-block lang="html" src="otw/natas/13-14.index.html"/>
+            </chapter>
+            <chapter title="Request inspection 13" id="request-inspection-13">
+                <p>The requests pack the login data like this:</p>
+
+                <code-block lang="http">
+                    username=testuser&amp;password=testpassword
+                </code-block>
+            </chapter>
+            <chapter title="PHP inspection 13" id="php-inspection-13">
+                <p>The code that handles the authentication:</p>
+                <code-block lang="php" src="otw/natas/13-14.index.php" include-lines="3-20" collapsible="true"
+                            collapsed-title="index.php"/>
+                <p>Thoughts:</p>
+                <list>
+                    <li>Opens a MySQL connection and selects natas14 database.</li>
+                    <li>The <code>$query</code> variable contains the query.</li>
+                    <li>
+                        <control>If the result of the query has more than 0 rows it shows the password.</control>
+                    </li>
+                </list>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 13" id="resolution-13">
+            <p>My first idea would be to try to inject SQL code into the form to &quot;cancel&quot; the
+                <code>WHERE</code> clausule or make it <code>TRUE</code>
+                always. The SQL after inject has to perform this operation:</p>
+
+            <code-block lang="sql">
+                SELECT * FROM user
+                -- THE FOLLOWING WHERE SHOULD EVAL TO TRUE
+                WHERE username=&quot;something&quot;
+                AND password=&quot;something&quot;
+            </code-block>
+            <p>Injecting an <code>OR TRUE</code> would make all statement result in true.</p>
+
+            <code-block lang="sql">
+                SELECT * FROM user
+                WHERE username=&quot;something&quot;
+                AND password=&quot;something&quot; OR TRUE
+            </code-block>
+            <chapter title="SQL injection" id="sql-injection">
+                <p>Considering the form works like this:</p>
+
+                <code-block lang="text">
+                    Username: &quot;Something&quot;
+                    Password: &quot;Something else&quot;
+                </code-block>
+                <p>Selecting a password (could be username too) that looks like this:</p>
+
+                <code-block lang="text">
+                    Username: &quot;&quot;OR TRUE--&quot;
+                    Password: &quot;something&quot;
+                </code-block>
+                <p>Will make the SQL query something like this:</p>
+
+                <code-block lang="sql">
+                    SELECT * FROM user
+                    WHERE username=&quot;&quot;OR TRUE--
+                    AND password=&quot;something&quot;
+                </code-block>
+                <p>Sometimes (in this particular case too) the comment <code>--</code> won't work. For MySQL, a more
+                    reliable way is to use <code>#</code>
+                    instead:</p>
+
+                <code-block lang="text">
+                    Username: &quot;&quot;OR TRUE#&quot;
+                    Password: &quot;something&quot;
+                </code-block>
+                <p>The SQL query:</p>
+                <code-block lang="sql" src="otw/natas/13-14.resolution.sql"/>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 14 to Level 15" id="level-14-to-level-15">
+        <p>This time the form only has a username field. There is an extra button that says &quot;Check
+            existence&quot;.</p>
+        <list>
+            <li>Try the form.</li>
+            <li>Inspect the resources.</li>
+            <li>Find end goal.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 14" id="testing-form-14">
+            <p>Tests:</p>
+            <list>
+                <li>Basic tests show the same results as the previous login form.</li>
+                <li>Injecting <code>&quot;OR TRUE#</code>, shows user exists but no information regarding the password.
+                </li>
+                <li>User <code>natas16</code>, exists.</li>
+            </list>
+            <p>Thoughts:</p>
+            <list>
+                <li>It seems it contains the usernames of all natas and maybe their passwords.</li>
+                <li>It is still vulnerable to SQL injections.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 14" id="inspection-14">
+            <chapter title="HTML inspection 14" id="html-inspection-14">
+                <p>Relevant code:</p>
+                <code-block lang="html" src="otw/natas/14-15.index.html"/>
+            </chapter>
+            <chapter title="PHP inspection 14" id="php-inspection-14">
+                <p>Relevant code:</p>
+                <code-block lang="php" src="otw/natas/14-15.index.php" include-lines="1-18"/>
+                <p>Thoughts:</p>
+                <list>
+                    <li>This time the password for the next level is not printed anywhere.</li>
+                    <li>There is a comment about the design of the table named <code>users</code>.</li>
+                </list>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 14" id="resolution-14">
+            <p>The plan is simple: considering the only information I get as response is if the user exists, I can brute
+                force the
+                password by injecting a clause that checks for it, the end result should be this query:</p>
+
+            <code-block lang="sql">
+                SELECT * FROM users
+                WHERE username=&quot;username&quot;
+                AND password=&quot;something else&quot;;
+            </code-block>
+            <chapter title="Bruteforcing logic 14" id="bruteforcing-logic-14">
+                <p>Considering the following information about the password:</p>
+                <list>
+                    <li>Has length 32.</li>
+                    <li>Has lowercase and uppercase letters.</li>
+                    <li>Has numbers.</li>
+                </list>
+                <p>I can try each character and advance when I get a correct one, until it reaches 32 characters. The
+                    way of confirming if
+                    a character is correct is with the <code>LIKE</code> operation in conjunction with
+                    <code>BINARY</code> to be case-sensitive.</p>
+
+                <code-block lang="sql">
+                    SELECT * FROM users
+                    WHERE username=&quot;username&quot;
+                    AND BINARY password LIKE &quot;chars%&quot;;
+                </code-block>
+                <p>The code used to brute force this:</p>
+                <code-block lang="generic" src="otw/natas/14-15.resolution.pl" collapsible="true"
+                            collapsed-title="natas14-15.pl"/>
+                <p>Steps:</p>
+                <list type="decimal">
+                    <li>Defines the credentials and the logic of the web request, taking into consideration the
+                        credentials.
+                    </li>
+                    <li>Defines a string with all lowercase, uppercase and numbers. In order to later use it to test
+                        char by char.
+                    </li>
+                    <li>Set up the looping process for testing the chars, it should run until the goal string reaches
+                        the length constraints.
+                    </li>
+                    <li>Test each char, injecting it into the SQL query.</li>
+                    <li>Check if is valid by parsing the HTML output given as response. If it is, update the string that
+                        holds the final
+                        value.
+                    </li>
+                </list>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 15 to Level 16" id="level-15-to-level-16">
+        <p>The website is similar to the one in <a anchor="level-08-to-level-09">Level 08 to Level 09</a>, it has only
+            one form field with the
+            label &quot;Find words containing&quot;. It also has the following message:</p>
+        <code-block lang="html">
+            For security reasons, we now filter even more on certain characters.
+        </code-block>
+        <p>And an output title that shows results as the user submits the form. Here go the general steps to follow:</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect the resources.</li>
+            <li>Find out the vulnerability or strategy to use.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 15" id="testing-form-15">
+            <p>Basic tests:</p>
+            <list>
+                <li>Blank field gives nothing.</li>
+                <li>Regular string or char gives the list of values that contain that string in them.</li>
+                <li>The URL after submitting: <code>.../?needle=test&amp;submit=Search</code></li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 15" id="inspection-15">
+            <p>The form seems to be using the same <code>dictionary.txt</code> as level 8 to 9 (or at least its own
+                version). I can be inspected
+                in <a href="http://natas16.natas.labs.overthewire.org/dictionary.txt">dictionary.txt</a>.</p>
+            <chapter title="HTML inspection 15" id="html-inspection-15">
+                <p>Nothing interesting.</p>
+            </chapter>
+            <chapter title="PHP inspection 15" id="php-inspection-15">
+                <p>Exact same code as <a anchor="inspection-09">Level 9 to 10</a>. Except this part:</p>
+                <compare type="top-bottom" first-title="Current" second-title="Level 9 to 10">
+                    <code-block lang="php" src="otw/natas/15-16.index.php" include-lines="3-7"/>
+                    <code-block lang="php" src="otw/natas/09-10.index.php" include-lines="9-13"/>
+                </compare>
+                <p>Thoughts:</p>
+                <list>
+                    <li>This time it checks for additional characters: backtick (<code> ` </code>), single quote (<code>'</code>)
+                        and double quote (<code>&quot;</code>).
+                    </li>
+                    <li>There is another way of executing a command with characters not considered:
+                        <code>$(whoami)</code>. But this runs in a subshell,
+                        so at the end of the day <code>grep</code> will count it as a string.
+                    </li>
+                </list>
+
+                <code-block lang="bash">
+                    grep -i &quot;$(something)&quot; dictionary.txt
+                </code-block>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 15" id="resolution-15">
+            <p>Taking into consideration the vulnerability explained in the inspection. I can brute force the password
+                by testing each
+                character, like the previous level.</p>
+            <p>Consider this input:</p>
+
+            <code-block lang="bash">
+                grep -i &quot;$(cat /etc/natas_webpass/natas17)&quot; dictionary.txt
+            </code-block>
+            <p>The <code>grep</code> command will look for the password for natas17 in <code>dictionary.txt</code>. Of
+                course this won't return anything. But
+                if instead of the whole password I test for just a part of it:</p>
+
+            <code-block lang="bash">
+                grep -i $(grep a /etc/natas_webpass/natas17) dictionary.txt
+            </code-block>
+            <p>Here I first search for the string 'a' in the password. If it is on the password, the final command would
+                look like:</p>
+
+            <code-block lang="bash">
+                grep -i THE_PASSWORD dictionary.txt
+            </code-block>
+            <p>Which won't show result in a match considering <code>dictionary.txt</code> contains regular words. If the
+                letter 'a' is not in the
+                password, the command would look like this:</p>
+
+            <code-block lang="bash">
+                grep -i &quot;&quot; dictionary.txt
+            </code-block>
+            <p>Which will return the whole contents of <code>dictionary.txt</code>.</p>
+            <p>Using this knowledge the brute force operation will test char by char and confirm it by looking at the
+                HTML output:</p>
+            <list>
+                <li>If tested string is correct:
+                    <control>no list on the webpage</control>
+                    .
+                </li>
+                <li>If tested is not correct:
+                    <control>list on the webpage</control>
+                    .
+                </li>
+            </list>
+            <p>To make things easier, instead of just sending the shell command, I can send a string I know exists on
+                the dictionary.
+                Here goes an example:</p>
+
+            <code-block lang="bash">
+                grep -i &quot;example&quot; dictionary.txt
+            </code-block>
+            <p>The file <code>dictionary.txt</code> has this words that match:</p>
+
+            <code-block lang="text">
+                counterexample
+                example
+                example's
+                exampled
+                examples
+            </code-block>
+            <p>Let's go back to the injection, but this time using an exact word too:</p>
+            <code-block lang="bash" src="otw/natas/15-16.resolution.sh"/>
+            <p>This time:</p>
+            <list>
+                <li>If the tested string is correct:
+                    <control>no list on the webpage</control>
+                    .
+                </li>
+                <li>If the tested string is not correct:
+                    <control>
+                        <emphasis>counterexample</emphasis>
+                        on the webpage
+                    </control>
+                    .
+                </li>
+            </list>
+            <chapter title="Bruteforcing 15" id="bruteforcing-15">
+                <p>To not post the whole script, I will be posting only snippets of relevant parts.</p>
+                <tabs>
+                    <tab title="Request handler" id="request-handler-15">
+                        <code-block lang="generic" src="otw/natas/15-16.resolution.pl" include-lines="1-11"/>
+                        <tip>
+                            Since the website handles it as a `GET` request with parameters, I do the same.
+                        </tip>
+                    </tab>
+                    <tab title="Request setup" id="request-setup">
+                        <code-block lang="generic" src="otw/natas/15-16.resolution.pl" include-lines="19-26"/>
+                        <tip>
+                            Since the value is sent via URL, the special characters have to be url-encoded.
+                        </tip>
+                    </tab>
+                    <tab title="Response handler" id="response-handler-15">
+                        <code-block lang="generic" src="otw/natas/15-16.resolution.pl" include-lines="13-17"/>
+                        <tip>
+                            The parameter <code>$candidate</code> is an HTML response.
+                        </tip>
+                    </tab>
+                    <tab title="Bruteforce operation" id="bruteforce-operation">
+                        <code-block lang="generic" src="otw/natas/15-16.resolution.pl" include-lines="28-46"/>
+                        <note>
+                            Given how <code>grep</code> is being used, the tested character could be at the beginning or
+                            the end of the password. That's why the checker runs 2 times.
+                        </note>
+                    </tab>
+                </tabs>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 16 to Level 17" id="level-16-to-level-17">
+        <p>It appears to be the same website as <a anchor="level-14-to-level-15">Level 14 to Level 15</a>. The form
+            looks the same.</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect resources.</li>
+            <li>Find vulnerability and understand how to abuse it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 16" id="testing-form-16">
+            <p>Some basic tests:</p>
+            <list>
+                <li>Blank data: shows a blank page.</li>
+                <li>Regular data: shows a blank page.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 16" id="inspection-16">
+            <chapter title="HTML inspection 16" id="html-inspection-16">
+                <p>Nothing interesting.</p>
+            </chapter>
+            <chapter title="PHP inspection 16" id="php-inspection-16">
+                <p>It looks like the same code as <a anchor="php-inspection-14">level 14 to 15</a>. The only difference
+                    is that, this time, the <code>echo</code>
+                    statement that printed the result of the SQL query, is commented:</p>
+                <code-block lang="php" src="otw/natas/16-17.index.php" include-lines="3-23"/>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 16" id="resolution-16">
+            <p>The first thing is to understand the problem. The SQL injection vulnerability still exists, the problem
+                is that I don't
+                have any apparent way of checking the result on the website.</p>
+            <p>A key focus is to understand that the website
+                <control>is still</control>
+                vulnerable to SQL. So, I can use SQL code to kind of &quot;give me
+                a hint&quot; on the frontend if what I am trying is correct.
+            </p>
+            <p>One way of doing this is with the <code>SLEEP</code> command. It pauses the serving of the response an X
+                amount of seconds.
+                I can use this to confirm if the brute force operation is correct or not.</p>
+            <tldr>
+                <p>Response takes too long: something</p>
+                <p>Response is fast: something else</p>
+            </tldr>
+            <chapter title="Overview of the SQL injection 16" id="overview-of-the-sql-injection-16">
+                <p>The SQL code that will eventually run on the server:</p>
+                <code-block lang="sql" src="otw/natas/16-17.resolution.sql"/>
+            </chapter>
+            <chapter title="Bruteforcing 16" id="bruteforcing-16">
+                <p>They key factor is the comparison between the response times. First I define a function that
+                    calculates it:</p>
+                <code-block lang="generic" src="otw/natas/16-17.resolution.pl" include-lines="1-9"/>
+                <list>
+                    <li>For this particular scenario it's not necessary to be that precise, so Perl's own
+                        <code>time()</code> is enough. For other cases
+                        consider: <code>use Time::HiRes qw(time);</code>.
+                    </li>
+                </list>
+                <p>Then I use it in the brute force operation:</p>
+                <code-block lang="generic" src="otw/natas/16-17.resolution.pl" include-lines="11-25"/>
+                <tip>The sleep time of 5 seconds is enough to tell the difference.</tip>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 17 to Level 18" id="level-17-to-level-18">
+        <p>The website contains a form with username and password fields. When logging in, sets up a cookie, locking the
+            user to
+            that account, hiding the login form.</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Play with the cookie.</li>
+            <li>Inspect resources.</li>
+            <li>Find the vulnerability and understand how to abuse it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Test form 17" id="test-form-17">
+            <p>Basic tests:</p>
+            <list>
+                <li>Not providing any value and submitting logs in the user regardless.</li>
+                <li>There seems to be only two valid user groups: regular and admin.</li>
+                <li>Trying to reload the page after logging in forces the login details to be sent again.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 17" id="inspection-17">
+            <chapter title="HTML inspection 17" id="html-inspection-17">
+                <p>Nothing interesting.</p>
+            </chapter>
+            <chapter title="HTTP inspection 17" id="http-inspection-17">
+                <p>The first GET request doesn't seem to contain any relevant information. The POST request has the
+                    following body:</p>
+
+                <code-block lang="http">
+                    username=example&amp;password=example
+                </code-block>
+                <p>The cookie that the login sets up:</p>
+                <table>
+                    <tr>
+                        <td>Cookie</td>
+                        <td>Value</td>
+                    </tr>
+                    <tr>
+                        <td>PHPSESSID</td>
+                        <td>22</td>
+                    </tr>
+                </table>
+                <p>The value depends on the login information. On the PHP inspection shows that the max value is
+                    640.</p>
+            </chapter>
+            <chapter title="PHP inspection 17" id="php-inspection-17">
+                <p>Too much code. The tldr:</p>
+                <list>
+                    <li>Defines <code>$maxid = 640</code> and uses it to generate a random id up to that limit.</li>
+                    <li>The first thing it does regarding the session is confirming the existence of cookie <code>PHPSESSID</code>.
+                        If it doesn't exist,
+                        PHP creates it.
+                    </li>
+                    <li>It checks for the user that is currently in the session, if it's the admin, prints the
+                        password.
+                    </li>
+                </list>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 17" id="resolution-17">
+            <p>It is posible to send the cookie and its value in the headers. My first strategy is to bruteforce it.</p>
+            <chapter title="Bruteforcing 17" id="bruteforcing-17">
+                <tabs>
+                    <tab title="Request handler" id="request-handler-17">
+                        <code-block lang="generic" src="otw/natas/17-18.resolution.pl" include-lines="1-19"/>
+                        <tip>It sets up the cookie in the headers hash. The values of the body are irrelevant.</tip>
+                    </tab>
+                    <tab title="Bruteforce operation" id="bruteforce-operation-1">
+                        <code-block lang="generic" src="otw/natas/17-18.resolution.pl" include-lines="21-31"/>
+                    </tab>
+                </tabs>
+                <tldr>
+                    <p>Define the total possible values (1 to 640).</p>
+                    <p>Make the request with the current value in iteration as the cookie.</p>
+                    <p>If the html response contains the phrase
+                        <emphasis>"You are an admin"</emphasis>
+                        , the cookie was correct.
+                    </p>
+                    <p>When the correct cookie is found, prints the password.</p>
+                    <p>(OPTIONAL) to display only the password and not the whole html, parse it with a regex. Focus
+                        on the print format defined in the PHP file and the fact that all passwords are length 32.
+                    </p>
+                </tldr>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 18 to Level 19" id="level-18-to-level-19">
+        <p>Same page as the previous level, this time it has additional information:</p>
+        <tip>
+            <p>This page uses mostly the same code as the previous level, but session IDs are no longer sequential.</p>
+        </tip>
+        <p>The general plan to follow:</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect the resources, focusing on the cookies.</li>
+            <li>Understand the vulnerability and how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 18" id="testing-form-18">
+            <p>It works the same as the one from the previous level.</p>
+        </chapter>
+        <chapter title="Inspection 18" id="inspection-18">
+            <p>The focus of the inspection should be on the cookie set up by PHP.</p>
+            <chapter title="Cookie inspection 18" id="cookie-inspection-18">
+                <p>Giving the form the following data:</p>
+
+                <code-block lang="text">
+                    Username: natas20
+                    Password:
+                </code-block>
+                <p>Produces the following cookie:</p>
+
+                <code-block lang="http">
+                    PHPSESSID=3133362d6e617461733230
+                </code-block>
+                <p>Some extra tests:</p>
+                <table>
+                    <tr>
+                        <td>Username</td>
+                        <td>Password</td>
+                        <td>PHPSESSID</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>3535372d</td>
+                    </tr>
+                    <tr>
+                        <td>admin</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>3436332d61646d696e</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>admin</td>
+                        <td>3234372d</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>natas20</td>
+                        <td>3437332d</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>natas20</td>
+                        <td>3539322d6e617461733230</td>
+                    </tr>
+                    <tr>
+                        <td>natas</td>
+                        <td>natas</td>
+                        <td>31362d6e61746173</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>3137312d6e617461733230</td>
+                    </tr>
+                </table>
+                <p>By studying the results, I found that the username defines the part after the character
+                    <code>d</code>, and that stays constant.
+                    Running the form three times with username natas20:</p>
+                <table>
+                    <tr>
+                        <td>Username</td>
+                        <td>Password</td>
+                        <td>PHPSESSID</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>34322d6e617461733230</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>3232342d6e617461733230</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>3236322d6e617461733230</td>
+                    </tr>
+                </table>
+                <p>So it seems that <code>6e617461733230</code> corresponds to <code>natas20</code>. It is also
+                    important to understand the meaning of the
+                    character <code>d</code>, as it appears in all results. In
+                    <control>hexadecimal</control>
+                    the letter 'd' corresponds to <code>-</code>. Giving all session
+                    ids the following format:
+                </p>
+
+                <code-block lang="Generic">
+                    MAYBE_RANDOM_TEXT-natas20
+                </code-block>
+                <p>With the new knowledge of the encoding method, let's run some extra tests:</p>
+                <table>
+                    <tr>
+                        <td>Username</td>
+                        <td>Password</td>
+                        <td>HEX Decoded Cookie</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>natas20</td>
+                        <td>465-natas20</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>&lt;BLANK&gt;</td>
+                        <td>555-natas20</td>
+                    </tr>
+                    <tr>
+                        <td>natas20</td>
+                        <td>natas20</td>
+                        <td>278-natas20</td>
+                    </tr>
+                </table>
+                <p>It looks like the id used for the bruteforce operation in the previous level it still there, but this
+                    time encoded with
+                    the username.</p>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 18" id="resolution-18">
+            <p>With the information collected in the cookie inspection process, the strategy becomes really clear:</p>
+            <list>
+                <li>Hex encode something that follows this format: <code>number-admin</code>. Because the admin's name
+                    is <code>admin</code>, not <code>natas20</code>.
+                </li>
+                <li>Bruteforce the <code>number</code> part, maybe considering the max limit of 640 set on previous
+                    level.
+                </li>
+                <li>Parse the html response to confirm the result.</li>
+            </list>
+            <chapter title="Bruteforcing 18" id="bruteforcing-18">
+                <tabs>
+                    <tab title="Request handler" id="request-handler">
+                        <code-block lang="shell" src="otw/natas/18-19.resolution.ps1" include-lines="1-21"/>
+                    </tab>
+                    <tab title="Bruteforce operation" id="bruteforce-operation-2">
+                        <code-block lang="shell" src="otw/natas/18-19.resolution.ps1" include-lines="23-32"/>
+                    </tab>
+                </tabs>
+                <tldr>
+                    <p>Hex encodes the string <code>ITER_NUMBER-admin</code>.</p>
+                    <p>Makes the request, using the hex string as cookie.</p>
+                    <p>If the response contains the string
+                        <emphasis>"You are an admin"</emphasis>
+                        . Uses a regex to extract the password and stops execution.
+                    </p>
+                </tldr>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 19 to Level 20" id="level-19-to-level-20">
+        <p>At first sight it appears to be another challenge related to cookies. This time it immediately logs the user
+            as <code>regular user</code>. The form has only one field <code>Your name</code> and a button <code>Change
+                name</code>.</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect the resources. Focus on the cookie and the PHP code (provided by the page this time).</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 19" id="testing-form-19">
+            <p>Some basic tests:</p>
+            <table>
+                <tr>
+                    <td>Your name</td>
+                    <td>PHPSESSID</td>
+                </tr>
+                <tr>
+                    <td>test</td>
+                    <td>eu0u0qlovt5iqhecvvo8ve9orm</td>
+                </tr>
+                <tr>
+                    <td>natas</td>
+                    <td>ulgghj97fbir2qvtomr4p2nino</td>
+                </tr>
+                <tr>
+                    <td>test</td>
+                    <td>u58moldlddcgo6i1krurpkd34i</td>
+                </tr>
+                <tr>
+                    <td>natas</td>
+                    <td>381h2ghbibi6bm4fha16rojo2t</td>
+                </tr>
+            </table>
+            <p>Thoughts:</p>
+            <list>
+                <li>To make the cookie change I had to delete it. The submission of the form doesn't seem to affect it
+                    if it is already
+                    set.
+                </li>
+                <li>There is some randomness, trying the same input after deleting the cookie give a different result.
+                </li>
+                <li>Cookies for the same name don't seem to have anything in common.</li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 19" id="inspection-19">
+            <chapter title="Cookie inspection 19" id="cookie-inspection-19">
+                <p>The information found about the cookie is well detailed on the <a anchor="testing-form-19">form
+                    testing</a>. By itself doesn't give
+                    any relevant information regarding the logic that backs it up.</p>
+            </chapter>
+            <chapter title="PHP inspection 19" id="php-inspection-19">
+                <p>This time the website provides PHP code to inspect. There is a lot of it. Let's start with the end
+                    goal:</p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="3-11"/>
+                <p>The code uses the function <code>session_set_save_handler()</code> to define its own session handling
+                    functions. The defaults are:</p>
+                <deflist type="medium">
+                    <def title="open($save_path, $session_name)" id="open-save_path-session_name">
+                        Opens the session storage.
+                    </def>
+                    <def title="close()" id="close">
+                        Closes the session storage.
+                    </def>
+                    <def title="read($id)" id="read-id">
+                        Reads the session storage given a session id.
+                    </def>
+                    <def title="write($id, $data)" id="write-id-data">
+                        Writes the session data given a session id.
+                    </def>
+                    <def title="destroy($id)" id="destroy-id">
+                        Destroys the session data given a session id.
+                    </def>
+                    <def title="gc($maxlifetime)" id="gc-maxlifetime">
+                        Garbage collection of old session data.
+                    </def>
+                </deflist>
+                <p>The code only overwrites all of them, but only 2 are functional:</p>
+                <tabs>
+                    <tab title="mywrite" id="mywrite">
+                        <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="13-33"/>
+                        <p>Overview:</p>
+                        <list type="decimal">
+                            <li>Check if session is valid (only contains numbers, letters or dash).</li>
+                            <li>If valid, saves it into
+                                <path>$session_save_path/mysess_$sid</path>
+                                .
+                            </li>
+                            <li>Sorts the session data by keys in ascending order.</li>
+                            <li>Saves the sorted session data in the file previously created.</li>
+                            <li>The file is given permissions of read and write for the owner.</li>
+                        </list>
+                    </tab>
+                    <tab title="myread" id="myread">
+                        <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="35-55"/>
+                        <p>Overview:</p>
+                        <list type="decimal">
+                            <li>Check if session id is valid (only contains numbers, letters or dash).</li>
+                            <li>If valid, opens the previously created session file and reads the data.</li>
+                            <li>Clears the current session data contained in <code>$_SESSION</code>.</li>
+                            <li>Populates <code>$_SESSION</code> with the data of the session file.</li>
+                            <li>Encodes and returns the <code>$_SESSION</code> array.</li>
+                        </list>
+                    </tab>
+                </tabs>
+                <p>There is two more pieces of relevant code. First:</p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="57-61"/>
+                <p>This allows the printing of relevant information during the execution of the script. It is set by a
+                    GET request with the
+                    key <code>debug</code> set on.</p>
+
+                <code-block lang="http">
+                    GET example.com/?debug=true
+                </code-block>
+                <p>The second and last snippet of relevant code is the one that handles the input of the user:</p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="63-66"/>
+                <p>This sets the <code>name</code> value on the session to the one provided by the user.</p>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 19" id="resolution-19">
+            <chapter title="Preparation 19" id="preparation-19">
+                <tabs>
+                    <tab title="Session configuration" id="session-configuration">
+                        <p>
+                            The session configuration (what allows me to send multiple request without changing
+                            cookies):
+                        </p>
+                        <br/>
+                        <code-block lang="shell" src="otw/natas/19-20.resolution.ps1" include-lines="1-12"/>
+                    </tab>
+                    <tab title="Request handlers" id="request-handlers">
+                        <p>
+                            Another thing to do is define two web requests, one for <code>GET</code> and the other for
+                            <code>POST</code>.
+                            <br/>
+                            The first one will allow me to
+                            inspect the debug information between operations, while the second one will allow me to
+                            change the <code>name</code> field.
+                        </p>
+                        <br/>
+                        <code-block lang="shell" src="otw/natas/19-20.resolution.ps1" include-lines="14-30"/>
+                    </tab>
+                </tabs>
+            </chapter>
+            <chapter title="Session handler injection 19" id="session-handler-injection-19">
+                <p>The key vulnerability is present in <code>myread()</code>:</p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="47-53"/>
+                <p>Particularly in this two lines:</p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="51-52"/>
+                <p>The code splits the data in new lines, without sanitization. Meaning <code>test\nadmin 1</code>, will
+                    translate to:</p>
+
+                <code-block lang="php">
+                    $_SESSION['name'] = test;
+                    $_SESSION['admin'] = 1;
+                </code-block>
+                <p>The code that exploits the vulnerability is fairly simple:</p>
+                <code-block lang="shell" src="otw/natas/19-20.resolution.ps1" include-lines="32-35"/>
+                <p>Overview:</p>
+                <list type="decimal">
+                    <li>Performs the initial <code>GET</code> request.</li>
+                    <li>Sets up the injection, escaping the newline character (PowerShell escapes characters with
+                        backtick). Then performs
+                        the <code>POST</code> request.
+                    </li>
+                    <li>Executes the last <code>GET</code> request, parsing the password from the response.</li>
+                </list>
+            </chapter>
+        </chapter>
+    </chapter>
+
+</topic>

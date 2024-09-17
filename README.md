@@ -2,6 +2,8 @@
 
 This repo contains my write-ups, solutions and related content.
 
-## Notes
+## TODO
 
-- As suggested by the creators, solutions should not be made public, so this repo will be private.
+- Make public.
+- GitHub actions for Writerside.
+- Deploy on GitHub Pages.

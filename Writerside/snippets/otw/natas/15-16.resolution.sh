@@ -1,0 +1,1 @@
+grep -i "counterexample$(grep SOME_STRING /etc/natas_webpass/natas17)" dictionary.txt

@@ -1,4 +1,4 @@
-# Notes
+# Bandit
 
 ## Room 00
 
@@ -16,7 +16,7 @@ Basic commands (`cd`, `ls`, `file`, etc) and working with special characters.
 
 ### Special characters
 
-To interact with the file named `-` the user has to write it with the path: `./-`. Because doing, for example, `file -` or `file '-'` wont work.
+To interact with the file named `-` the user has to write it with the path: `./-`. Because doing, for example, `file -` or `file '-'` won't work.
 
 ## Room 02
 
@@ -38,14 +38,14 @@ The password is in a hidden file.
 
 ### Hidden files
 
-Using `ls` just like that wont show hidden files, im pretty sure there are some parameters to change its behavior. I personally use the command `ll`.
+Using `ls` just like that won't show hidden files, im pretty sure there are some parameters to change its behavior. I personally use the command `ll`.
 
 ## Room 04
 
 Unreadable files, using the command `reset` to fix the terminal.
 
 - Use the password from previous room.
-- Using `cat` on unreadable files will mess up the terminal. Use `reset` and keep searching until finding the only human readable
+- Using `cat` on unreadable files will mess up the terminal. Use `reset` and keep searching until finding the only human-readable
 file.
 
 ### Fix the terminal
@@ -144,7 +144,7 @@ Where each command corresponds to:
 
 ## Room 09
 
-This time the file contains non human readable data alongside the password.
+This time the file contains non human-readable data alongside the password.
 
 - As usual, use the password found on the previous round to access via SSH.
 - Filter the non-readable text with `strings` and use `grep` to find the pattern we are looking for.  
@@ -208,7 +208,7 @@ We continue with this process of checking the file and decompressing it if neces
 
 ## Room 13
 
-This room instead of giving the user a password, it gives a private SSH key, used to login to the next room. Once logged in, the user has to search for the password in the path specified.
+This room instead of giving the user a password, it gives a private SSH key, used to log in to the next room. Once logged in, the user has to search for the password in the path specified.
 
 - The user has a file `sshkey.private` that can be used with the command `ssh`.  
 - After the login, the user has to search for the password, in order to be able to connect later without using the private key.
@@ -235,7 +235,7 @@ The password can be retrieved by submitting the current password to the specifie
 
 ### Using nc to submit things
 
-This time the user has to submit text to localhost on an specific port. To do this, the user has to use the command `nc`:
+This time the user has to submit text to localhost on a specific port. To do this, the user has to use the command `nc`:
 
 ```shell
 echo "CURRENT_PASSWORD" | nc localhost 30000
@@ -257,7 +257,7 @@ echo "CURRENT_PASSWORD" | ncat --ssl localhost 30001
 
 ## Room 16
 
-This room is similar to the previous one, the user submits the current password. This time the user does not have an specified port, instead it has a range of possible ports.
+This room is similar to the previous one, the user submits the current password. This time the user does not have a specified port, instead it has a range of possible ports.
 
 - First the user has to find out what ports have a server listening on them.
 - Then the user has to find out which one speaks SSL/TLS. There is only one correct port.
@@ -287,7 +287,7 @@ The previous step outputs two ports, the user has to manually test then with the
 cat /etc/bandit_pass/bandit16 | ncat --ssl localhost <PORT>
 ```
 
-If the command outputs the current round password it means that port is not the one. The correct port will give the user a private key that the user can use to login with SSH.
+If the command outputs the current round password it means that port is not the one. The correct port will give the user a private key that the user can use to log in with SSH.
 Once the user knows the correct port, this command can be user to save the key into a file:
 
 ```shell
@@ -418,17 +418,17 @@ Another room with setuid binaries. This time the setuid binary makes a connectio
 
 ### Sending and receiving with netcat
 
-To setup the listener the user has to use the following command:
+To set up the listener the user has to use the following command:
 
 ```shell
 nc -lvnp 35000 &
 ```
 
-Where each parts corresponds to:
+Where each parts correspond to:
 
 - `nc -lvnp`: listen, verbose, no dns resolution, on specified port.
 - `35000`: port to listen to.
-- `&`: since the user is in a ssh session, is a good idea to run the listener on the background.
+- `&`: since the user is in an ssh session, is a good idea to run the listener on the background.
 
 Then the user has to start the setuid with the listener's port:
 
@@ -465,9 +465,9 @@ This room has a program running at regular intervals from `cron`, a time-based j
 - **Purpose**: refers to man page section 5, which describes the format and configuration of the crontab file.
 - **Usage**: to read this documentation, use `man 5 crontab`.
 
-### Finding the password
+### Finding the password 21
 
-The user can check the location of the crontab files and look out for the relevant one. Because for this particular case, the user does not has the required permissions to execute `crontab -l`.
+The user can check the location of the crontab files and look out for the relevant one. Because for this particular case, the user does not have the required permissions to execute `crontab -l`.
 
 ```shell
 ls /etc/cron.d/
@@ -481,9 +481,9 @@ chmod 644 /SOME/PATH
 cat /etc/bandit_pass/bandit22 > /SOME/PATH
 ```
 
-The user can easily understand that the cron job is pasting the password for the next room in a folder with permission 644 (user can read from this file). Now its just a matter of inspecting the contents of that file.
+The user can easily understand that the cron job is pasting the password for the next room in a folder with permission 644 (user can read from this file). Now it's just a matter of inspecting the contents of that file.
 
-Just for the sake of practicing, the one liner that parses the path and shows the contents of the password file:
+Just for the sake of practicing, the one-liner that parses the path and shows the contents of the password file:
 
 ```shell
 cat /usr/bin/cronjob_bandit22.sh | grep '>' | awk -F'>' '{ print $NF }' | xargs cat
@@ -503,7 +503,7 @@ This room is similar to the last one, it has a program running at regular interv
 - Find out what command does the scheduler execute.
 - Examine the command for clues on how to find the password.
 
-### Finding out the password
+### Finding the password 22
 
 The firsts steps are the same as the previous room. This time the script that the cron job executes is a little bit more complex, it requires manual inspection from the user.
 
@@ -527,7 +527,7 @@ Replicating the logic from the script:
 echo I am user bandit23 | md5sum | cut -d ' ' -f 1
 ```
 
-That is enough for getting the name of the file that contains the password in /tmp/. The one liner for replicating the logic and printing the password will be:
+That is enough for getting the name of the file that contains the password in /tmp/. The one-liner for replicating the logic and printing the password will be:
 
 ```shell
 echo I am user bandit23 | md5sum | cut -d ' ' -f 1 | awk '{ print "/tmp/" $1 }' | xargs cat
@@ -612,11 +612,11 @@ Then the user can copy the file into the `/var/spool/bandit/foo/` path and wait 
 cp solve.sh /var/spool/bandit24/foo/
 ```
 
-Finally the user can `cat` into the new file and save the password.
+Finally, the user can `cat` into the new file and save the password.
 
 ## Room 24
 
-This time, a daemon is listening on port 30002 and will give the password if given the previous password and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations.
+This time, a daemon is listening on port 30002 and will give the password if given the previous password and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all the 10000 combinations.
 
 - Understand what a daemon is and how they work.
 - Find out how to brute force the operation.
@@ -641,7 +641,7 @@ An easy way to generate all the posible pin codes is with a for loop:
 for i in {0000..9999}; do echo $i; done
 ```
 
-The user can modify the one liner to create the string that the daemon wants inline:
+The user can modify the one-liner to create the string that the daemon wants inline:
 
 ```bash
 for i in {0000..9999}; do echo "CURRENT_PASSWORD $i"; done
@@ -705,19 +705,19 @@ The file `~/text.txt` is really short, so normally the `more` command won't ente
 Once paused in `more` paged view, the user can use the `v` key to open *vi*, as detailed in the man pages of `more`.
 In vi, the user can execute shell commands with `:!COMMAND`. But trying a regular command like this won't work:
 
-```vim
+```Bash
 :!ls
 ```
 
 It won't work because behind the scenes the shell used to run that command is the default bandit26 shell. To change it to bash the user has to do the following:
 
-```vim
+```Bash
 :set shell=/bin/bash
 ```
 
 Then the user can start bash with the command:
 
-```vim
+```Bash
 :shell
 ```
 
@@ -850,7 +850,7 @@ After doing the commit and push the user will get a message with the password.
 
 ## Room 32
 
-The only instruction that the user has for this room is to escape. It suggest the usage of the commands `man` and `sh`.
+The only instruction that the user has for this room is to escape. It suggests the usage of the commands `man` and `sh`.
 
 - Understand the shell the user has to escape.
 - Escape.

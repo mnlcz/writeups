@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile id="in"
+                 name="Instance Name"
+                 start-page="Home.md">
+
+    <toc-element topic="Home.md"/>
+    <toc-element topic="OverTheWire.md">
+        <toc-element topic="Bandit.md"/>
+        <toc-element topic="Natas.md"/>
+    </toc-element>
+</instance-profile>

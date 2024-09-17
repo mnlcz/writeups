@@ -13,7 +13,7 @@
 
         <!--    Add up to 2 topics that you want to promote. Use the "type" attribute to select an icon.    -->
         <spotlight>
-            <a href="OverTheWire.md" type="start" summary="The goal of the OverTheWire games is to provide educational resources to people willing to learn
+            <a href="OverTheWire.topic" type="start" summary="The goal of the OverTheWire games is to provide educational resources to people willing to learn
 topics on cybersecurity">Over The Wire</a>
             <a href="HackTheBox.topic" type="container" summary="Hack The Box (HTB) offers a wide range of challenges, including vulnerable machines, capture-the-flag (CTF) tasks, and real-world labs.">HackTheBox</a>
         </spotlight>

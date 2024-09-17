@@ -1,0 +1,1005 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       id="Bandit" title="Bandit">
+
+    <title>
+        Bandit
+    </title>
+    <chapter title="Room 00" id="room-00">
+        <p>Understand general workflow of the rooms.</p>
+        <list>
+            <li>Connect via SSH with given credentials at specific host with specific port.</li>
+            <li>Get password of the next room from <code>readme</code> file.</li>
+        </list>
+    </chapter>
+    <chapter title="Room 01" id="room-01">
+        <p>Basic commands (<code>cd</code>, <code>ls</code>, <code>file</code>, etc.) and working with special
+            characters.</p>
+        <list>
+            <li>Connect via SSH with new user and the password found on the previous room.</li>
+            <li>Next password is located in a file named <code>-</code> in home directory.</li>
+        </list>
+        <chapter title="Special characters" id="special-characters">
+            <p>To interact with the file named <code>-</code> the user has to write it with the path: <code>./-</code>.
+                Because doing, for example, <code>file -</code> or <code>file '-'</code> won't work.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 02" id="room-02">
+        <p>Same commands as previous room. This time the file contains spaces.</p>
+        <list>
+            <li>Use the password from previous room.</li>
+            <li>Password is located in a file name <code>spaces in this filename</code>.</li>
+        </list>
+        <chapter title="Spaces in filename" id="spaces-in-filename">
+            <p>Nothing out of the ordinary, interact with the file using quotes. Example: <code>cat &quot;file
+                one&quot;</code>.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 03" id="room-03">
+        <p>The password is in a hidden file.</p>
+        <list>
+            <li>Use the password from previous room.</li>
+            <li>The hidden file is in the directory named <code>inhere</code>.</li>
+        </list>
+        <chapter title="Hidden files" id="hidden-files">
+            <p>Using <code>ls</code> just like that won't show hidden files, im pretty sure there are some parameters to
+                change its behavior. I personally use the command <code>ll</code>.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 04" id="room-04">
+        <p>Unreadable files, using the command <code>reset</code> to fix the terminal.</p>
+        <list>
+            <li>Use the password from previous room.</li>
+            <li>Using <code>cat</code> on unreadable files will mess up the terminal. Use <code>reset</code> and keep
+                searching until finding the only human-readable
+                file.
+            </li>
+        </list>
+        <chapter title="Fix the terminal" id="fix-the-terminal">
+            <p>OverTheWire tells the user to use the command <code>reset</code>. I tried using CTRL+L (clear) and works
+                too, at least on my terminal.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 05" id="room-05">
+        <p>Multi-property file search with <code>find</code> . The password is stored in a file that has all the
+            properties given by the problem.</p>
+        <list>
+            <li>As always, use the password from previous room to log in via SSH.</li>
+            <li>Move to the <code>inhere</code> directory and find the file that has the following properties:
+                <list>
+                    <li>Human readable.</li>
+                    <li>1033 bytes in size.</li>
+                    <li>Not executable.</li>
+                </list>
+            </li>
+        </list>
+        <chapter title="Multi-property file search" id="multi-property-file-search">
+            <p>This problem can be solved by using the <code>find</code> command with specific filters. In particular,
+                the following ones:</p>
+
+            <code-block lang="shell">
+                find . -type f -size 1033c ! -executable
+            </code-block>
+            <p>Where each part corresponds to:</p>
+            <list>
+                <li><code>find .</code>: search on the current directory.</li>
+                <li><code>-type f</code>: search a file of type
+                    <emphasis>regular file</emphasis>
+                    .
+                </li>
+                <li><code>-size 1033c</code>: search a file that is exactly 1033 bytes, <code>c</code> corresponds to
+                    byte.
+                </li>
+                <li><code>! -executable</code> or <code>! -perm /111</code>: exclude executable files.</li>
+            </list>
+            <p>We can pipe it to <code>cat</code> to show the contents immediately:</p>
+
+            <code-block lang="shell">
+                find . -type f -size 1033c ! -executable | xargs cat
+            </code-block>
+            <p>The command <code>xargs</code> is used to process and pass data between commands.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 06" id="room-06">
+        <p>Multi-property file search with <code>file</code> and filter output with <code>grep</code>. This time we only
+            have the properties and that is stored somewhere on the server.</p>
+        <list>
+            <li>As always, use the password from the previous room to log in via SSH.</li>
+            <li>Same logic as the previous room, this time we have to search on root and apply some filtering to the
+                output using <code>grep</code>.
+            </li>
+        </list>
+        <chapter title="Filtering output" id="filtering-output">
+            <p>We will use the following chain of commands:</p>
+
+            <code-block lang="shell" src="otw/bandit/06.resolution.sh"/>
+            <p>The new params and commands used do the following:</p>
+            <list>
+                <li><code>-group</code> and <code>-user</code>: searches for a file that is owned by X group and X user.
+                </li>
+                <li><code>2&gt;&amp;1</code>: redirects
+                    <emphasis>standard error</emphasis>
+                    (file descriptor 2) to
+                    <emphasis>standard output</emphasis>
+                    (file descriptor 1), so both stderr and stdout are combined on a single stream that can be
+                    redirected.
+                </li>
+                <li><code>grep -v &quot;find&quot;</code>: to filter the results that are not correct. Considering that
+                    if we don't add this we will get a lot of lines that look like this: <code>find: ‘/boot/efi’:
+                        Permission denied</code>. We are using the word
+                    <emphasis>find</emphasis>
+                    (that appears on all invalid results) to filter those lines.
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 07" id="room-07">
+        <p>The password is located in a file next to a particular word. The suggestion for commands include:
+            <code>sort</code>, <code>strings</code>, a couple of<br/>compress/decompress commands, <code>tr</code>,
+            <code>xxd</code>, etc.</p>
+        <list>
+            <li>Use previous password to login via SSH.</li>
+            <li>Search for the particular word using <code>grep</code>.</li>
+        </list>
+        <chapter title="Search and clean" id="search-and-clean">
+            <p>The following command will perform the search and return the line that has the word and password.</p>
+
+            <code-block lang="shell">
+                grep &quot;millionth&quot; data.txt'
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Room 08" id="room-08">
+        <p>The password is located in the line of text that appears only once. So we will be using <code>uniq</code>
+            with <code>sort</code>.</p>
+        <list>
+            <li>Use previous password to login via SSH.</li>
+            <li>Use a chain of commands that allows us to get the line that contains the password.</li>
+        </list>
+        <chapter title="Find unique line" id="find-unique-line">
+            <p>We use <code>sort</code> to prepare the text for the <code>uniq</code> command, ensuring that duplicates
+                are adjacent.</p>
+
+            <code-block lang="shell">
+                sort data.txt | uniq -u
+            </code-block>
+            <p>Where each command corresponds to:</p>
+            <list>
+                <li><code>sort</code>: sorts the lines.</li>
+                <li><code>uniq -u</code>: prints
+                    <control>only</control>
+                    the lines that appear exactly once in the input.
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 09" id="room-09">
+        <p>This time the file contains non human-readable data alongside the password.</p>
+        <list>
+            <li>As usual, use the password found on the previous round to access via SSH.</li>
+            <li>Filter the non-readable text with <code>strings</code> and use <code>grep</code> to find the pattern we
+                are looking for.
+            </li>
+        </list>
+    </chapter>
+    <chapter title="Room 10" id="room-10">
+        <p>The password is stored in the specified file that, this time, has base64 encoded data. Use
+            <code>base64</code> command.</p>
+        <list>
+            <li>Use <code>base64 -d</code> to decode the password.</li>
+        </list>
+    </chapter>
+    <chapter title="Room 11" id="room-11">
+        <p>The password is stored in a file that has the
+            <emphasis>ROT13</emphasis>
+            cipher. Use <code>tr</code> command.
+        </p>
+        <list>
+            <li>Use <code>tr</code> command with the correct mapping to get the password.</li>
+        </list>
+        <chapter title="Decipher ROT13" id="decipher-rot13">
+            <p>The mapping is the following:</p>
+
+            <code-block lang="shell">
+                tr 'A-Za-z' 'N-ZA-Mn-za-m' &lt; inputfile
+            </code-block>
+            <p>The map follows this logic:</p>
+            <list>
+                <li><code>A-Z</code>: uppercase letters.</li>
+                <li><code>a-z</code>: lowercase letters.</li>
+                <li><code>N-ZA-M</code>: letters
+                    <emphasis>N</emphasis>
+                    to
+                    <emphasis>Z</emphasis>
+                    , followed by
+                    <emphasis>A</emphasis>
+                    to
+                    <emphasis>M</emphasis>
+                    .
+                </li>
+                <li><code>n-za-m</code>: letters
+                    <emphasis>n</emphasis>
+                    to
+                    <emphasis>z</emphasis>
+                    , followed by
+                    <emphasis>a</emphasis>
+                    to
+                    <emphasis>m</emphasis>
+                    .
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 12" id="room-12">
+        <p>The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been
+            repeatedly compressed. Commands to use are <code>xxd</code> and the compress/decompress ones.</p>
+        <list>
+            <li>Use <code>xxd</code> to convert the hexdump back to binary.</li>
+            <li>Check the type of conversion used on the binary.</li>
+            <li>Decompress the binary.</li>
+        </list>
+        <chapter title="From hexdump into password" id="from-hexdump-into-password">
+            <p>First we convert the hexdump into a binary.</p>
+
+            <code-block lang="shell">
+                xxd -r data.txt data.bin
+            </code-block>
+            <p>We inspect the compressed binary with the goal of finding the conversion type used.</p>
+
+            <code-block lang="shell">
+                file data.bin
+            </code-block>
+            <p>The first compressor used is <code>gzip</code>. So we use <code>gunzip</code> to decompress:</p>
+
+            <code-block lang="shell">
+                gunzip &lt; data.bin &gt; data.dec
+            </code-block>
+            <p>We continue with this process of checking the file and decompressing it if necessary until we find the
+                password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 13" id="room-13">
+        <p>This room instead of giving the user a password, it gives a private SSH key, used to log in to the next room.
+            Once logged in, the user has to search for the password in the path specified.</p>
+        <list>
+            <li>The user has a file <code>sshkey.private</code> that can be used with the command <code>ssh</code>.</li>
+            <li>After the login, the user has to search for the password, in order to be able to connect later without
+                using the private key.
+            </li>
+        </list>
+        <chapter title="Login SSH using private key" id="login-ssh-using-private-key">
+            <p>The user has to use the private key with the following command:</p>
+
+            <code-block lang="shell">
+                ssh -i sshkey.private bandit14@localhost -p 2220
+            </code-block>
+            <p>Where each part corresponds to:</p>
+            <list>
+                <li><code>ssh -i sshkey.private</code>: use private key stored in specified file.</li>
+                <li><code>bandit14@localhost</code>: the user that has the rights to read the password we need.</li>
+                <li><code>-p 2220</code>: optional, I had a problem with the port 22, normally used by SSH, so I had to
+                    change it as specified by a user that had the same issue.
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 14" id="room-14">
+        <p>The password can be retrieved by submitting the current password to the specified port on localhost.</p>
+        <list>
+            <li>To submit text the user has to use the command <code>nc</code>.</li>
+        </list>
+        <chapter title="Using nc to submit things" id="using-nc-to-submit-things">
+            <p>This time the user has to submit text to localhost on a specific port. To do this, the user has to use
+                the command <code>nc</code>:</p>
+
+            <code-block lang="shell">
+                echo &quot;CURRENT_PASSWORD&quot; | nc localhost 30000
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Room 15" id="room-15">
+        <p>This room is similar to the last one, the user has to submit the current password to the specified port on
+            localhost. This time, the user also has to use SSL/TSL encryption.</p>
+        <list>
+            <li>To submit the text the user has to use the command <code>ncat</code>, because <code>nc</code> does not
+                support SSL/TSL.
+            </li>
+        </list>
+        <chapter title="Submitting data with ncat and SSL" id="submitting-data-with-ncat-and-ssl">
+            <p>As <code>nc</code> is a simple networking utility, it does not support encryption. The user has to use
+                <code>ncat</code>, which is a more advanced version of <code>nc</code> from the Nmap suite.</p>
+
+            <code-block lang="shell">
+                echo &quot;CURRENT_PASSWORD&quot; | ncat --ssl localhost 30001
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Room 16" id="room-16">
+        <p>This room is similar to the previous one, the user submits the current password. This time the user does not
+            have a specified port, instead it has a range of possible ports.</p>
+        <list>
+            <li>First the user has to find out what ports have a server listening on them.</li>
+            <li>Then the user has to find out which one speaks SSL/TLS. There is only one correct port.</li>
+            <li>Lastly the user has to use the <code>ncat</code> command like in the previous room.</li>
+        </list>
+        <chapter title="Looking for the correct port" id="looking-for-the-correct-port">
+            <p>The user can combine step 1 and 2 by using the correct options for the <code>nmap</code> command. To get
+                the open ports that user SSL/TLS:</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="2"/>
+            <p>The output is fairly large, so the user can use different tools to parse it. For extracting only the
+                ports that use SSL/TLS:</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="3"/>
+            <p>Optionally the user can save the ports into a file by adding <code>&gt; FILENAME.txt</code> at the end.
+            </p>
+        </chapter>
+        <chapter title="Get the key from the correct port" id="get-the-key-from-the-correct-port">
+            <p>The previous step outputs two ports, the user has to manually test then with the command:</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="6"/>
+            <p>If the command outputs the current round password it means that port is not the one. The correct port
+                will give the user a private key that the user can use to log in with SSH.
+                Once the user knows the correct port, this command can be user to save the key into a file:</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="7"/>
+            <p>Before attempting to use the key, the user has to give it the correct permissions.</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="8"/>
+            <p>Lastly the user has to connect to the next round:</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="9"/>
+            <p>And the user can get the password for later access.</p>
+
+            <code-block lang="shell" src="otw/bandit/16.resolution.sh" include-lines="10"/>
+        </chapter>
+    </chapter>
+    <chapter title="Room 17" id="room-17">
+        <p>This room provides the user with two files: <code>passwords.new</code> and <code>passwords.old</code>. The
+            password is located in <code>passwords.new</code> in the only line that has been modified from <code>passwords.old</code>.
+        </p>
+        <list>
+            <li>To compare the files the user can use the <code>diff</code> command.</li>
+        </list>
+        <chapter title="Comparing files" id="comparing-files">
+            <p>The user can compare the files like this:</p>
+
+            <code-block lang="shell">
+                diff passwords.new passwords.old
+            </code-block>
+            <p>The output will be something like:</p>
+
+            <code-block lang="text">
+                3c3
+                &lt; old line
+                ---
+                &gt; new line
+            </code-block>
+            <p>Where each part corresponds to:</p>
+            <list>
+                <li><code>3c3</code>: indicates that line 3 in the first file should be changed to line 3 in the second
+                    file.
+                </li>
+                <li><code>&lt;</code>: shows the line from the
+                    <control>first file</control>
+                    .
+                </li>
+                <li><code>&gt;</code>: shows the line from the
+                    <control>second file</control>
+                    .
+                </li>
+            </list>
+            <p>The user passed the file <code>password.new</code> as the first parameter, so the relevant result is the
+                one after the <code>&lt;</code> symbol. For parsing the user can use the following chain of commands:
+            </p>
+
+            <code-block lang="shell">
+                diff passwords.new passwords.old | grep '&lt;' | cut -d' ' -f2-
+            </code-block>
+            <p>This command does the following:</p>
+            <list>
+                <li><code>grep '&lt;'</code>: gets the relevant line.</li>
+                <li><code>cut -d' ' -f2-</code>: extracts the password.
+                    <list>
+                        <li><code>-d' '</code>: splits the text by spaces.</li>
+                        <li><code>-f2-</code>: the <code>-f</code> specifies the fields to print, <code>2-</code> means
+                            <emphasis>print from the second field to the end of the line</emphasis>
+                            .
+                        </li>
+                    </list>
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 18" id="room-18">
+        <p>The password is in a file located in the home directory. The catch is that this time, the
+            <code>.bashrc</code> has been modified so the user immediately logs out after logging in.</p>
+        <list>
+            <li>The user can solve this problem really easily by using the correct options when running <code>ssh</code>.
+            </li>
+        </list>
+        <chapter title="Ignoring .bashrc for SSH session" id="ignoring-bashrc-for-ssh-session">
+            <p>The user can use the following option to ignore the usage of the <code>.bashrc</code>:</p>
+
+            <code-block lang="shell" src="otw/bandit/18.resolution.sh" include-lines="1"/>
+            <p>The previous command alone gives the user a default bash shell session. A quick alternative to that
+                command is the following one:</p>
+
+            <code-block lang="shell" src="otw/bandit/18.resolution.sh" include-lines="2"/>
+            <p>The new option allows the user to run a single command before terminating the session, really useful for
+                this particular case:</p>
+            <list>
+                <li><code>-c</code>: runs a command without loading the <code>.bashrc</code>.</li>
+                <li><code>&quot;cat readme&quot;</code>: the <code>cat</code> command shows the contents of a file,
+                    <code>readme</code> is the name of the file that contains the password.
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 19" id="room-19">
+        <p>This round is an introduction to
+            <control>setuid binaries</control>
+            . TLDR: binaries that run with the permissions of the creator/owner rather than with the ones of the user
+            running it.
+        </p>
+        <list>
+            <li>Run the binary to see how it works.</li>
+            <li>Get the password from the usual path, using the binary.</li>
+        </list>
+        <chapter title="Escalate privilege with the setuid binary" id="escalate-privilege-with-the-setuid-binary">
+            <p>The binary provided this time allows the user to execute any command with the privileges of the owner
+                (bandit20). The user can use this binary to access the location of the password for the next room.</p>
+
+            <code-block lang="shell">
+                ./bandit20-do cat /etc/bandit_pass/bandit20
+            </code-block>
+            <p>Where each part corresponds to:</p>
+            <list>
+                <li><code>./bandit20-do</code>: the name of the setuid binary.</li>
+                <li><code>cat ...</code>: the command to execute with the privileges of user bandit20.</li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 20" id="room-20">
+        <p>Another room with setuid binaries. This time the setuid binary makes a connection to localhost on the
+            specified port. It then reads a line of text from the connection and compares it to the password in the
+            previous level. If the password is correct, it will transmit the password for the next level.</p>
+        <list>
+            <li>Setup a netcat listener.</li>
+            <li>Send current password and get the next one.</li>
+        </list>
+        <chapter title="Job management tldr" id="job-management-tldr">
+            <list>
+                <li><code>jobs</code>: lists all current jobs running.</li>
+                <li><code>&amp;</code>: makes a command run in the background.</li>
+                <li><code>CTRL+Z</code>: suspends the current job.</li>
+                <li><code>bg %JOB_NUMBER</code>: resume specified suspended job.</li>
+                <li><code>fg %JOB_NUMBER</code>: brings background specified job to the foreground.</li>
+                <li><code>kill %JOB_NUMBER</code>: kills the specified job.</li>
+                <li><code>jobs -p | xargs kill</code>: kills all jobs.</li>
+            </list>
+        </chapter>
+        <chapter title="Sending and receiving with netcat" id="sending-and-receiving-with-netcat">
+            <p>To set up the listener the user has to use the following command:</p>
+
+            <code-block lang="shell">
+                nc -lvnp 35000 &amp;
+            </code-block>
+            <p>Where each parts correspond to:</p>
+            <list>
+                <li><code>nc -lvnp</code>: listen, verbose, no dns resolution, on specified port.</li>
+                <li><code>35000</code>: port to listen to.</li>
+                <li><code>&amp;</code>: since the user is in an ssh session, is a good idea to run the listener on the
+                    background.
+                </li>
+            </list>
+            <p>Then the user has to start the setuid with the listener's port:</p>
+
+            <code-block lang="shell">
+                ./suconnect 35000 &amp;
+            </code-block>
+            <p>Lastly, with both jobs running on the background, hop into the listener and send the current password to
+                the setuid.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 21" id="room-21">
+        <p>This room has a program running at regular intervals from <code>cron</code>, a time-based job scheduler. The
+            user is given the path to the configuration of <code>cron</code> and it's hinted to find out what command is
+            being executed.</p>
+        <list>
+            <li>Find out what command does the scheduler execute.</li>
+            <li>Examine the command for clues on how to find the password.</li>
+        </list>
+        <chapter title="Job scheduler cron TLDR" id="job-scheduler-cron-tldr">
+            <p><code>cron</code>:</p>
+            <list>
+                <li>
+                    <control>Purpose</control>
+                    : daemon that runs scheduled tasks at specific intervals. Used to execute commands or scripts
+                    automatically.
+                </li>
+                <li>
+                    <control>Usage</control>
+                    : typically runs in the background and checks the schedule defined in the <code>crontab</code> files
+                    to execute the scheduled tasks.
+                </li>
+            </list>
+            <p><code>crontab</code>:</p>
+            <list>
+                <li>
+                    <control>Purpose</control>
+                    : command used to manage cron jobs (tasks). Allows the user to create, view, edit and delete cron
+                    schedules.
+                </li>
+                <li>
+                    <control>Usage</control>
+                    :
+                    <list>
+                        <li><code>crontab -e</code>: edit crontab file.</li>
+                        <li><code>crontab -l</code>: list current cron jobs.</li>
+                        <li><code>crontab -r</code>: remove crontab file (delete all cron jobs).</li>
+                    </list>
+                </li>
+            </list>
+            <p><code>crontab(5)</code>:</p>
+            <list>
+                <li>
+                    <control>Purpose</control>
+                    : refers to man page section 5, which describes the format and configuration of the crontab file.
+                </li>
+                <li>
+                    <control>Usage</control>
+                    : to read this documentation, use <code>man 5 crontab</code>.
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Finding the password 21" id="finding-the-password-21">
+            <p>The user can check the location of the crontab files and look out for the relevant one. Because for this
+                particular case, the user does not have the required permissions to execute <code>crontab -l</code>.</p>
+
+            <code-block lang="shell" src="otw/bandit/21.resolution.sh" include-lines="1"/>
+            <p>The file that stands out is the one named <code>cronjob_bandit22</code>, mainly because it has the name
+                of the next room. The user can use <code>cat</code> to inspect its contents. The schedule executes a
+                shell script that looks something like this:</p>
+
+            <code-block lang="shell" src="otw/bandit/21.resolution.sh" include-lines="3-4"/>
+            <p>The user can easily understand that the cron job is pasting the password for the next room in a folder
+                with permission 644 (user can read from this file). Now it's just a matter of inspecting the contents of
+                that file.</p>
+            <p>Just for the sake of practicing, the one-liner that parses the path and shows the contents of the
+                password file:</p>
+
+            <code-block lang="shell" src="otw/bandit/21.resolution.sh" include-lines="6"/>
+            <p>Details:</p>
+            <list>
+                <li><code>cat ...</code>: gets the contents of the cron job, like explained before.</li>
+                <li><code>grep '&gt;'</code>: focuses on the line with the path.</li>
+                <li><code>awk ...</code>: splits the text with '&lt;' as separator and prints the last element.</li>
+                <li><code>xargs cat</code>: trims the output from awk and shows the contents of the file.</li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 22" id="room-22">
+        <p>This room is similar to the last one, it has a program running at regular intervals from cron. The user has
+            to inspect the crontab files and look for the password.</p>
+        <list>
+            <li>Find out what command does the scheduler execute.</li>
+            <li>Examine the command for clues on how to find the password.</li>
+        </list>
+        <chapter title="Finding the password 22" id="finding-the-password-22">
+            <p>The firsts steps are the same as the previous room. This time the script that the cron job executes is a
+                little bit more complex, it requires manual inspection from the user.</p>
+
+            <code-block lang="bash" src="otw/bandit/22.resolution.sh" include-lines="1-8"/>
+            <p>For this user, the variable <code>$myname</code> will be <code>bandit22</code>. Understanding this and
+                how it affects the rest of the operations will be key to continue.
+                If the user can run all commands but with <code>$myname</code> as <code>bandit23</code>, it will get the
+                location of the password for the next room.</p>
+            <p>Replicating the logic from the script:</p>
+
+            <code-block lang="shell">
+                echo I am user bandit23 | md5sum | cut -d ' ' -f 1
+            </code-block>
+            <p>That is enough for getting the name of the file that contains the password in /tmp/. The one-liner for
+                replicating the logic and printing the password will be:</p>
+
+            <code-block lang="bash" src="otw/bandit/22.resolution.sh" include-lines="10"/>
+        </chapter>
+    </chapter>
+    <chapter title="Room 23" id="room-23">
+        <p>Another cron related room. This time it hints the user has to create its own shell script.</p>
+        <list>
+            <li>Find out what command does the scheduler execute.</li>
+            <li>Examine the command for clues on how to find the password. This time the command
+                <control>runs and deletes</control>
+                all scripts in a particular location.
+            </li>
+            <li>Write the needed script and find the password.</li>
+        </list>
+        <chapter title="Understanding the cron job" id="understanding-the-cron-job">
+            <p>As said before, the command that executes the cron job runs and deletes all scripts located on the
+                specified path. Inspecting the file:</p>
+
+            <code-block lang="bash" src="otw/bandit/23.in.sh"/>
+            <p>Interpretation of the code:</p>
+            <list>
+                <li><code>myname=$(whoami)</code>: sets bandit23 (in this case) as <code>myname</code>.</li>
+                <li><code>for i in * .*;</code>: iterates over all visible (<code>*</code>) and hidden (<code>.*</code>)
+                    files in current directory.
+                </li>
+                <li><code>if [ &quot;$i&quot; != &quot;.&quot; -a &quot;$i&quot; != &quot;..&quot; ];</code>: checks if
+                    variable is not current directory (<code>.</code>) and parent directory (<code>..</code>).
+                </li>
+                <li><code>owner=&quot;$(stat --format &quot;%U&quot; ./$i)&quot;</code>: uses <code>stat</code> command
+                    to get the status of the current file iteration, formatted to only see the owner.
+                </li>
+                <li><code>if [ &quot;${owner}&quot; = &quot;bandit23&quot; ]; then</code>: checks if the owner is
+                    bandit23.
+                </li>
+                <li><code>timeout -s 9 60 ./$i</code>: runs the script with a time limit of 60 seconds.</li>
+                <li><code>rm -f ./$i</code>: removes the file.</li>
+            </list>
+        </chapter>
+        <chapter title="Creating the script" id="creating-the-script">
+            <p>The file that the cron job runs has bandit24 as its owner, so the user can write a script that retrieves
+                the password from <code>/etc/bandit_pass/bandit24</code>.
+                First the user has to create a temporary directory on which eventually the cron job will send the
+                password.</p>
+
+            <code-block lang="bash">
+                mktemp -d
+            </code-block>
+            <p>The user can create the script here first, set up all permissions and then move it into the correct
+                spot.</p>
+
+            <code-block lang="bash">
+                #!/bin/bash
+
+                cat /etc/bandit_pass/bandit24 &gt; /tmp/ztk9bn8CtG/pass
+            </code-block>
+            <p>This script needs execution permissions:</p>
+
+            <code-block lang="bash">
+                chmod +x script.sh
+            </code-block>
+            <p>And the user that is going to run the cron job (bandit24) has to be able to write to the <code>/tmp/something/</code>
+                folder specified earlier. So the user has to change its permissions:</p>
+
+            <code-block lang="bash">
+                cd /tmp/ztk9bn8CtG/pass
+                chmod 777 .
+            </code-block>
+            <p>Then the user can copy the file into the <code>/var/spool/bandit/foo/</code> path and wait for the cron
+                job to run.</p>
+
+            <code-block lang="bash">
+                cp solve.sh /var/spool/bandit24/foo/
+            </code-block>
+            <p>Finally, the user can <code>cat</code> into the new file and save the password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 24" id="room-24">
+        <p>This time, a daemon is listening on port 30002 and will give the password if given the previous password and
+            a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all the
+            10000 combinations.</p>
+        <list>
+            <li>Understand what a daemon is and how they work.</li>
+            <li>Find out how to brute force the operation.</li>
+        </list>
+        <chapter title="Daemon TLDR" id="daemon-tldr">
+            <p>A daemon is a background process that runs continuously, usually without direct user interaction. It
+                typically starts when the system boots and remains running to perform certain tasks.</p>
+            <p>Key features:</p>
+            <list>
+                <li>
+                    <control>Runs in the background</control>
+                    : often do not even require a user to be logged in.
+                </li>
+                <li>
+                    <control>No terminal or ui</control>
+                    : daemons are not associated with a terminal session, so they run independently.
+                </li>
+                <li>
+                    <control>System services</control>
+                    : daemons often provide essential system services. Examples: <code>sshd</code>, <code>cron</code>
+                    and <code>httpd</code>.
+                </li>
+                <li>
+                    <control>Start at boot</control>
+                    : start automatically at boot through system initialization processes like <code>systemd</code>.
+                </li>
+                <li>
+                    <control>Process naming convention</control>
+                    : daemons typically have names that end in the letter <code>d</code> to indicate their role, such as
+                    <code>sshd</code>, <code>crond</code> or <code>systemd</code>.
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Brute forcing" id="brute-forcing">
+            <p>An easy way to generate all the posible pin codes is with a for loop:</p>
+
+            <code-block lang="bash" src="otw/bandit/24.resolution.sh" include-lines="1"/>
+            <p>The user can modify the one-liner to create the string that the daemon wants inline:</p>
+
+            <code-block lang="bash" src="otw/bandit/24.resolution.sh" include-lines="2"/>
+            <p>Lastly the user can send all that to the daemon with netcat:</p>
+
+            <code-block lang="bash" src="otw/bandit/24.resolution.sh" include-lines="3"/>
+            <p>Quick explanation of how does this work:</p>
+            <list>
+                <li><code>(for ...)</code>: by surrounding the operation in parentheses, the command inside is executed
+                    in a subshell. The output is a sequence of strings.
+                </li>
+                <li><code>| nc localhost 30002</code> by piping the sequence of strings (already generated) into netcat,
+                    the daemon gets all of them in a single connection.
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Room 25" id="room-25">
+        <p>This room is different, it says that the current user (bandit25) can easily hop into bandit26, the problem is
+            that the shell that bandit26 uses is not <code>/bin/bash</code>. The user has to find out how to break out
+            of it.</p>
+        <list>
+            <li>Find out what shells are available (OPTIONAL).</li>
+            <li>Find out what shell is bandit26 using.</li>
+            <li>Login to bandit26 using the provided sshkey.</li>
+            <li>Understand how that shell works and how to get out of it.</li>
+        </list>
+        <chapter title="Listing available shells" id="listing-available-shells">
+            <p>Fairly easy thing to do, there is a file on the system with this information:</p>
+
+            <code-block lang="bash">
+                cat /etc/shells
+            </code-block>
+        </chapter>
+        <chapter title="Get information about user shells" id="get-information-about-user-shells">
+            <p>To find out what shell bandit26 is using, the user can inspect the file (<code>/etc/passwd</code>) that
+                contains this information:</p>
+
+            <code-block lang="bash">
+                cat /etc/passwd | grep bandit26
+            </code-block>
+            <p>Inspecting the &quot;shell&quot; that bandit26 is using:</p>
+
+            <code-block lang="bash">
+                #!/bin/sh
+
+                export TERM=linux
+
+                exec more ~/text.txt
+                exit 0
+            </code-block>
+            <p>The command that immediately kicks out the user when trying to log in is <code>exit 0</code>. So the user
+                has to somehow pause the execution of <code>more</code>.</p>
+        </chapter>
+        <chapter title="Forcing the more command into paged view" id="forcing-the-more-command-into-paged-view">
+            <p>The file <code>~/text.txt</code> is really short, so normally the <code>more</code> command won't enter
+                its &quot;paged&quot; view. To force this the user can resize the terminal window into a smaller
+                version.</p>
+        </chapter>
+        <chapter title="Getting a bash terminal from more" id="getting-a-bash-terminal-from-more">
+            <p>Once paused in <code>more</code> paged view, the user can use the <code>v</code> key to open
+                <emphasis>vi</emphasis>
+                , as detailed in the man pages of <code>more</code>.
+                In vi, the user can execute shell commands with <code>:!COMMAND</code>. But trying a regular command
+                like this won't work:
+            </p>
+
+            <code-block lang="Bash">
+                :!ls
+            </code-block>
+            <p>It won't work because behind the scenes the shell used to run that command is the default bandit26 shell.
+                To change it to bash the user has to do the following:</p>
+
+            <code-block lang="Bash">
+                :set shell=/bin/bash
+            </code-block>
+            <p>Then the user can start bash with the command:</p>
+
+            <code-block lang="Bash">
+                :shell
+            </code-block>
+            <p>And grab the password from <code>/etc/bandit_pass/bandit26</code>.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 26" id="room-26">
+        <p>Just before trying anything, the user has to remember that the default shell of bandit26 is problematic. So
+            the first thing is to get a regular bash shell. After that, the only instructions are to quickly grab the
+            password for the next room.</p>
+        <list>
+            <li>Get a bash shell.</li>
+            <li>Get the password for the next room.</li>
+        </list>
+        <chapter title="Getting the password" id="getting-the-password">
+            <p>After logging in, the user will find an executable named <code>bandit27-do</code>. This file allows the
+                user to run any command as bandit27. To get the password, the user has to inspect the file in bandit27's
+                password location.</p>
+
+            <code-block lang="bash">
+                ./bandit27-do cat /etc/bandit_pass/bandit27
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Room 27" id="room-27">
+        <p>This room contains the password somewhere in a git repository. The user is given the git credentials needed
+            for cloning the repo.</p>
+        <list>
+            <li>Clone the repository.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Cloning and inspecting the repository" id="cloning-and-inspecting-the-repository">
+
+            <code-block lang="bash">
+                git clone ssh://bandit27-git@localhost:2220/home/bandit27-git/repo
+            </code-block>
+            <p>Inside the repository there is a single markdown file that contains the password for the next room.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 28" id="room-28">
+        <p>The instructions for this room are the same as the previous one. There is a git repository and the user has
+            to clone it and find the password.</p>
+        <list>
+            <li>Clone the repository.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Inspect commits" id="inspect-commits">
+            <p>This time the markdown file does not contain the password. If the user checks the history with:</p>
+
+            <code-block lang="bash">
+                git log
+            </code-block>
+            <p>There is a commit that fixed the info leak (the password). Using this commit's hash the user can find the
+                password:</p>
+
+            <code-block lang="bash">
+                git show COMMIT_HASH
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Room 29" id="room-29">
+        <p>Same as the 2 previous rooms, there is a git repository and the user has to find the password.</p>
+        <list>
+            <li>Clone the repo.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Inspect branches" id="inspect-branches">
+            <p>This time the password cannot be found in the file or the commits. The user can list the branches
+                with:</p>
+
+            <code-block lang="bash">
+                git branch --all
+            </code-block>
+            <p>To check the branches commits the user can use:</p>
+
+            <code-block lang="bash">
+                git show-branch BRANCH_NAME
+            </code-block>
+            <p>The user can switch branches it using:</p>
+
+            <code-block lang="bash">
+                git checkout BRANCH_NAME
+            </code-block>
+            <tip>
+                <p>
+                    <control>HINT</control>
+                    : check all branches and commits. The suspiciously named branch turned out to have no relevant
+                    information.
+                </p>
+            </tip>
+        </chapter>
+    </chapter>
+    <chapter title="Room 30" id="room-30">
+        <p>Yet another git related room. As usual, the user has to clone the repository and find the password.</p>
+        <list>
+            <li>Clone the repository.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Inspect tags" id="inspect-tags">
+            <p>Problematic room to say the least, this time there is no other commits and no extra branches. The last
+                place to store information would be the tags (a tag is like a bookmark or label placed on a commit).
+                To list all tags the user can run:</p>
+
+            <code-block lang="bash">
+                git tag
+            </code-block>
+            <p>And to inspect a specific tag the user can use:</p>
+
+            <code-block lang="bash">
+                git show TAG_NAME
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Room 31" id="room-31">
+        <p>Last git related room. As usual, clone and find the password.</p>
+        <list>
+            <li>Clone the repository.</li>
+            <li>Find the password.</li>
+        </list>
+        <chapter title="Following the instructions" id="following-the-instructions">
+            <p>This time the markdown file located in the repository has some instructions for the user:</p>
+            <list type="decimal">
+                <li>Create a file named <code>key.txt</code>.</li>
+                <li>Put a specific phrase in the file.</li>
+                <li>Push it to the remote repository.</li>
+            </list>
+            <p>The user will find out that the <code>.gitignore</code> file ignores all <code>.txt</code> files. A quick
+                workaround to this without touching that file:</p>
+
+            <code-block lang="bash">
+                git add -f key.txt
+            </code-block>
+            <p>After doing the commit and push the user will get a message with the password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 32" id="room-32">
+        <p>The only instruction that the user has for this room is to escape. It suggests the usage of the commands
+            <code>man</code> and <code>sh</code>.</p>
+        <list>
+            <li>Understand the shell the user has to escape.</li>
+            <li>Escape.</li>
+        </list>
+        <chapter title="Uppercase shell" id="uppercase-shell">
+            <p>The shell the user is logged in immediately after ssh is called &quot;Uppercase shell&quot; and as the
+                name suggest, every command that the user inputs it is turned into uppercase. For example: if the user
+                types <code>ls</code> the shell will interpret <code>LS</code>.</p>
+        </chapter>
+        <chapter title="Positional parameters" id="positional-parameters">
+            <p>If the user researches about the way of making something uppercase in a shell, it will stumble upon
+                something called
+                <emphasis>positional parameters</emphasis>
+                .
+                Suppose the user types the following:
+            </p>
+
+            <code-block lang="bash">
+                ./example.sh apple banana
+            </code-block>
+            <p>In this particular case, the positional parameters will be:</p>
+            <list>
+                <li><code>$0</code>: it is always the command to run, in this case <code>./example.sh</code>.</li>
+                <li><code>$1</code>: parameter number 1, in this case <code>apple</code></li>
+                <li><code>$2</code>: parameter number 2, in this case <code>banana</code></li>
+            </list>
+            <p>Translating this into what the uppercase shell is doing, the user can assume that the bourne shell
+                (<code>sh</code>) is interpreting the commands after the uppercase operation runs. So returning to the
+                <code>ls</code> example, it will be something like this:</p>
+
+            <code-block lang="bash">
+                sh LS
+            </code-block>
+            <p>For clarity, the whole operation probably looks like this:</p>
+
+            <code-block lang="bash">
+                command=&quot;ls&quot;
+                uppercase=${command^^}
+                sh $uppercase
+            </code-block>
+            <p>Going back to the <code>sh LS</code> example, as previously explained, the first positional parameter is
+                always the command. The user can quickly understand that for the whole operation to work, the parameter
+                <code>$0</code> cannot be modified by the uppercase operation.
+                If the user runs the positional parameter 0, like this:</p>
+
+            <code-block lang="bash">
+                $0
+            </code-block>
+            <p>It will be the same as running <code>sh</code>, allowing the user to finally reach a regular shell.</p>
+        </chapter>
+        <chapter title="Finding the password?" id="finding-the-password">
+            <p>The user has no extra instructions on how to get the password for the next room. But if the user
+                runs:</p>
+
+            <code-block lang="bash">
+                whoami
+            </code-block>
+            <p>It will find out that it is bandit33, the user for the next room. Therefore, the only thing the user has
+                to do is check <code>/etc/bandit_pass/bandit33</code> for the password.</p>
+        </chapter>
+    </chapter>
+    <chapter title="Room 33" id="room-33">
+        <p>This room does not exist yet. (13 sep 2024)</p>
+    </chapter>
+
+</topic>

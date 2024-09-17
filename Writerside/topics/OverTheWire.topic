@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       id="OverTheWire" title="OverTheWire">
+
+    <title>
+        OverTheWire
+    </title>
+    <p>Write-ups, solutions and related content to the war games from <a href="https://overthewire.org/wargames/">OverTheWire</a>.
+    </p>
+    <chapter title="Notes" id="notes">
+        <tip>
+            As suggested by the creators, credentials should not be made public..
+        </tip>
+    </chapter>
+    <chapter title="War games" id="war-games">
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>Link</td>
+                <td>Solved</td>
+            </tr>
+            <tr>
+                <td>Bandit</td>
+                <td><a href="https://overthewire.org/wargames/bandit/">Click here</a></td>
+                <td>✔</td>
+            </tr>
+            <tr>
+                <td>Natas</td>
+                <td><a href="https://overthewire.org/wargames/natas/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+        </table>
+    </chapter>
+
+</topic>

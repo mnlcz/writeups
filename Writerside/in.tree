@@ -6,7 +6,7 @@
                  name="Instance Name"
                  start-page="Home.topic">
     <toc-element topic="Home.topic"/>
-    <toc-element topic="OverTheWire.md">
+    <toc-element topic="OverTheWire.topic">
         <toc-element topic="Bandit.md"/>
         <toc-element topic="Natas.md"/>
     </toc-element>

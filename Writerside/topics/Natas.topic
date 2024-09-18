@@ -1780,10 +1780,82 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </note>
             <note>The flag <code>-SkipHttpErrorCheck</code> with <code>-MaximumRedirection 0</code> seems to act kind of
                 odd, at least in PowerShell 7.4.5. It shows an error saying the maximum redirection has been exceeded,
-                but that doesn't seem to be the case, considering the execution works and the response contains the password. For the sake of maintaining a clean output, I opted
+                but that doesn't seem to be the case, considering the execution works and the response contains the
+                password. For the sake of maintaining a clean output, I opted
                 to ignore the error with the flag <code>-ErrorAction Ignore</code></note>
             <p>As usual, here is the optional response parser for the password:</p>
             <code-block lang="shell" src="otw/natas/21-22.resolution.ps1" include-lines="17,18"/>
+        </chapter>
+    </chapter>
+    <chapter title="Level 22 to Level 23" id="level-22-to-level-23">
+        <p>The page contains a form with a single field called
+            <control>password</control>
+            .
+        </p>
+        <list>
+            <li>Inspect the resources.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Inspection 22" id="inspection-22">
+            <chapter title="HTML inspection 22" id="html-inspection-22">
+                <p>Nothing out of the ordinary. Here is the form though:</p>
+                <code-block lang="html" src="otw/natas/22-23.index.html"/>
+            </chapter>
+            <chapter title="PHP inspection 22" id="php-inspection-22">
+                <p>Here is the PHP code:</p>
+                <code-block lang="php" src="otw/natas/22-23.index.php"/>
+                <tip>
+                    <p>The function <code>strstr($haystack, $needle)</code> returns part of the haystack including and
+                        after the needle.</p>
+                    <deflist type="wide">
+                        <def id="strstr" title="strstr('name@example.com', '@')">Returns the string
+                            <code>@example.com</code></def>
+                    </deflist>
+                </tip>
+                <p>Thoughts:</p>
+                <list>
+                    <li>Given the previous explanation of <code>strstr</code> the password has to contain
+                        <emphasis>iloveyou</emphasis>
+                        .
+                    </li>
+                    <li>The password size has to be greater than 10. Important to clarify,
+                        <control>size</control>
+                        , not length.
+                    </li>
+                </list>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 22" id="resolution-22">
+            <chapter title="Preparation 22" id="preparation-22">
+                <p>The goal is simple, submit a password that follows both conditions previously stated.</p>
+                <p>For the first check, the password has to contain the word "iloveyou" somewhere. I previously said
+                    that <code>strstr</code> returns a string. For PHP that counts as a truthy value.</p>
+                <p>For the second condition, some information about PHP type juggling is needed.</p>
+                <p>PHP performs different casts when comparing values from different types. In this particular case, it
+                    is casting the string as an integer, and for the string "iloveyou" that value ends up being 0. The
+                    goal is to somehow transform that string into something that PHP will cast into a number greater
+                    than 10. It is fairly easy when understanding the type juggling, here:</p>
+                <deflist type="medium">
+                    <def title="(int)'iloveyou'" id="int-iloveyou">Returns <code>0</code>.</def>
+                    <def title="(int)'2iloveyou'" id="int-2iloveyou">Returns <code>2</code>.</def>
+                    <def title="(int)'12iloveyou'" id="int-12iloveyou">Returns <code>12</code>.</def>
+                </deflist>
+            </chapter>
+            <chapter title="Getting the password for natas24" id="getting-the-password-for-natas24">
+                <p>The code is fairly simple this time:</p>
+                <tabs>
+                    <tab title="POST" id="post-1">
+                        <code-block lang="shell" src="otw/natas/22-23.resolution.ps1" include-lines="8-16"/>
+                    </tab>
+                    <tab title="Getting the password" id="getting-the-password">
+                        <code-block lang="shell" src="otw/natas/22-23.resolution.ps1" include-lines="18"/>
+                    </tab>
+                    <tab title="Password parser" id="password-parser">
+                        <code-block lang="shell" src="otw/natas/22-23.resolution.ps1" include-lines="20-21"/>
+                    </tab>
+                </tabs>
+            </chapter>
         </chapter>
     </chapter>
 </topic>

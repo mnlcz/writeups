@@ -1734,4 +1734,56 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
     </chapter>
+    <chapter title="Level 21 to Level 22" id="level-21-to-level-22">
+        <p>The page is empty, it only shows the link to inspect the PHP source code.</p>
+        <list>
+            <li>Inspect the resources.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Inspection 21" id="inspection-21">
+            <chapter title="HTML inspection 21" id="html-inspection-21">
+                <p>Nothing interesting.</p>
+            </chapter>
+            <chapter title="PHP inspection 21" id="php-inspection-21">
+                <p>
+                    The code can be separated in two parts. First it checks for a particular key in the PHP super-global
+                    <code>$_GET</code>:
+                </p>
+                <code-block lang="php" src="otw/natas/21-22.index.php" include-lines="1-10"/>
+                <tip>The <code>header</code> function sends a raw HTTP header. In this case is used for redirecting to
+                    the home page.
+                </tip>
+                <p>If the key exists, updates the HTML to show the credentials:</p>
+                <code-block lang="php" src="otw/natas/21-22.index.php" include-lines="12-28"/>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 21" id="resolution-21">
+            <p>Since there is no way of manipulating the <code>$_SESSION</code> super-global. The key thing to do is
+                avoid the redirection.</p>
+            <p>Check this particular line of code from the
+                <path>index.php</path>
+                file:
+            </p>
+            <code-block lang="php" src="otw/natas/21-22.index.php" include-lines="18"/>
+            <p>This is the check that holds the password, it does not care if the super-global <code>$_SESSION</code>
+                has the admin key or not. So if I somehow ignore the redirection, I'll be able to reach this part.</p>
+            <p>The first thing to do is to add the parameter to the URL:</p>
+            <code-block lang="shell" src="otw/natas/21-22.resolution.ps1" include-lines="5"/>
+            <p>The request parameters are nothing out of the ordinary:</p>
+            <code-block lang="shell" src="otw/natas/21-22.resolution.ps1" include-lines="8-13"/>
+            <p>Here comes the solution:</p>
+            <code-block lang="shell" src="otw/natas/21-22.resolution.ps1" include-lines="15"/>
+            <tip>The parameter <code>-MaximumRedirection 0</code> prevents the redirections.</tip>
+            <note>PowerShell treats the result <code>301 Moved Permanently</code> as an error. Adding <code>-SkipHttpErrorCheck</code>
+                fixes it.
+            </note>
+            <note>The flag <code>-SkipHttpErrorCheck</code> with <code>-MaximumRedirection 0</code> seems to act kind of
+                odd, at least in PowerShell 7.4.5. It shows an error saying the maximum redirection has been exceeded,
+                but that doesn't seem to be the case, considering the execution works and the response contains the password. For the sake of maintaining a clean output, I opted
+                to ignore the error with the flag <code>-ErrorAction Ignore</code></note>
+            <p>As usual, here is the optional response parser for the password:</p>
+            <code-block lang="shell" src="otw/natas/21-22.resolution.ps1" include-lines="17,18"/>
+        </chapter>
+    </chapter>
 </topic>

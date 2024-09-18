@@ -481,8 +481,8 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
 
                 <code-block lang="php">
                     $json_encode = '{
-                        &quot;showpassword&quot;:&quot;no&quot;,
-                        &quot;bgcolor&quot;:&quot;#ffffff&quot;
+                    &quot;showpassword&quot;:&quot;no&quot;,
+                    &quot;bgcolor&quot;:&quot;#ffffff&quot;
                     }';
                     $base64_decode = &quot;something non human readable&quot;;
                 </code-block>
@@ -898,7 +898,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 WHERE username=&quot;username&quot;
                 AND password=&quot;something else&quot;;
             </code-block>
-            <chapter title="Bruteforcing logic 14" id="bruteforcing-logic-14">
+            <chapter title="Brute-forcing logic 14" id="bruteforce-logic-14">
                 <p>Considering the following information about the password:</p>
                 <list>
                     <li>Has length 32.</li>
@@ -1063,7 +1063,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     .
                 </li>
             </list>
-            <chapter title="Bruteforcing 15" id="bruteforcing-15">
+            <chapter title="Brute-forcing 15" id="bruteforce-15">
                 <p>To not post the whole script, I will be posting only snippets of relevant parts.</p>
                 <tabs>
                     <tab title="Request handler" id="request-handler-15">
@@ -1142,7 +1142,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <p>The SQL code that will eventually run on the server:</p>
                 <code-block lang="sql" src="otw/natas/16-17.resolution.sql"/>
             </chapter>
-            <chapter title="Bruteforcing 16" id="bruteforcing-16">
+            <chapter title="Brute-forcing 16" id="bruteforce-16">
                 <p>They key factor is the comparison between the response times. First I define a function that
                     calculates it:</p>
                 <code-block lang="generic" src="otw/natas/16-17.resolution.pl" include-lines="1-9"/>
@@ -1218,7 +1218,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Resolution 17" id="resolution-17">
             <p>It is posible to send the cookie and its value in the headers. My first strategy is to bruteforce it.</p>
-            <chapter title="Bruteforcing 17" id="bruteforcing-17">
+            <chapter title="Brute-forcing 17" id="bruteforce-17">
                 <tabs>
                     <tab title="Request handler" id="request-handler-17">
                         <code-block lang="generic" src="otw/natas/17-18.resolution.pl" include-lines="1-19"/>
@@ -1390,7 +1390,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </li>
                 <li>Parse the html response to confirm the result.</li>
             </list>
-            <chapter title="Bruteforcing 18" id="bruteforcing-18">
+            <chapter title="Brute-forcing 18" id="bruteforce-18">
                 <tabs>
                     <tab title="Request handler" id="request-handler">
                         <code-block lang="shell" src="otw/natas/18-19.resolution.ps1" include-lines="1-21"/>
@@ -1580,5 +1580,158 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
     </chapter>
-
+    <chapter title="Level 20 to Level 21" id="level-20-to-level-21">
+        <p>
+            The website is similar to the one from <a href="Natas.topic" anchor="level-18-to-level-19">Level 19 to Level
+            20</a>, without the
+            <ui-path>Change name</ui-path>
+            button.
+        </p>
+        <p>
+            The page also contains a note with a link, allowing the user to go to an "experimental" version. This
+            version contains a form with multiple CSS attributes, and it invites the user to try them.
+        </p>
+        <list>
+            <li>Understand the mechanics of the level, considering this time there are two websites.</li>
+            <li>Test the form from the second website.</li>
+            <li>Find the vulnerability and exploit it.</li>
+            <li>Get the password</li>
+        </list>
+        <chapter title="Testing form 20" id="testing-form-20">
+            <p>Thoughts after some basic tests on the experimental website:</p>
+            <list>
+                <li>The form seems to be affecting 3 CSS properties:
+                    <list>
+                        <li><code>text-align</code></li>
+                        <li><code>font-size</code></li>
+                        <li><code>background-color</code></li>
+                    </list>
+                </li>
+                <li>After updating the values, they appear inline in the HTML style attribute.</li>
+                <li>The form does not seem to affect the original website.</li>
+                <li>
+                    <control>The form is vulnerable to CSS injection.</control>
+                    . Example, putting this on the font-size form: <code>200%; font-style: italic</code> makes the font
+                    italic.
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Inspection 20" id="inspection-20">
+            <chapter title="HTML inspection 20" id="html-inspection-20">
+                <p>Nothing catches my attention on the html from the original website.</p>
+                <p>On the experimental one, the interesting thing is the common comment that says the head tag has
+                    nothing to do with the level, is not present.</p>
+            </chapter>
+            <chapter title="PHP inspection 20" id="php-inspection-20">
+                <p>
+                    The original website has only one function definition, and is the same as in <a href="Natas.topic"
+                                                                                                    anchor="php-inspection-19">Level
+                    19 to 20</a>. Here is the code:
+                </p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="3-11"/>
+                <tip>The only thing that changes this time is, of course, the username. The current one is natas22.
+                </tip>
+                <p>
+                    The experimental website, on the other hand, has new code. The overview of it:
+                </p>
+                <procedure title="index.php" id="index-php-20">
+                    <step>
+                        <p>First, it starts the session and checks if the form has been submitted:</p>
+                        <code-block lang="php" src="otw/natas/20-21.index.php" include-lines="1-13"/>
+                    </step>
+                    <step>
+                        <p>Defines what keys are valid and gives them a default value.</p>
+                        <code-block lang="php" src="otw/natas/20-21.index.php" include-lines="16-21"/>
+                    </step>
+                    <step>
+                        <p>Gives the page the keys and their values. If they are not present in <code>$_SESSION</code>
+                            they are set up, if they are, they get updated.</p>
+                        <code-block lang="php" src="otw/natas/20-21.index.php" include-lines="23-34"/>
+                    </step>
+                    <step>
+                        <p>Lastly, it upgrades the <code>style</code> attribute of the <code>div</code> with the
+                            submitted values.</p>
+                        <code-block lang="php" src="otw/natas/20-21.index.php" include-lines="36-42"/>
+                    </step>
+                </procedure>
+            </chapter>
+            <chapter title="Cookie inspection 20" id="cookie-inspection-20">
+                <p>
+                    The only relevant information about the cookies is that both websites give different values to
+                    <code>PHPSESSID</code>.
+                </p>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 20" id="resolution-20">
+            <chapter title="Preparation 20" id="preparation-20">
+                <p>First, lets clarify what the goal is. The only way to get the password lies on the original website's
+                    code:</p>
+                <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="4-8"/>
+                <p id="session-values-definition">The session values get edited here:</p>
+                <code-block lang="php" src="otw/natas/20-21.index.php" include-lines="4-8"/>
+                <p>And here:</p>
+                <code-block lang="php" src="otw/natas/20-21.index.php" include-lines="24-32"/>
+                <p>
+                    The most interesting one is the first one, mainly because it has no sanitization at all. It just
+                    grabs the values from <code>$_REQUEST</code> and gives them to <code>$_SESSION</code>.
+                </p>
+                <p>
+                    The PHP super-global <code>$_REQUEST</code>, in this particular case. contain the values from <code>$_GET</code>
+                    and <code>$_POST</code>, depending on the request made. Meaning that, for a request that has this
+                    body:
+                </p>
+                <code-block lang="text">
+                    align: "start"
+                    admin: 1
+                </code-block>
+                <p>The previously shown code will translate it into:</p>
+                <code-block lang="php">
+                    $_SESSION['align'] = 'start';
+                    $_SESSION['admin'] = 1;
+                </code-block>
+            </chapter>
+            <chapter title="Injection 20" id="css-injection-20">
+                <p>The first thing to do is define the two URLs.</p>
+                <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="5,6"/>
+                <tip>
+                    The <code>submit=1</code> is needed for the check that is shown <a
+                        summary="The session values get edited here" href="Natas.topic"
+                        anchor="session-values-definition">here</a>.
+                </tip>
+                Then the request handlers:
+                <tabs>
+                    <tab title="GET" id="get">
+                        <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="16-30"/>
+                        <tip>The need for a cookie parameter will be explained later.</tip>
+                    </tab>
+                    <tab title="POST" id="post">
+                        <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="32-47"/>
+                    </tab>
+                </tabs>
+                Then comes the logic for the injection, it's fairly simple:
+                <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="49-51"/>
+                A quick overview:
+                <list type="decimal">
+                    <li>
+                        <p>
+                            Send the first post request to the experimental website. Remember that the post method
+                            injects the admin attribute.
+                        </p>
+                        <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="39-44"/>
+                    </li>
+                    <li>Then save the cookie assigned by the website.</li>
+                    <li>Finally, perform the <code>GET</code> request to the main site, using the cookie that the
+                        experimental site returned.
+                    </li>
+                </list>
+                As usual, here is the optional password parser for the response:
+                <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="53-54"/>
+                <tldr>
+                    <p>Send the <code>POST</code> request with the injected data to the experimental website.</p>
+                    <p>Save the cookie assigned by the experimental website.</p>
+                    <p>Using the saved cookie, perform the final <code>GET</code> request to the main site.</p>
+                </tldr>
+            </chapter>
+        </chapter>
+    </chapter>
 </topic>

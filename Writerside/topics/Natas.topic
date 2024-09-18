@@ -1858,4 +1858,69 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
     </chapter>
+    <chapter title="Level 23 to Level 24" id="level-23-to-level-24">
+        <p>Same layout as the previous level, a form with only one field called
+            <control>password</control>
+            .
+        </p>
+        <list>
+            <li>Inspect the resources.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Inspection 23" id="inspection-23">
+            <chapter title="HTML inspection 23" id="html-inspection-23">
+                <p>The HTML code is the same as <a summary="Level 22 to Level 23" href="Natas.topic"
+                                                   anchor="html-inspection-22">previous level</a>.
+                </p>
+            </chapter>
+            <chapter title="PHP inspection 23" id="php-inspection-23">
+                <p>Different logic from the last level:</p>
+                <code-block lang="php" src="otw/natas/23-24.index.php"/>
+                <tip>
+                    <p>The function <code>strcmp($str1, $str2)</code> makes a binary comparison between two strings.</p>
+                    <list>
+                        <li>Returns <code>-1</code> if <code>$str1</code> is lesser.</li>
+                        <li>Returns <code>1</code> if <code>$str1</code> is greater.</li>
+                        <li>Returns <code>0</code> if equal.</li>
+                    </list>
+                </tip>
+                <p>I did some research and it looks like <code>strcmp</code> is specially effective against
+                    type-juggling.</p>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 23" id="resolution-23">
+            <chapter title="Preparation 23" id="preparation-23">
+                <p>The goal is simple, surpass the if statement that holds the password.</p>
+                <code-block lang="php" src="otw/natas/23-24.index.php" include-lines="3"/>
+                <p>For this to happen,
+                    <control>both strings have to be equal</control>
+                    . If equal, <code>strcmp</code> returns 0, applying the negation operation to 0 turns it into a
+                    truthy value.
+                </p>
+                <p>Another way would be to somehow
+                    <control>make <code>strcmp</code> return <code>NULL</code></control>
+                    . Applying the negation to <code>NULL</code> will make it a truthy value. I don't know if that's
+                    even possible.
+                </p>
+                <p>After even more research, it turns out breaking the execution of <code>strcmp</code> by passing it
+                    something that is not a string, makes it return 0.</p>
+            </chapter>
+            <chapter title="Getting the password for natas25" id="getting-the-password-for-natas25">
+                <p>The code is fairly simple:</p>
+                <tabs>
+                    <tab title="POST" id="post-2">
+                        <code-block lang="shell" src="otw/natas/23-24.resolution.ps1" include-lines="8-16"/>
+                        <tip>Adding <code>[]</code> to a key transforms it into an array.</tip>
+                    </tab>
+                    <tab title="natas25" id="natas25">
+                        <code-block lang="shell" src="otw/natas/23-24.resolution.ps1" include-lines="18"/>
+                    </tab>
+                    <tab title="Password parser" id="password-parser-1">
+                        <code-block lang="shell" src="otw/natas/23-24.resolution.ps1" include-lines="20,21"/>
+                    </tab>
+                </tabs>
+            </chapter>
+        </chapter>
+    </chapter>
 </topic>

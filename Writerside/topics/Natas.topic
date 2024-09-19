@@ -1923,4 +1923,144 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
     </chapter>
+    <chapter title="Level 24 to Level 25" id="level-24-to-level-25">
+        <p>The website contains a large quote with a scrollable menu to change the language.</p>
+        <list>
+            <li>Inspect the resources.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Inspection 24" id="inspection-24">
+            <chapter title="HTML inspection 24" id="html-inspection-24">
+                <p>Nothing interesting. Here is the form though:</p>
+                <code-block lang="html" src="otw/natas/24-25.index.html"/>
+            </chapter>
+            <chapter title="PHP inspection 24" id="php-inspection-24">
+                <chapter title="File listing 24" id="file-listing-24">
+                    <p>The first sign of dynamic data comes from the listing of the available languages:</p>
+                    <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="51-60"/>
+                    <p>The <code>listFiles</code> returns the list of files given a path. It excludes special cases like
+                        <path>..</path>
+                        (parent directory)
+                        and
+                        <path>.</path>
+                        (current directory)
+                        . Here is the definition:
+                    </p>
+                    <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="30-39"/>
+                </chapter>
+                <chapter title="Language selector 24" id="language-selector-24">
+                    <p>With the list of available languages, it's time to make use of it:</p>
+                    <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="62-69"/>
+                    <p>The <code>setLanguage</code> function is defined here:</p>
+                    <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="2-8"/>
+                    <tip>By default, the language is set to english.</tip>
+                    <p>The function makes use of a custom include logic, defined here:</p>
+                    <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="10-28"/>
+                    <p>Overview:</p>
+                    <list type="decimal">
+                        <li>
+                            <p>It checks if the user is trying to go to a parent directory (
+                                <path>..</path>
+                                ), if that's the case, it fixes the given path.
+                            </p>
+                            <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="11-15"/>
+                            <p>If it finds a directory traversal attempt it also calls a custom log function:</p>
+                            <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="41-48"/>
+                            <tip>Saves a description, the datetime of the traversal, the user's
+                                <code>HTTP_USER_AGENT</code> present on the header of the request, and it saves this
+                                into the specified directory.
+                            </tip>
+                            <tip>The <code>"a"</code> parameter in <code>fopen</code> specifies the file is opened in
+                                only-write mode.
+                            </tip>
+                        </li>
+                        <li>
+                            <p>Checks if the user is trying to access the
+                                <path>natas_webpass</path>
+                                directory, the one containing the passwords. If that's the case, the script execution
+                                stops with code <code>-1</code>.
+                            </p>
+                            <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="17-20"/>
+                        </li>
+                        <li>
+                            <p>If the file passed all the checks and is present on the directory, it returns it:</p>
+                            <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="23-26"/>
+                        </li>
+                        <li>
+                            <p>If it reaches this point it automatically returns 0, meaning function failure. This will
+                                make the check made in <code>setLanguage</code> fail, and fallback into setting
+                                english as the language.</p>
+                        </li>
+                    </list>
+                </chapter>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 24" id="resolution-24">
+            <chapter title="Preparation 24" id="preparation-24">
+                <p>My first idea would be to try trick this particular check:</p>
+                <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="12-15"/>
+                <p>Mainly because it's a check that directly modifies the file and does not interfere with the execution
+                    of the script.</p>
+                <p>After that, considering the following check for 'natas_pass' is unavoidable and the previous replace
+                    operation will ensure the execution of <code>logRequest</code>, maybe I can do something with that
+                    function.</p>
+            </chapter>
+            <chapter title="Getting the password for natas26" id="getting-the-password-for-natas26">
+                <p>After playing around for sometime with the <code>str_replace</code> function, one will find out is
+                    really easy to trick it for this particular case. For example:</p>
+                <code-block lang="php">
+                    str_replace("../", "", "....//....//....//....//....//etc/passwd")
+                </code-block>
+                <p>Will reach
+                    <path>/etc/passwd</path>
+                    , and show everything with the later execution of <code>listFiles</code>.
+                </p>
+                <p>With this knowledge, I can change the path into pointing to the location where the log files are
+                    saved. But to get this first I need to grab the cookie for the session, so let's start with the
+                    code:</p>
+                <tabs>
+                    <tab title="Initial configuration" id="initial-configuration">
+                        <code-block lang="javascript" src="otw/natas/24-25.resolution.js" include-lines="5-20"/>
+                    </tab>
+                    <tab title="GET" id="get-1">
+                        <code-block lang="javascript" src="otw/natas/24-25.resolution.js" include-lines="22-38"/>
+                        <p>As previously stated, I need to retrieve the cookie for later, that's why I opted to use a
+                            promise.</p>
+                    </tab>
+                    <tab title="POST" id="post-3">
+                        <code-block lang="javascript" src="otw/natas/24-25.resolution.js" include-lines="40-62"/>
+                        <p>Overview:</p>
+                        <list type="decimal">
+                            <li>Wait for the <code>GET</code> request to finish, so I can make use of the cookie.</li>
+                            <li>
+                                <p>Update the header with the required configurations. Pay extra attention on this
+                                    particular line:</p>
+                                <code-block lang="javascript" src="otw/natas/24-25.resolution.js"
+                                            include-lines="45-46"/>
+                                <p>This is the key to get the password. Let's go back to the PHP code, see this line on
+                                    the <code>logRequest</code> function:</p>
+                                <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="43"/>
+                                <p>The user agent can be easily manipulated in the header of the request. Considering
+                                    its value will end up on the log file and that
+                                    <control>it will be interpreted by PHP</control>
+                                    I can inject PHP code directly into it, to easily extract the password from its
+                                    location, it won't be accesible until next step though.
+                                </p>
+                            </li>
+                            <li>
+                                <p>After the header configuration, the next relevant section is this one:</p>
+                                <code-block lang="javascript" src="otw/natas/24-25.resolution.js"
+                                            include-lines="53-57"/>
+                                <p>Making use of the <code>str_replace</code> vulnerability, I get access to the log
+                                    file. At this point the file contains the interpreted PHP code regarding the user
+                                    agent, so I'll be able to retrieve the password easily, just by inspecting the
+                                    response.</p>
+                            </li>
+                        </list>
+                    </tab>
+                </tabs>
+            </chapter>
+        </chapter>
+    </chapter>
 </topic>

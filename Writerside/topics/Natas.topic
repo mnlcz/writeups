@@ -2063,4 +2063,155 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
     </chapter>
+    <chapter title="Level 25 to Level 26" id="level-25-to-level-26">
+        <p>This time there is a form with 4 fields and a button that says
+            <ui-path>DRAW!</ui-path>
+            .
+        </p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect the resources.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 25" id="testing-form-25">
+            <p>The form has "Draw a line" as title, and contains 4 fields, named: X1, Y1, X2 and Y2. Submitting it shows
+                a warning message with a large
+                square. Some tests:</p>
+            <table>
+                <tr>
+                    <td>Inputs</td>
+                    <td>Message</td>
+                    <td>Output</td>
+                </tr>
+                <tr>
+                    <td>X1: 0, Y1: 0, X2: 500, Y2: 500</td>
+                    <td>
+                        <p>No message.</p>
+                    </td>
+                    <td>Black square. With a line.</td>
+                </tr>
+                <tr>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>
+                        <p><code>imageline()</code> expects parameter 2 to be int, string given in
+                            <path>/var/www/natas/natas26/index.php</path>
+                            on line 66
+                        </p>
+                    </td>
+                    <td>Black square.</td>
+                </tr>
+                <tr>
+                    <td>&lt;ANYTHING&gt;</td>
+                    <td><p>Same message. But it stacks, one on top of each-other.</p></td>
+                    <td>Black square, it goes down as the warning messages stack.</td>
+                </tr>
+                <tr>
+                    <td>&lt;PHPCODE&gt;</td>
+                    <td><p>Same behavior.</p></td>
+                    <td>Same behavior.</td>
+                </tr>
+                <tr>
+                    <td>&lt;SPAMMING&gt;</td>
+                    <td>
+                        <p>A new message appears at the bottom: Cannot modify header information - headers already sent
+                            by (output started at
+                            <path>/var/www/natas/natas26/index.php:80</path>
+                            ) in
+                            <path>/var/www/natas/natas26/index.php</path>
+                            on line 106.
+                        </p>
+                    </td>
+                    <td>Same behavior.</td>
+                </tr>
+            </table>
+            <p>After spamming, no new messages appear. It also seems the cookie doesn't change anymore.</p>
+        </chapter>
+        <chapter title="Inspection 25" id="inspection-25">
+            <chapter title="HTML inspection 25" id="html-inspection-25">
+                <p>Nothing interesting.</p>
+            </chapter>
+            <chapter title="Request inspection 25" id="request-inspection-25">
+                <p>There are two cookies. The usual <code>PHPSESSID</code> and a new one called <code>drawing</code>.
+                </p>
+                <list>
+                    <li>The new cookie appears after the first submit.</li>
+                    <li>The new cookie grows with each submission.</li>
+                    <li>The image path seems to be
+                        <path>img/natas26_PHPSESSID.png</path>
+                        .
+                    </li>
+                </list>
+            </chapter>
+            <chapter title="PHP inspection 25" id="php-inspection-25">
+                <p>There is a lot to cover, the main flow of execution goes like this:</p>
+                <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="95-106"/>
+                <p>Here are the definition for the functions:</p>
+                <tabs>
+                    <tab title="drawImage" id="draw-image">
+                        <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="38-68"/>
+                    </tab>
+                    <tab title="showImage" id="show-image">
+                        <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="33-36"/>
+                    </tab>
+                    <tab title="storeData" id="store-data">
+                        <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="70-91"/>
+                    </tab>
+                </tabs>
+                <p>There is also a class definition at the top of the file, but it doesn't seem to be used anywhere.
+                    Here is it, just in case:</p>
+                <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="2-31" collapsible="true"
+                            collapsed-title="Logger"/>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 25" id="resolution-25">
+            <chapter title="Preparation 25" id="preparation-25">
+                <p>The vulnerability this time is located in this line from the <code>drawFromUserData</code> function:
+                </p>
+                <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="55"/>
+                <p>This gives me the information that the <code>drawing</code> cookie, it's just a PHP serialized value
+                    with a base64 encoding.</p>
+                <p>I can make use of the <code>Logger</code> class to play around with its properties,
+                    <control>injecting PHP code</control>
+                    , then serialize it and encode it:
+                </p>
+                <code-block lang="php" src="otw/natas/25-26.resolution.php" collapsible="true"
+                            collapsed-title="Custom Logger.php"/>
+                <p>The execution of that custom script will output the serialized and encoded version of the <code>Logger</code>,
+                    with its injections. This will be use later as a value for the drawing cookie.</p>
+            </chapter>
+            <chapter title="Getting the password for natas27" id="getting-the-password-for-natas27">
+                <p>Let's summarize the obtained knowledge and resources:</p>
+                <list>
+                    <li>The key lies on the <code>drawing</code> cookie.</li>
+                    <li>The cookie is a base64-encoded and serialized PHP object.</li>
+                    <li>I have a custom, valid value for the cookie with injected code.</li>
+                    <li>
+                        <p>I also have the location of the final file, because it has been injected into the serialized
+                            object:</p>
+                        <code-block lang="php" src="otw/natas/25-26.resolution.php" include-lines="12"/>
+                        <p>I opted for a path that will be accesible later. The
+                            <path>img/</path>
+                            one is open to the end user.
+                        </p>
+                    </li>
+                </list>
+                <p>With all this information, I am ready to start coding the solution. The logic can be separated into three parts: the initial <code>GET</code>, the <code>GET</code> with the injected cookie and the final <code>GET</code> to retrieve the contents of the generated file.</p>
+                <tabs>
+                    <tab title="Initial GET" id="initial-get">
+                        <code-block lang="javascript" src="otw/natas/25-26.resolution.js" include-lines="22-35"/>
+                        <tip>This also saves the assigned session cookie.</tip>
+                    </tab>
+                    <tab title="GET with injected cookie" id="get-with-injected-cookie">
+                        <code-block lang="javascript" src="otw/natas/25-26.resolution.js" include-lines="44-52"/>
+                        <tip>The value for the drawing cookie is the output of the custom PHP file previously mentioned.</tip>
+                    </tab>
+                    <tab title="Final GET" id="final-get">
+                        <code-block lang="javascript" src="otw/natas/25-26.resolution.js" include-lines="53-60"/>
+                        <p>By this point the <path>img/pass.php</path> already exists. And it contains the interpretation of the PHP code I injected on the cookie in the previous step. In other words, it contains the output of the command <code>cat /etc/natas_webpass/natas27</code>.</p>
+                    </tab>
+                </tabs>
+            </chapter>
+        </chapter>
+    </chapter>
 </topic>

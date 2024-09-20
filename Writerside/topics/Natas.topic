@@ -2196,7 +2196,9 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         </p>
                     </li>
                 </list>
-                <p>With all this information, I am ready to start coding the solution. The logic can be separated into three parts: the initial <code>GET</code>, the <code>GET</code> with the injected cookie and the final <code>GET</code> to retrieve the contents of the generated file.</p>
+                <p>With all this information, I am ready to start coding the solution. The logic can be separated into
+                    three parts: the initial <code>GET</code>, the <code>GET</code> with the injected cookie and the
+                    final <code>GET</code> to retrieve the contents of the generated file.</p>
                 <tabs>
                     <tab title="Initial GET" id="initial-get">
                         <code-block lang="javascript" src="otw/natas/25-26.resolution.js" include-lines="22-35"/>
@@ -2204,13 +2206,168 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     </tab>
                     <tab title="GET with injected cookie" id="get-with-injected-cookie">
                         <code-block lang="javascript" src="otw/natas/25-26.resolution.js" include-lines="44-52"/>
-                        <tip>The value for the drawing cookie is the output of the custom PHP file previously mentioned.</tip>
+                        <tip>The value for the drawing cookie is the output of the custom PHP file previously
+                            mentioned.
+                        </tip>
                     </tab>
                     <tab title="Final GET" id="final-get">
                         <code-block lang="javascript" src="otw/natas/25-26.resolution.js" include-lines="53-60"/>
-                        <p>By this point the <path>img/pass.php</path> already exists. And it contains the interpretation of the PHP code I injected on the cookie in the previous step. In other words, it contains the output of the command <code>cat /etc/natas_webpass/natas27</code>.</p>
+                        <p>By this point the
+                            <path>img/pass.php</path>
+                            already exists. And it contains the interpretation of the PHP code I injected on the cookie
+                            in the previous step. In other words, it contains the output of the command <code>cat
+                                /etc/natas_webpass/natas27</code>.
+                        </p>
                     </tab>
                 </tabs>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="Level 26 to Level 27" id="level-26-to-level-27">
+        <p>The page contains a form with username and password.</p>
+        <list>
+            <li>Test the form.</li>
+            <li>Inspect the resources.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 26" id="testing-form-26">
+            <p>Some basic tests:</p>
+            <table>
+                <tr>
+                    <td>User</td>
+                    <td>Password</td>
+                    <td>Output</td>
+                </tr>
+                <tr>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>User was created!</td>
+                </tr>
+                <tr>
+                    <td>natas28</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>Wrong password for user: natas28</td>
+                </tr>
+                <tr>
+                    <td>test</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>User test was created!</td>
+                </tr>
+                <tr>
+                    <td>'OR TRUE --</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>User 'OR TRUE -- was created!</td>
+                </tr>
+                <tr>
+                    <td>"OR 1=1 #</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>User "OR 1=1 # was created!</td>
+                </tr>
+                <tr>
+                    <td>&lt;PREVIOUSLY CREATED&gt;</td>
+                    <td>&lt;CORRECT PASSWORD&gt;</td>
+                    <td>
+                        <p>Welcome &lt;username&gt;</p>
+                        <p>Here is your data:</p>
+                        <code>Array ( [username] => &lt;username&gt; [password] => &lt;password&gt; )</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&lt;PREVIOUSLY CREATED&gt;</td>
+                    <td>&lt;INCORRECT PASSWORD&gt;</td>
+                    <td>Wrong password for user: &lt;username&gt;</td>
+                </tr>
+            </table>
+        </chapter>
+        <chapter title="Inspection 26" id="inspection-26">
+            <chapter title="HTML inspection 26" id="html-inspection-26">
+                <p>Function definitions:</p>
+                <tabs>
+                    <tab title="checkCredentials" id="check-credentials">
+                        <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="15-25"/>
+                    </tab>
+                    <tab title="validUser" id="valid-user">
+                        <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="28-39"/>
+                    </tab>
+                    <tab title="dumpData" id="dump-data">
+                        <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="42-57"/>
+                    </tab>
+                    <tab title="createUser" id="create-user">
+                        <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="60-74"/>
+                    </tab>
+                </tabs>
+                <p>Database design:</p>
+                <code-block lang="sql" src="otw/natas/26-27.index.php" include-lines="8-11"/>
+                <note>The code contains a comment saying the database get cleared every 5 minutes.</note>
+                <p>The main flow of execution:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="77-101"/>
+                <tldr>
+                    <p>- Check for form submission.</p>
+                    <p>- If not submitted, displays it and finishes flow of execution.</p>
+                    <p>- If submitted, continues.</p>
+                    <p>- Starts MySQL connection.</p>
+                    <p>- Check credentials, if valid shows information, if invalid shows message.</p>
+                    <p>- If it's a new user, creates it.</p>
+                    <p>- Close MySQL connection.</p>
+                </tldr>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 26" id="resolution-26">
+            <chapter title="Preparation 26" id="preparation-26">
+                <p>The line that got my attention is one of the <code>checkCredentials</code> function, particularly
+                    this one:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="16,17"/>
+                <p>The function <code>mysql_real_escape_string</code> escapes special characters, but it seems to be
+                    deprecated. Here is some relevant info about it:</p>
+                <list>
+                    <li>
+                        <p>
+                            <control> Ineffective against encoding mismatches:</control>
+                            the function relays on the connection's character set. If the encoding from the database
+                            differs from the one used in the app, some characters may bypass the escaping mechanism.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <control>Prone to SQL injection in certain queries:</control>
+                            if used incorrectly (not all user inputs are escaped or queries are constructed in a dangerous way), attackers could still inject SQL code.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <control>Does not escape SQL keywords or operators:</control>
+                            It escapes special characters within a string but does not handle other SQL components like column names, table names, or SQL keywords.
+                        </p>
+                    </li>
+                </list>
+                <p>Another possible strategy would be to focus on the trimming that is made when sending a username with a length greater than the one defined on the code:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="9"/>
+                <p>Sending a really large string, like:</p>
+                <code-block src="text">
+                    "natas28                                                          a"
+                </code-block>
+                <p>Will trim the extra characters and turn it into <code>"natas28"</code>, it has to end with something different from a whitespace to avoid this check:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="61-64"/>
+                <p>By this point there will be two entries on the database for user <code>natas28</code> one with the real password and the other one with the password I chose, for this particular case it will be an empty password.</p>
+                <p>It is important to understand that the user validation check made by the backend does not take the password into consideration:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="28-39"/>
+                <p>And later, when it comes to displaying the information, this check takes place:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="19"/>
+                <p>Which, by this point, will be true. Because, as I said earlier, they are two entries for natas28 and one of their passwords passes the check.</p>
+                <p>The website will show the real password, ignoring the custom one, see:</p>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="84-87"/>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="49" collapsible="true" collapsed-title="special function used in dumpData"/>
+                <tip>The function <code>mysqli_fetch_assoc</code> fetches <control>only one row of data</control>.</tip>
+            </chapter>
+            <chapter title="Getting the password for natas28" id="getting-the-password-for-natas28">
+                <p>The strategy (in code) will be really similar from the one previously stated, with just a quick fix that will be explained in short.</p>
+                <p>First, here is the only request definition that will be used:</p>
+                <code-block lang="javascript" src="otw/natas/26-27.resolution.js" include-lines="21-40" collapsible="true" collapsed-title="POST"/>
+                <p>The main flow of execution is just doing two <code>POST</code> request, the first one with the special string and the second one with the normal one, to retrieve the password:</p>
+                <code-block lang="javascript" src="otw/natas/26-27.resolution.js" include-lines="42-48"/>
+                <p>And here comes the quick fix I mentioned earlier, in the example stated on the preparation stage, I used whitespaces to trick the backend. But that doesn't seem to work here, it worked for other people's solutions online (solutions made years ago), but maybe the OverTheWire team patched it.</p>
+                <p>I had to use the special <code>NULL</code> character <code>%00</code> instead of the whitespaces, and I also had to manually build the body-string in Node, instead of using the <code>stringify</code> functions.</p>
             </chapter>
         </chapter>
     </chapter>

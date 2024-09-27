@@ -3,7 +3,7 @@
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
 
 <instance-profile id="in"
-                 name="Instance Name"
+                 name="Writeups"
                  start-page="Home.topic">
     <toc-element topic="Home.topic"/>
     <toc-element topic="OverTheWire.topic">

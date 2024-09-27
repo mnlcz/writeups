@@ -2331,44 +2331,450 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>
                         <p>
                             <control>Prone to SQL injection in certain queries:</control>
-                            if used incorrectly (not all user inputs are escaped or queries are constructed in a dangerous way), attackers could still inject SQL code.
+                            if used incorrectly (not all user inputs are escaped or queries are constructed in a
+                            dangerous way), attackers could still inject SQL code.
                         </p>
                     </li>
                     <li>
                         <p>
                             <control>Does not escape SQL keywords or operators:</control>
-                            It escapes special characters within a string but does not handle other SQL components like column names, table names, or SQL keywords.
+                            It escapes special characters within a string but does not handle other SQL components like
+                            column names, table names, or SQL keywords.
                         </p>
                     </li>
                 </list>
-                <p>Another possible strategy would be to focus on the trimming that is made when sending a username with a length greater than the one defined on the code:</p>
+                <p>Another possible strategy would be to focus on the trimming that is made when sending a username with
+                    a length greater than the one defined on the code:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="9"/>
                 <p>Sending a really large string, like:</p>
-                <code-block src="text">
-                    "natas28                                                          a"
+                <code-block lang="text">
+                    "natas28 a"
                 </code-block>
-                <p>Will trim the extra characters and turn it into <code>"natas28"</code>, it has to end with something different from a whitespace to avoid this check:</p>
+                <p>Will trim the extra characters and turn it into <code>"natas28"</code>, it has to end with something
+                    different from a whitespace to avoid this check:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="61-64"/>
-                <p>By this point there will be two entries on the database for user <code>natas28</code> one with the real password and the other one with the password I chose, for this particular case it will be an empty password.</p>
-                <p>It is important to understand that the user validation check made by the backend does not take the password into consideration:</p>
+                <p>By this point there will be two entries on the database for user <code>natas28</code> one with the
+                    real password and the other one with the password I chose, for this particular case it will be an
+                    empty password.</p>
+                <p>It is important to understand that the user validation check made by the backend does not take the
+                    password into consideration:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="28-39"/>
                 <p>And later, when it comes to displaying the information, this check takes place:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="19"/>
-                <p>Which, by this point, will be true. Because, as I said earlier, they are two entries for natas28 and one of their passwords passes the check.</p>
+                <p>Which, by this point, will be true. Because, as I said earlier, they are two entries for natas28 and
+                    one of their passwords passes the check.</p>
                 <p>The website will show the real password, ignoring the custom one, see:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="84-87"/>
-                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="49" collapsible="true" collapsed-title="special function used in dumpData"/>
-                <tip>The function <code>mysqli_fetch_assoc</code> fetches <control>only one row of data</control>.</tip>
+                <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="49" collapsible="true"
+                            collapsed-title="special function used in dumpData"/>
+                <tip>The function <code>mysqli_fetch_assoc</code> fetches
+                    <control>only one row of data</control>
+                    .
+                </tip>
             </chapter>
             <chapter title="Getting the password for natas28" id="getting-the-password-for-natas28">
-                <p>The strategy (in code) will be really similar from the one previously stated, with just a quick fix that will be explained in short.</p>
+                <p>The strategy (in code) will be really similar from the one previously stated, with just a quick fix
+                    that will be explained in short.</p>
                 <p>First, here is the only request definition that will be used:</p>
-                <code-block lang="javascript" src="otw/natas/26-27.resolution.js" include-lines="21-40" collapsible="true" collapsed-title="POST"/>
-                <p>The main flow of execution is just doing two <code>POST</code> request, the first one with the special string and the second one with the normal one, to retrieve the password:</p>
+                <code-block lang="javascript" src="otw/natas/26-27.resolution.js" include-lines="21-40"
+                            collapsible="true" collapsed-title="POST"/>
+                <p>The main flow of execution is just doing two <code>POST</code> request, the first one with the
+                    special string and the second one with the normal one, to retrieve the password:</p>
                 <code-block lang="javascript" src="otw/natas/26-27.resolution.js" include-lines="42-48"/>
-                <p>And here comes the quick fix I mentioned earlier, in the example stated on the preparation stage, I used whitespaces to trick the backend. But that doesn't seem to work here, it worked for other people's solutions online (solutions made years ago), but maybe the OverTheWire team patched it.</p>
-                <p>I had to use the special <code>NULL</code> character <code>%00</code> instead of the whitespaces, and I also had to manually build the body-string in Node, instead of using the <code>stringify</code> functions.</p>
+                <p>And here comes the quick fix I mentioned earlier, in the example stated on the preparation stage, I
+                    used whitespaces to trick the backend. But that doesn't seem to work here, it worked for other
+                    people's solutions online (solutions made years ago), but maybe the OverTheWire team patched it.</p>
+                <p>I had to use the special <code>NULL</code> character <code>%00</code> instead of the whitespaces, and
+                    I also had to manually build the body-string in Node, instead of using the <code>stringify</code>
+                    functions.</p>
             </chapter>
         </chapter>
+    </chapter>
+    <chapter title="Level 27 to Level 28" id="level-27-to-level-28">
+        <p>
+            The page contains a search form field with a button for submitting the data. It looks like it outputs a list
+            of computer related jokes.
+        </p>
+        <list>
+            <li>Test the form.</li>
+            <li>Maybe inspect the resources, there is no PHP code available this time though.</li>
+            <li>Find the vulnerability and understand how to exploit it.</li>
+            <li>Get the password.</li>
+        </list>
+        <chapter title="Testing form 27" id="testing-form-27">
+            <p>Some thoughts:</p>
+            <list>
+                <li>The results don't seem to be consistent. Multiple blank submissions return different jokes.</li>
+                <li>It looks like the output tries to match with the input given in the form. See test table below.</li>
+                <li>The output jokes seem to contain non-alphanumeric characters.</li>
+            </list>
+            <p>And some basic tests:</p>
+            <table>
+                <tr>
+                    <td>Search</td>
+                    <td>Output</td>
+                    <td>Notes</td>
+                </tr>
+                <tr>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>3 random unrelated jokes.</td>
+                    <td>Multiple submissions return different jokes.</td>
+                </tr>
+                <tr>
+                    <td>C++</td>
+                    <td>"When your hammer is C++, everything begins to look like a thumb."</td>
+                    <td>That seems to be the only C++ joke. Multiple submission always return the same joke.</td>
+                </tr>
+                <tr>
+                    <td>natas29</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>Nothing to add.</td>
+                </tr>
+                <tr>
+                    <td>&lt;SQL INJECTIONS&gt;</td>
+                    <td>&lt;BLANK&gt;</td>
+                    <td>Nothing to add.</td>
+                </tr>
+            </table>
+        </chapter>
+        <chapter title="Inspection 27" id="inspection-27">
+            <p>No PHP code this time.</p>
+            <chapter title="HTML inspection 27" id="html-inspection-27">
+                <p>Nothing interesting...</p>
+            </chapter>
+            <chapter title="Request inspection 27" id="request-inspection-27">
+                <p>Interesting things:</p>
+                <list>
+                    <li>Submitting seems to proc two request, a <code>POST</code> request, followed by a
+                        <code>GET</code> one.
+                    </li>
+                    <li>The <code>GET</code> request contains an URL argument <code>?query=</code>, its value seems to
+                        be URL encoded.
+                    </li>
+                    <li>The <code>query</code> value seems to be encoded multiple times.</li>
+                    <li>There are no cookies.</li>
+                </list>
+            </chapter>
+        </chapter>
+        <chapter title="Resolution 27" id="resolution-27">
+            <chapter title="Preparation 27" id="preparation-27">
+                <p>
+                    The setup this time will be simpler. I'll encapsulate the requests and logic into one class called
+                    <code>RequestHandler</code>.
+                </p>
+                <tabs>
+                    <tab title="Credentials" id="credentials">
+                        <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="8-11"/>
+                    </tab>
+                    <tab title="Constructor" id="constructor">
+                        <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="17-22"/>
+                    </tab>
+                    <tab title="Request" id="request">
+                        <p>
+                            The website redirects the user after the form submission. This method handles that
+                            redirection and captures the url argument.
+                        </p>
+                        <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="24-36"/>
+                        <p>
+                            Here are the individual methods:
+                        </p>
+                        <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="38-57"
+                                    collapsible="true" collapsed-title="post, get, get_urlparam"/>
+                    </tab>
+                    <tab title="Request with custom url argument" id="request-with-custom-url-argument">
+                        <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="59-64"/>
+                    </tab>
+                </tabs>
+                <p>I also performed various test using special characters instead of the encoded argument:</p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="69-77"/>
+                <p>And got this particular error message in the response's content.</p>
+                <code-block lang="text">
+                    Uninitialized string offset:-1
+                    in /var/www/natas/natas28/search.php on line 59
+                    Zero padding found instead of PKCS#7 padding
+                </code-block>
+            </chapter>
+            <chapter title="Research 27" id="research-27">
+                <p>I asked ChatGPT about the meaning of that odd string <code>PKCS#7</code>, and got this:</p>
+                <tip>
+                    <p>
+                        PKCS#7 padding is a scheme used to ensure that plaintext data can be divided into blocks of a
+                        fixed size when using block ciphers.
+                    </p>
+                </tip>
+                <p>It also explained to me a couple of rules this scheme uses:</p>
+                <list>
+                    <li>
+                        <p>
+                            <control>Padding length:</control>
+                            the number of padding bytes added is equal to the number of bytes needed to fill the last
+                            block to the block size. For example, if the block size is 16 bytes and the last block has
+                            10 bytes, 6 bytes of padding will be added.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <control>Padding value:</control>
+                            each padding byte is set to the value of the number of padding bytes added. Continuing with
+                            the previous example, if 6 bytes of padding are added, each of those 6 bytes will have the
+                            value <code>0x06</code>.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <control>Complete blocks:</control>
+                            If the plaintext is already a multiple of the block size, an entire block of padding must be
+                            added. For example, if the block size is 16 bytes, and the plaintext is already 16 bytes,
+                            you would add a full block of padding, consisting of 16 bytes of value <code>0x10</code>.
+                        </p>
+                    </li>
+                </list>
+                <p>Some examples of block cipher modes that use it:</p>
+                <list>
+                    <li>
+                        <p>
+                            <control>ECB (Electronic Codebook):</control>
+                            the most basic mode. the plain text is processed block by block and each block is encrypted
+                            using a single key.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            <control>CBC (Cipher block chaining):</control>
+                            advancement made on ECB, the previous cipher block is given as input to the next encryption
+                            algorithm after XOR with the original plaintext block. In a nutshell here, a cipher block is
+                            produced by encrypting an XOR output of the previous cipher block and present plaintext
+                            block.
+                        </p>
+                    </li>
+                </list>
+                <p>I prompted ChatGPT about methods of differentiating both of them, and how can I find out which one is
+                    being used, here is what I got:</p>
+                <list type="decimal">
+                    <li>
+                        <control>Pattern Analysis</control>
+                        <list>
+                            <li>
+                                <p>
+                                    <control>ECB:</control>
+                                    If the encrypted output shows noticeable patterns or repetitions (especially in
+                                    cases where the plaintext contains repetitive data), it is likely ECB.
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <control>CBC:</control>
+                                    The ciphertext from CBC will generally appear more random and less patterned, since
+                                    each block is influenced by the previous one.
+                                </p>
+                            </li>
+                        </list>
+                    </li>
+                    <li>
+                        <control>Known Plaintext Attack</control>
+                        <p>
+                            If you have access to both plaintext and ciphertext, you can determine the mode by comparing
+                            how identical plaintext blocks map to ciphertext. In ECB, identical plaintext blocks will
+                            produce identical ciphertext blocks, while in CBC, they will not.
+                        </p>
+                    </li>
+                    <li>
+                        <control>IV Presence</control>
+                        <p>
+                            CBC requires an IV, which is typically included in the ciphertext or communicated alongside
+                            it. If you see an IV (often a random string at the beginning of the ciphertext), it's likely
+                            CBC. The IV is random and unique for each encryption operation.
+                        </p>
+                    </li>
+                </list>
+            </chapter>
+            <chapter title="Identification 27" id="identification-27">
+                <p>Given the information about the pattern analysis, the first thing to do is inspect the encrypted text
+                    for multiple inputs. I'll do it like this:</p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="79-83"/>
+                <tip>
+                    The query values will be the single character 'a', increasing in repetition (first one a single 'a',
+                    then two, and so on).
+                </tip>
+                <p>And I get this results:</p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.responses1"/>
+                <p>
+                    With this pattern repetition and the lack of an apparent IV string at the beginning. I can conclude
+                    that the cypher mode used is
+                    <control>ECB</control>
+                    .
+                </p>
+                <p>
+                    The next thing to do now is to find the size of each block. To do this I'll perform multiple
+                    request with queries varying in length and inspect the length of the encrypted string. If I notice a
+                    change in length that must mean a new block is added.
+                </p>
+                <p>Here is the code used:</p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="85-98"/>
+                <p>
+                    The entirety results can be inspected in the file
+                    <path>snippets/otw/natas/27-28.resolution.responses2</path>
+                    . It is fairly large to display it here.
+                </p>
+                <p>
+                    From these results I can identify when the length changed, here is some compiled data from the
+                    results file:
+                </p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.responses2" include-lines="14,31,48,65,82"/>
+                <p>
+                    It seems that something odd happens at the beginning, it may have something to do with the prepended
+                    text, that information can be discarded. The relevant pattern here is that after that, all changes
+                    occur after 16 characters.
+                </p>
+                <p>It is correct to assume by this point that
+                    <control>the blocks are of size 16</control>
+                    .
+                </p>
+                <p>A proof of this can be seen from this simple test:</p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="101-109" collapsible="true"
+                            collapsed-title="Block size proof"/>
+                <tip>
+                    Remember that the first change comes at 13 for the prepended text (check
+                    <path>.responses2</path>
+                    file). Later they all change at length
+                    16.
+                </tip>
+                <p>
+                    The next thing I decided to do is inspect the queries. Even though the method
+                    <code>get_urlparam</code> already decodes it into a readable hex format (the base64 data is non
+                    human-readable), we can use PowerShell to display it in a cleaner way.
+                </p>
+                <p>
+                    Given that we are going to use PowerShell for the base64 decoding. I have to change <code>get_urlparam</code>
+                    to only urldecode the original string:
+                </p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="119-122"/>
+                <p>
+                    Then, I can test relevant sized inputs:
+                </p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="112-116"/>
+                <p>
+                    And intercept the outputs with PowerShell, using this custom advanced function I created:
+                </p>
+                <code-block lang="shell" src="otw/natas/Out-Hex.ps1"/>
+                <p>
+                    Using it like this:
+                </p>
+                <code-block lang="bash">
+                    ruby ./natas27-28.rb | % { Out-Hex($_) }
+                </code-block>
+                <p>
+                    I ran the script and found relevant results, too large to be shown here but available in the
+                    snippets section, file
+                    <path>27-28.resolution.hex</path>
+                    . Here is a peek:
+                </p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.hex" include-lines="27-39"/>
+                <tip>This is the result of the second iteration.</tip>
+                <p>
+                    Considering all inputs contain the letter 'A'. It's no surpise that we will find repeating patterns
+                    on all iterations. Particularly this:
+                </p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.hex" include-lines="27-31,35"/>
+                <p>
+                    That set of bytes keeps appearing. Two times for the second iteration, three times for the third one
+                    and so on. I'm not going to keep extending the explanation so the takeway is that those set of bytes
+                    represent the letter "A" 16 times.
+                </p>
+                <p>
+                    Another interesting thing I found is that, if we inspect some of the outputs in detail (for the sake
+                    of simplicity just the relevant ones):
+                </p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.responses3" include-lines="8-12"/>
+                <p>
+                    We can notice that when the input reaches
+                    <control>length 10</control>
+                    the prepended text gets larger. Let's compare them just to see it clearly:
+                </p>
+                <compare first-title="Before reaching length 10" second-title="After reaching length 10"
+                         type="top-bottom">
+                    <code-block lang="text">
+                        G+glEae6W/1XjA7vRm21nNyEco/c+J2TdR0Qp8dcjP
+                    </code-block>
+                    <code-block lang="text">
+                        G+glEae6W/1XjA7vRm21nNyEco/c+J2TdR0Qp8dcjPLAhy3ui8kLEVaROwiiI6Oe
+                    </code-block>
+                </compare>
+                <p>
+                    After inspecting the results in the hex version. I realized that there is another repetition
+                    pattern. I previously mentioned the prepended data, but if you take a look at the whole string, you
+                    will notice that there is also a repetition at the end. More on this later.
+                </p>
+                <p>
+                    I opted to do some tests with this information. I generated strings of length 9 with all "A" and
+                    inspected the result of appending every possible character:
+                </p>
+                <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="125-129"/>
+                <p>As usual, the output is fairly large, so here is some data from each type of char:</p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.responses4" include-lines="1,43,54"/>
+                <p>We can see that there is a pattern at the beginning and at the end. This is true for all characters,
+                    except for these:</p>
+                <code-block lang="text" src="otw/natas/27-28.resolution.responses4" include-lines="73,81,82"/>
+                <p>
+                    They have similarities with each other, but completly different from the rest of characters. We can
+                    see that they all have one thing in common: two of them are used for terminating a string and the
+                    other one for escaping characters, tldr:
+                    <control>they all are interpreted differently by the database</control>
+                    .
+                </p>
+                <p>
+                    Taking all the previous information into consideration, we can assume that behind the scenes the
+                    following logic takes place when we use a special character:
+                </p>
+                <list>
+                    <li>
+                        <p>
+                            We send a string of length 9 with an extra special character at the end.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            The algorithm behind the scenes
+                            <control>escapes</control>
+                            this special character, adding the escape operator <code>\</code>.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            The adding of the escape operator "increases" the size of the original string up by one.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            This increase in size "pushes" the special character to the next block.
+                        </p>
+                        <note>
+                            Is important to clarify that even though the special character is in another block, away
+                            from the escaping character, at the end (when it's time for the database to interpret the
+                            query) the special character will be joined with the <code>\</code> character, escaping it.
+                        </note>
+                    </li>
+                </list>
+            </chapter>
+        </chapter>
+    </chapter>
+    <chapter title="References" id="references">
+        <p>
+            I started this challenges with no prior cybersecurity experience, so sometimes I had to rely on other
+            write-ups and content creators. Here is a list of them:
+        </p>
+        <list>
+            <li><a href="https://www.youtube.com/@_JohnHammond"
+                   summary="My go-to for help, focuses on programming solutions with Python.">JohhHammond</a></li>
+            <li><a href="https://www.youtube.com/@ChrisDale"
+                   summary="My second go-to creator, focuses on solutions using software like Burpsuite.">ChrisDale</a>
+            </li>
+            <li><a href="https://www.youtube.com/@HMCyberAcademy"
+                   summary="Good explanations for people with no previous experience in the field.">HMCyberAcademy</a>
+            </li>
+            <li><a href="https://learnhacking.io/"
+                   summary="First actual write-up I consumed, helped me on the hardest levels.">LearnHacking.io</a>
+            </li>
+        </list>
     </chapter>
 </topic>

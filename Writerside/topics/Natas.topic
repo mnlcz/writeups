@@ -2760,7 +2760,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     </chapter>
     <chapter title="References" id="references">
         <p>
-            I started this challenges with no prior cybersecurity experience, so sometimes I had to rely on other
+            I started this challenge with no prior cybersecurity experience, so sometimes I had to rely on other
             write-ups and content creators. Here is a list of them:
         </p>
         <list>
@@ -2773,7 +2773,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                    summary="Good explanations for people with no previous experience in the field.">HMCyberAcademy</a>
             </li>
             <li><a href="https://learnhacking.io/"
-                   summary="First actual write-up I consumed, helped me on the hardest levels.">LearnHacking.io</a>
+                   summary="First actual write-up I read, helped me on the hardest levels.">LearnHacking.io</a>
             </li>
         </list>
     </chapter>

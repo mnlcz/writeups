@@ -10,16 +10,20 @@
     <p>Write-ups, solutions and related content to the war games from <a href="https://overthewire.org/wargames/">OverTheWire</a>.
     </p>
     <chapter title="Notes" id="notes">
-        <tip>
-            As suggested by the creators, credentials should not be made public..
-        </tip>
+        <note>
+            Considering I have 0 cybersecurity experience prior to this, some information might be innacurate or
+            incorrect.
+        </note>
+        <note>
+            Also, I'm not a native English speaker, so expect some typos.
+        </note>
     </chapter>
     <chapter title="War games" id="war-games">
         <table>
             <tr>
                 <td>Name</td>
                 <td>Link</td>
-                <td>Solved</td>
+                <td>Done</td>
             </tr>
             <tr>
                 <td>Bandit</td>

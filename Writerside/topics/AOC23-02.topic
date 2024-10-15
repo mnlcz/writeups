@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="AOC23-02" id="AOC23-02">
+
+    <title>Day 02</title>
+    <chapter title="Introduction" id="introduction">
+        <p>
+            Today we are going to work with data science tools, particularly with Python and Jupyter Notebooks. The
+            virtual machine provided by THM has multiple notebooks with different exercises, today's challenge consists
+            on solving those exercises.
+        </p>
+    </chapter>
+
+    <chapter title="Goals" id="goals">
+        <list>
+            <li>Learn how to use data science for cybersecurity.</li>
+            <li>Learn about Python.</li>
+            <li>Learn about Pandas and Matplotlib libraries.</li>
+        </list>
+    </chapter>
+
+    <chapter title="Theory" id="theory">
+        <chapter title="Data science" id="data-science">
+            <p>
+                TLDR: data science's objective is the correct interpretation of some information, with the goal of
+                solving a particular problem. This process usually involves: programming, statistics and (lately) AI.
+            </p>
+            <p>
+                We can identify the following data scientist roles:
+            </p>
+            <table>
+                <tr>
+                    <td>Role</td>
+                    <td>Description</td>
+                </tr>
+                <tr>
+                    <td>Data collection</td>
+                    <td>
+                        <p>
+                            Collects raw data.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Data processing</td>
+                    <td>
+                        <p>
+                            Transforms raw data into a standard format so the analyst can work with it.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Data mining</td>
+                    <td>
+                        <p>
+                            Creates relationships between the different elements present on the data, it also
+                            looks for patterns.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Analysis</td>
+                    <td>
+                        <p>
+                            Explores the data, on this particular stage some questions stated at the beginning of
+                            the study start to get their answers.
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Communication</td>
+                    <td>
+                        <p>
+                            Represent all the information and the obtained answers visually.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+            <chapter title="Data science for cybersecurity" id="data-science-for-cybersecurity">
+                <p>
+                    Modern day data science tools are constantly being used in cybersecurity. Analyse data like log
+                    events, allow the specialist to understand more easily what's going on in a particular organization,
+                    for example. Another use case can be in anomaly detection.
+                </p>
+                <p>Other use cases</p>
+                <list>
+                    <li>
+                        <control>SIEM</control>
+                        : SIEM (
+                        <emphasis>Security Information and Event Management</emphasis>
+                        ) systems collect and study large quantities of data about a particular organization.
+                    </li>
+                    <li>
+                        <control>Threat trend analysis</control>
+                        :
+                        new vulnerabilities and exploits can be localized and studied.
+                    </li>
+                    <li>
+                        <control>Predictive analysis</control>
+                        : analysing historical events could generate a potential image of future vulnerabilities. This
+                        can be used to prevent incidents.
+                    </li>
+                </list>
+            </chapter>
+            <chapter title="Jupyter Notebooks" id="jupyter-notebooks">
+                <p>
+                    On this section, TryHackMe gives us a brief introduction to Jupyter Notebooks. Given that I already
+                    have experience with this technology, I'll skip it. Feel free to learn about it here <a
+                        href="https://docs.jupyter.org/en/latest/">docs.jupyter.org</a>.
+                </p>
+            </chapter>
+        </chapter>
+        <chapter title="Python" id="python">
+            <chapter title="Introduction" id="python-introduction">
+                <p>
+                    Here TryHackMe gives us an introduction to Python. Like with Jupyter Notebooks, I'll skip it because
+                    I already know how to code in Python. If you don't, you should check Python's official wiki,
+                    particularly this <a href="https://wiki.python.org/moin/BeginnersGuide">Beginner's Guide to
+                    Python</a>.
+                </p>
+            </chapter>
+            <chapter title="Pandas" id="python-pandas">
+                <p>
+                    Pandas is a library specialized in working with
+                    <emphasis>data sets</emphasis>
+                    . Data sets are collections of related information, for example: a list of sales.
+                </p>
+                <p>
+                    Pandas lets us manipulate, analyse, explore and clean data sets.
+                </p>
+                <chapter title="Series" id="python-pandas-series">
+                    <p>
+                        If you have experience with other programming languages, you can think of series as a
+                        <code>Map</code> or <code>Dictionary</code>. They are a
+                        <emphasis>key-value pair</emphasis>
+                        data structure. Here is an example:
+                    </p>
+                    <code-block lang="python">
+                        import pandas as pd
+
+                        transportation = ['Train', 'Plane', 'car']
+                        transportation_series = pd.Series(transportation)
+                    </code-block>
+                    <tip>
+                        In this particular case, the index is the key.
+                    </tip>
+                </chapter>
+                <chapter title="DataFrames" id="python-pandas-dataframes">
+                    <p>
+                        They are an extension of the previously mentioned series. They are a set of series, kind of like
+                        a
+                        database or a spreadsheet.
+                    </p>
+                    <p>
+                        In the following example I will be creating a <code>DataFrame</code> with the following fields:
+                        name, age and country.
+                    </p>
+                    <code-block lang="python">
+                        data = [['Ben', 24, 'UK'],
+                        ['Jacob', 32, 'USA'],
+                        ['Alice', 19], 'Germany']
+
+                        df = pd.DataFrame(data, columns=['Name', 'Age', 'Country'])
+                    </code-block>
+                    <p>
+                        Getting a little bit into output manipulation, here is how to return a particular field only:
+                    </p>
+                    <code-block lang="python">
+                        # row 2: Jacob data
+                        df.loc(1)
+                    </code-block>
+                </chapter>
+
+                <chapter title="Grouping" id="python-pandas-grouping">
+                    <p>
+                        Grouping is an operation in Pandas that allows us to, as the name suggest, group information in
+                        categories. For example: group columns, rows, make comparisons.
+                    </p>
+                    <p>
+                        In the following example, we will be using a csv file given by the provided VM. The csv contains
+                        3 fields: Employee, Department and Prize. The statement says that we need to group the columns
+                        Department and Prize, to find how many prizes each department won.
+                    </p>
+                    <code-block lang="python">
+                        df = pd.read_csv("awards.csv")
+                        df.groupby(['Department'])['Prize'].sum()
+                    </code-block>
+                    <p>
+                        We can also use the <code>describe</code> function. It shows a summary of all the information.
+                    </p>
+                    <code-block lang="python">
+                        df.groupby(['Department'])['Prize'].describe()
+                    </code-block>
+                </chapter>
+            </chapter>
+            <chapter title="Matplotlib" id="python-matplotlib">
+                <p>
+                    Matplotlib is a fairly known library for plotting and generating graphs.
+                </p>
+                <chapter title="Our first plot" id="python-matplotlib-plot">
+                    <p>First we import the required libraries:</p>
+                    <code-block lang="python">
+                        import pandas as pd
+                        import matplotlib.pyplot as plt
+                    </code-block>
+                    <p>
+                        Then we have to specify the environment we are going to use, in this case Jupyter, because by
+                        default all graphs show on a different window.
+                    </p>
+                    <code-block lang="python">
+                        %matplotlib inline
+                    </code-block>
+                    <p>
+                        Now we can generate our first plot:
+                    </p>
+                    <code-block lang="python">
+                        plt.plot(['January', 'February', 'March', 'April'], [8, 14, 23, 40])
+                    </code-block>
+                    <p>
+                        And we can add some descriptions/labels for the axis:
+                    </p>
+                    <code-block lang="python">
+                        plt.xlabel('Months of the year')
+                        plt.ylabel('Number of toys produces')
+                        plt.title('A line graph showing toys produced between sep and dec')
+
+                        plt.plot(['Sep', 'Oct', 'Nov', 'Dec'], [8, 14, 80, 160])
+                    </code-block>
+                </chapter>
+                <chapter title="Bar graph" id="python-matplotlib-bar">
+                    <p>
+                        For this kind of graph we are going to be using a csv file given by the VM. The file contains a
+                        list
+                        of alcoholic drinks and their respective points/votes. We want to find out what drinks are
+                        popular.
+                    </p>
+                    <p>
+                        We can identify the following steps:
+                    </p>
+                    <list type="decimal">
+                        <li>Read the csv file.</li>
+                        <li>Extract Drink and Vote columns. Save them into variables.</li>
+                        <li>Generate the graph.</li>
+                    </list>
+                    <code-block lang="python">
+                        # Step 1
+                        spreadsheet = pd.read_csv('drinks.csv')
+
+                        # Step 2
+                        drinks = spreadsheet['Drink']
+                        votes = spreadsheet['Vote']
+
+                        # Step 3
+                        plt.figure(figsize=(10, 6)) # change figure size
+                        plt.barh(drinks, votes, color='skyblue') # bar graph [h]orizontal
+                        plt.xlabel('Number of votes')
+                        plt.ylabel('Name of drink')
+                        plt.title('A bar graph showing the employees favourite drinks')
+                        plt.gca().invert_yaxis() # invert axis for clarity
+                    </code-block>
+                </chapter>
+            </chapter>
+        </chapter>
+    </chapter>
+
+    <chapter title="Logic" id="logic">
+        <chapter title="Statement" id="statement">
+            <p>
+                The statement says we should work with a particular notebook provided by the VM and use all the
+                things we learned. We have to:
+            </p>
+            <list type="decimal">
+                <li>Analyse the csv file.</li>
+                <li>Group the data into: <code>Sources</code>, <code>Destination</code> and <code>Protocol</code>.</li>
+                <li>Apply <code>sum</code>, <code>average</code>, <code>size</code> and <code>describe</code>.</li>
+            </list>
+            <p>
+                And after that, answer the following questions:
+            </p>
+            <list type="decimal">
+                <li>Amount of packages captured.</li>
+                <li>IP address with the highest traffic.</li>
+                <li>Most used protocol.</li>
+            </list>
+        </chapter>
+        <chapter title="Code" id="code">
+            <chapter title="Step 1" id="step-1">
+                <code-block lang="python">
+                    df.count()
+                </code-block>
+            </chapter>
+            <chapter title="Step 2" id="step-2">
+                <code-block lang="python">
+                    df.groupby(['Source']).size().sort_values(ascending=False)
+                </code-block>
+            </chapter>
+            <chapter title="Step 3" id="step-3">
+                <code-block lang="python">
+                    df.groupby(['Protocol']).size().sort_values(ascending=False)
+                </code-block>
+            </chapter>
+        </chapter>
+    </chapter>
+
+    <chapter title="Solution" id="solution" collapsible="true">
+        <table>
+            <tr>
+                <td>Information</td>
+                <td>Value</td>
+            </tr>
+            <tr>
+                <td>Packages captured</td>
+                <td><code>100</code></td>
+            </tr>
+            <tr>
+                <td>IP with the highest amount of traffic</td>
+                <td><code>10.10.1.4</code></td>
+            </tr>
+            <tr>
+                <td>Most used protocol</td>
+                <td><code>ICMP</code></td>
+            </tr>
+        </table>
+    </chapter>
+</topic>

@@ -16,5 +16,10 @@
             <td>Machine learning</td>
             <td><a href="AOC23-01.topic"/></td>
         </tr>
+        <tr>
+            <td>02</td>
+            <td>Log analysis, Data science, Python (Pandas, Matplotlib)</td>
+            <td><a href="AOC23-02.topic"/></td>
+        </tr>
     </table>
 </topic>

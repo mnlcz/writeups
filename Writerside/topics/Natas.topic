@@ -2045,7 +2045,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                                     its value will end up on the log file and that
                                     <control>it will be interpreted by PHP</control>
                                     I can inject PHP code directly into it, to easily extract the password from its
-                                    location, it won't be accesible until next step though.
+                                    location, it won't be accessible until next step though.
                                 </p>
                             </li>
                             <li>
@@ -2190,7 +2190,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         <p>I also have the location of the final file, because it has been injected into the serialized
                             object:</p>
                         <code-block lang="php" src="otw/natas/25-26.resolution.php" include-lines="12"/>
-                        <p>I opted for a path that will be accesible later. The
+                        <p>I opted for a path that will be accessible later. The
                             <path>img/</path>
                             one is open to the end user.
                         </p>
@@ -2672,13 +2672,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <code-block lang="text" src="otw/natas/27-28.resolution.hex" include-lines="27-39"/>
                 <tip>This is the result of the second iteration.</tip>
                 <p>
-                    Considering all inputs contain the letter 'A'. It's no surpise that we will find repeating patterns
+                    Considering all inputs contain the letter 'A'. It's no surprise that we will find repeating patterns
                     on all iterations. Particularly this:
                 </p>
                 <code-block lang="text" src="otw/natas/27-28.resolution.hex" include-lines="27-31,35"/>
                 <p>
                     That set of bytes keeps appearing. Two times for the second iteration, three times for the third one
-                    and so on. I'm not going to keep extending the explanation so the takeway is that those set of bytes
+                    and so on. I'm not going to keep extending the explanation so the takeaway is that those set of
+                    bytes
                     represent the letter "A" 16 times.
                 </p>
                 <p>
@@ -2711,12 +2712,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </p>
                 <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="125-129"/>
                 <p>As usual, the output is fairly large, so here is some data from each type of char:</p>
-                <code-block lang="text" src="otw/natas/27-28.resolution.responses4" include-lines="1,43,54"/>
+                <code-block id="response4a" lang="text" src="otw/natas/27-28.resolution.responses4"
+                            include-lines="1,43,54"/>
                 <p>We can see that there is a pattern at the beginning and at the end. This is true for all characters,
                     except for these:</p>
-                <code-block lang="text" src="otw/natas/27-28.resolution.responses4" include-lines="73,81,82"/>
+                <code-block id="response4b" lang="text" src="otw/natas/27-28.resolution.responses4"
+                            include-lines="73,81,82"/>
                 <p>
-                    They have similarities with each other, but completly different from the rest of characters. We can
+                    They have similarities with each other, but completely different from the rest of characters. We can
                     see that they all have one thing in common: two of them are used for terminating a string and the
                     other one for escaping characters, tldr:
                     <control>they all are interpreted differently by the database</control>
@@ -2755,6 +2758,92 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         </note>
                     </li>
                 </list>
+                <p>
+                    With all this information, let's summarize all the knowledge regarding the blocks.
+                </p>
+                <code-block lang="mermaid" src="otw/natas/27-28.diagram.mermaid"/>
+                <deflist type="wide">
+                    <def title="Common Prepended Block" id="common-prepended-block">
+                        Block added at the beginning of every instance, it has no
+                        correlation with any user input.
+                    </def>
+                    <def title="Escaping Block" id="escaping-block">
+                        Following the example from before, this block will have the special character at the end, and
+                        will eventually contain the escaping character <code>\</code>.
+                    </def>
+                    <def title="After Escape Block" id="after-escape-block">
+                        Block that will contain the data with the prepended special character, pushed from the previous
+                        block.
+                    </def>
+                    <def title="Common Ending Block" id="common-ending-block">
+                        Block added at the end of every instance, it has no correlation with any user input.
+                    </def>
+                </deflist>
+                <p>
+                    All this information is enough to conclude the identification stage.
+                </p>
+            </chapter>
+            <chapter title="SQL injection 27" id="sql-injection-27">
+                <p>
+                    It's no surprise that this level is related to SQL injections, considering the way the website
+                    operates and the way the user input directly affects the returned data.
+                </p>
+                <p>
+                    As always, the first thing to do is try the common <code>' OR 1=1 --</code> query. But, there is a
+                    problem, where should this query go? To answer this question we have to go back to the block
+                    diagram.
+                </p>
+                <code-block lang="mermaid" src="otw/natas/27-28.diagram.mermaid"/>
+                <p>
+                    We can ignore both common blocks. Considering we are going to use the already problematic character
+                    <code>'</code>, we can make use of the previously discussed behavior regarding the escaping
+                    operator.
+                </p>
+                <p>
+                    An easier way to understand the plan is to take a look at how will the blocks will end up if we use
+                    the previous example of the string of length 9 plus a special character.
+                </p>
+                <code-block lang="mermaid" src="otw/natas/27-28.diagram2.mermaid"/>
+                <p>
+                    Thoughts:
+                </p>
+                <list>
+                    <li>The special character is pushed to the next block.</li>
+                    <li>The special character is the new beginning of the next block.</li>
+                    <li>There can be text after the escaped character.</li>
+                </list>
+                <p>
+                    Using common sense, we can try something like this:
+                </p>
+                <code-block lang="mermaid" src="otw/natas/27-28.diagram3.mermaid"/>
+                <p>
+                    But, if you paid attention to what I previously said, you'll know this won't work. Because, even
+                    though the character <code>'</code> is in a different block,
+                    <control>it will be escaped</control>
+                    when all blocks are combined post decoding, encryption and all that.
+                </p>
+                <p>
+                    So, the goal now is to
+                    <emphasis>somehow</emphasis>
+                    replace the escaping character for something else or just
+                    <control>replace the whole block</control>
+                    . Why? Take a look at this:
+                </p>
+                <code-block lang="mermaid" src="otw/natas/27-28.diagram4.mermaid"/>
+                <p>
+                    This time, instead of the escaping character we have just another 'A', this means the <code>'</code>
+                    from the next block will pass through, allowing the SQL injection to act.
+                </p>
+                <p>
+                    Now that the goal is clear, we can go back to regular text. The diagrams were useful, but the real
+                    representation of the blocks is just text mashed up together.
+                </p>
+                <p>
+                    Using the snippets shown <a
+                        href="Natas.topic" anchor="response4a"
+                        summary="Responses for string length 9 with X character at the end.">here</a>. We can extract
+                    both common blocks:
+                </p>
             </chapter>
         </chapter>
     </chapter>
@@ -2765,9 +2854,9 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </p>
         <list>
             <li><a href="https://www.youtube.com/@_JohnHammond"
-                   summary="My go-to for help, focuses on programming solutions with Python.">JohhHammond</a></li>
+                   summary="My go-to for help, focuses on programming solutions with Python.">JohnHammond</a></li>
             <li><a href="https://www.youtube.com/@ChrisDale"
-                   summary="My second go-to creator, focuses on solutions using software like Burpsuite.">ChrisDale</a>
+                   summary="My second go-to creator, focuses on solutions using software like Burp suite.">ChrisDale</a>
             </li>
             <li><a href="https://www.youtube.com/@HMCyberAcademy"
                    summary="Good explanations for people with no previous experience in the field.">HMCyberAcademy</a>

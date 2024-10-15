@@ -10,4 +10,8 @@
         <description>Created after removal of "Section Starting Page" from Instance Name</description>
         <accepts>Section-Starting-Page.html</accepts>
     </rule>
+    <rule id="3494cffe">
+        <description>Created after removal of "AdventOfCyber" from Writeups</description>
+        <accepts>AdventOfCyber.html</accepts>
+    </rule>
 </rules>

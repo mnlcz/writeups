@@ -10,7 +10,13 @@
         <toc-element topic="Bandit.topic"/>
         <toc-element topic="Natas.topic"/>
     </toc-element>
+    <toc-element topic="TryHackMe.topic">
+        <toc-element topic="AdventOfCyber.topic">
+            <toc-element topic="AOC23.topic">
+                <toc-element topic="AOC23-01.topic"/>
+            </toc-element>
+        </toc-element>
+    </toc-element>
     <toc-element topic="HackTheBox.topic"/>
-    <toc-element topic="TryHackMe.topic"/>
     <toc-element topic="WeChall.topic"/>
 </instance-profile>

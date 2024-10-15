@@ -4,6 +4,25 @@
 <topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
        title="TryHackMe" id="TryHackMe">
-
-    <p>TODO...</p>
+    <p>Solutions and tools used to solve challenges from <a href="https://tryhackme.com/">TryHackMe</a></p>
+    <chapter title="Contents" id="contents">
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>Link</td>
+                <td>Done</td>
+            </tr>
+            <tr>
+                <td>Advent Of Cyber 2023</td>
+                <td><a href="https://tryhackme.com/r/christmas">Click here</a></td>
+                <td>❌</td>
+            </tr>
+        </table>
+        <note>
+            <p>
+                Advent of Cyber challenges are only available for a year. Meaning that the link from above (Advent of
+                Cyber 2023) will only work until the next one (Advent of Cyber 2024) is available.
+            </p>
+        </note>
+    </chapter>
 </topic>

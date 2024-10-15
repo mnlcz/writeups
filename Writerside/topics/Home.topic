@@ -15,13 +15,13 @@
         <spotlight>
             <a href="OverTheWire.topic" type="start" summary="The goal of the OverTheWire games is to provide educational resources to people willing to learn
 topics on cybersecurity">Over The Wire</a>
-            <a href="HackTheBox.topic" type="container" summary="Hack The Box (HTB) offers a wide range of challenges, including vulnerable machines, capture-the-flag (CTF) tasks, and real-world labs.">HackTheBox</a>
+            <a href="TryHackMe.topic" type="cloud" summary="TryHackMe is a browser-based cyber security training platform, with learning content covering all skill levels.">TryHackMe</a>
         </spotlight>
 
         <!--    Add several topics that are most important for this section.    -->
         <primary>
             <title>On the making</title>
-            <a href="TryHackMe.topic" type="cloud" summary="TryHackMe is a browser-based cyber security training platform, with learning content covering all skill levels.">TryHackMe</a>
+            <a href="HackTheBox.topic" type="container" summary="Hack The Box (HTB) offers a wide range of challenges, including vulnerable machines, capture-the-flag (CTF) tasks, and real-world labs.">HackTheBox</a>
         </primary>
 
         <secondary>

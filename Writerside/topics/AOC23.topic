@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="AOC23" id="AOC23" help-id="AdventOfCyber2023">
+
+    <table>
+        <tr>
+            <td>Day</td>
+            <td>Topics</td>
+            <td>Solution</td>
+        </tr>
+        <tr>
+            <td>01</td>
+            <td>Machine learning</td>
+            <td><a href="AOC23-01.topic"/></td>
+        </tr>
+    </table>
+</topic>

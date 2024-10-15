@@ -28,19 +28,4 @@
             </tr>
         </table>
     </chapter>
-
-    <chapter title="Days" id="days">
-        <table>
-            <tr>
-                <td>Number</td>
-                <td>Topics</td>
-                <td>Solution</td>
-            </tr>
-            <tr>
-                <td>Day 01</td>
-                <td>Machine learning</td>
-                <td></td>
-            </tr>
-        </table>
-    </chapter>
 </topic>

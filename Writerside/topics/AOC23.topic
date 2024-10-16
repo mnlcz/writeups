@@ -21,5 +21,10 @@
             <td>Log analysis, Data science, Python (Pandas, Matplotlib)</td>
             <td><a href="AOC23-02.topic"/></td>
         </tr>
+        <tr>
+            <td>03</td>
+            <td>Brute force</td>
+            <td><a href="AOC23-03.topic"/></td>
+        </tr>
     </table>
 </topic>

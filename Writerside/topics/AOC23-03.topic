@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="AOC23-03" id="AOC23-03">
+    <title>Day 03</title>
+    <chapter title="Introduction" id="introduction">
+        <p>
+            Today's challenge has some lore behind it, the main characters are victims of a cyberattack. They cannot get
+            access into their systems and all their passwords were changed.
+        </p>
+        <p>
+            We are going to be learning about passwords: combinations, complexity, creation and testing. And we are
+            going to be using tools like
+            <control>hydra</control>
+            and
+            <control>crunch</control>
+            .
+        </p>
+    </chapter>
+    <chapter title="Goals" id="goals">
+        <list>
+            <li>Learn about password combinations and complexity.</li>
+            <li>Understand how the amount of combinations affect the viability of a brute force attack.</li>
+            <li>Learn about generating passwords using
+                <control>crunch</control>
+                .
+            </li>
+            <li>Learn about automated password testing with
+                <control>hydra</control>
+                .
+            </li>
+        </list>
+    </chapter>
+    <chapter title="Brute force viability" id="brute-force-viability">
+        <p>
+            In this section we are going to get an answer for the following questions:
+        </p>
+        <list type="decimal">
+            <li>How many PIN codes can I possibly have?</li>
+            <li>How many distinct passwords can I generate?</li>
+            <li>How much time it takes to crack a password with a brute force attack?</li>
+        </list>
+
+        <chapter title="Counting PIN codes" id="counting-pin-codes">
+            <p>
+                Here TryHackMe talks about PIN codes as a security measure for different systems. It mentions that,
+                if the administrator does not take the necessary precautions, they are vulnerable to brute force
+                attacks.
+            </p>
+            <p>
+                We are also given an example: we need to obtain a 4-digit PIN code. To find out how many
+                possibilities are we can do some basic math. By doing
+                <code>10 x 10 x 10 x 10</code> or <code>10^4</code>. we obtain <code>10000</code>, which is the
+                amount of possible PIN codes.
+            </p>
+        </chapter>
+        <chapter title="Generating passwords" id="generating-passwords">
+            <p>
+                Here we focus on a scenario similar to the previous one, but instead of having a 4-digit PIN code,
+                we have a 4-digit password (a combination of characters).
+            </p>
+            <p>
+                We can start by identifying all the possible contents of a password:
+            </p>
+            <list>
+                <li>Digits from 0 to 9. (10 in total).</li>
+                <li>Upper case letters. (26 for the English language).</li>
+                <li>Lower case letters. (26 for the English language).</li>
+            </list>
+            <p>
+                Adding all that we get <code>62</code> possible options. Considering that for this particular case
+                we have 4-digit passwords, the value will end up being <code>62^4</code> or <code>14776336</code>.
+            </p>
+            <p>
+                We can conclude that, even though the password is fairly short in length (4-digit), we end up having
+                a lot of possible combinations. It's also important to consider that for this particular example, we
+                didn't use symbols for the passwords, if we took them into consideration we would have to add
+                another 30 characters to our calculations.
+            </p>
+        </chapter>
+        <chapter title="Brute force timing" id="brute-force-timing">
+            <p>
+                Continuing with the previous example. If we would like to find the correct 4-digit password using
+                brute force, we will end up having to wait 4 hours. Why? Here:
+            </p>
+            <list>
+                <li>There are <code>62^4</code> possibilities.</li>
+                <li>We assume testing one password takes <code>0,001</code> seconds.</li>
+                <li>Doing <code>62^4 x 0,001</code> we get <code>14776</code>, which means <code>4,1</code> hours.
+                </li>
+            </list>
+            <p>
+                Is important to clarify that 4 hours is the worst possible scenario, it is possible to "find" the
+                password at the beginning of the process, or at the middle, you get the idea. We can conclude that
+                in average it will take 2 hours.
+            </p>
+            <p>
+                Another important thing to clarify is that the 0,001 seconds used before is a fictional value, only
+                relevant for the example. In reality, the systems will not let us test passwords at that rate.
+            </p>
+            <p>
+                With all the information we gathered, it's now easy to understand why it is important to have high
+                length passwords with different types of characters.
+            </p>
+        </chapter>
+    </chapter>
+    <chapter title="Logic" id="logic">
+        <p>
+            For this challenge we are going to be using the THM Attack Box and VM.
+        </p>
+        <p>
+            Following the instructions provided we go to the specified website, and we find a display with a 3-digit
+            code.
+        </p>
+        <chapter title="Generating the passwords" id="generating-the-passwords">
+            <p>
+                If we focus on the display, we gather the following information:
+            </p>
+            <list>
+                <li>The code can contain numeric values</li>
+                <li>The code can contain upper letters from A to F.</li>
+            </list>
+            <p>
+                With this information, we can use a tool called <code>crunch</code> that allows us to generate a list of
+                combinations using a specified pattern. For this particular case the command will be:
+            </p>
+            <code-block lang="bash">
+                crunch 3 3 0123456789ABCDEF -o 3digits.txt
+            </code-block>
+            <p>Where each part corresponds to:</p>
+            <list>
+                <li>
+                    <p>
+                        <code>3</code>: min length of the password.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>3</code>: max length of the password.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>0123456789ABCDEF</code>: pattern to use.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>-o 3digits.txt</code>: output file.
+                    </p>
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Using the passwords list" id="using-the-passwords-list">
+            <p>
+                Trying all those passwords one by one will be a nightmare, because of that we are going to be using a
+                tool called <code>hydra</code>. Hydra allows us to automate the password testing process.
+            </p>
+            <p>
+                Before using hydra, TryHackMe tells us we should take a look at the HTML code of the page. we focus on
+                this part:
+            </p>
+            <img src="03a.png" alt="HTML code section"/>
+            <p>Where each thing corresponds to:</p>
+            <list>
+                <li>
+                    <p>
+                        <code>-l ''</code>: means empty username, in our scenario we only care about the password.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>-P 3digits.txt</code>: the file that contains the combinations.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>-f</code>: tells hydra to stop when it finds out the correct password.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>-v</code>: verbose output.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>MACHINE_IP</code>: target's IP address.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>http-post-form</code>: HTTP method to use.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <code>"/login.php:pin=^PASS^:Access denied"</code>: 3 different sections divided with
+                        <code>:</code>.
+                    </p>
+                    <list>
+                        <li><code>/login.php</code>: the website that the password is sent to.</li>
+                        <li><code>pin=^PASS^</code>: replaces <code>^PASS^</code> for the current list value that is
+                            going to be tested.
+                        </li>
+                        <li><code>"Access denied"</code>: indicates that incorrect passwords are going to redirect to a
+                            website that contains that particular text.
+                        </li>
+                    </list>
+                </li>
+                <li>
+                    <p>
+                        <code>-s 8000</code>: target's port.
+                    </p>
+                </li>
+            </list>
+        </chapter>
+    </chapter>
+    <chapter title="Solution" id="solution" collapsible="true">
+        <table>
+            <tr>
+                <td>Information</td>
+                <td>Value</td>
+            </tr>
+            <tr>
+                <td>PIN (not needed)</td>
+                <td><code>6F5</code></td>
+            </tr>
+            <tr>
+                <td>Flag</td>
+                <td><code>THM{pin-code-brute-force}</code></td>
+            </tr>
+        </table>
+    </chapter>
+</topic>

@@ -15,6 +15,7 @@
             <toc-element topic="AOC23.topic">
                 <toc-element topic="AOC23-01.topic"/>
                 <toc-element topic="AOC23-02.topic"/>
+                <toc-element topic="AOC23-03.topic"/>
             </toc-element>
         </toc-element>
     </toc-element>

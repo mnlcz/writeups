@@ -163,6 +163,22 @@
                 this part:
             </p>
             <img src="03a.png" alt="HTML code section"/>
+            <p>Where:</p>
+            <list>
+                <li>The HTTP method is <code>POST</code>.</li>
+                <li>The URL is <code>http://MACHINE_IP:8000/login.php</code>.</li>
+                <li>The value we send has a name of <code>pin</code>.</li>
+            </list>
+            <p>
+                <control>TLDR</control>
+                : the main page gets user input and sends it to
+                <path>/login.php</path>
+                using the name <code>pin</code>.
+            </p>
+            <p>With this information we are ready to use hydra:</p>
+            <code-block lang="bash">
+                hydra -l '' -P 3digits.txt -f -v MACHINE_IP http-post-form "/login.php:pin=^PASS^:Access denied" -s 8000
+            </code-block>
             <p>Where each thing corresponds to:</p>
             <list>
                 <li>

@@ -26,5 +26,10 @@
             <td>Brute force</td>
             <td><a href="AOC23-03.topic"/></td>
         </tr>
+        <tr>
+            <td>04</td>
+            <td>Brute force</td>
+            <td><a href="AOC23-04.topic"/></td>
+        </tr>
     </table>
 </topic>

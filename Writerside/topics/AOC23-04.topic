@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="AOC23-04" id="AOC23-04">
+    <title>Day 04</title>
+
+    <chapter title="Introduction" id="introduction">
+        <p>
+            Same context as the previous day, the main characters of the story got hacked, the attacker used brute force
+            to obtain the credentials. Surprisingly the attacker got access really quickly, considering the brute force
+            strategy.
+        </p>
+        <p>
+            TryHackMe explains that the attacker used what is known as a
+            <emphasis>customized wordlist</emphasis>
+            to narrow the possible options, and that it used a tool called
+            <control>CeWL</control>
+            to generate it.
+        </p>
+    </chapter>
+
+    <chapter title="Goals" id="goals">
+        <list>
+            <li>Learn about CeWL (pronounced "cool").</li>
+            <li>Learn how to generate a custom wordlist given a website.</li>
+            <li>Learn about output configuration/customization.</li>
+        </list>
+    </chapter>
+
+    <chapter title="CeWL" id="ce_wl">
+        <chapter title="What is it" id="what_is_it">
+            <p>
+                CeWL is a utility that generates a list of words. It's what is known as a
+                <emphasis>web crawler</emphasis>
+                or
+                <emphasis>spider</emphasis>
+                , which are tools that "crawl" a website and generate a list of words given its contents.
+            </p>
+            <p>
+                This utility not only generates the word list, it also compiles a list of the emails and usernames
+                it
+                caught.
+            </p>
+        </chapter>
+        <chapter title="How to use it" id="how_to_use_it">
+            <p>
+                To generate a simple word list:
+            </p>
+            <code-block lang="bash">
+                cewl https://MACHINE_IP -w output.txt
+            </code-block>
+            <p>
+                To check all available options:
+            </p>
+            <code-block lang="bash">
+                cewl -h
+            </code-block>
+        </chapter>
+        <chapter title="Why use it" id="why_use_it">
+            <p>
+                Compared to other similar tools, CeWL does not require predefined lists or common dictionary attacks.
+                CeWL generates personalized lists based on the website contents.
+            </p>
+            <p>
+                Other features:
+            </p>
+            <list>
+                <li>
+                    <p>
+                        <control>Specific lists</control>
+                        : the generated lists are created for/by a particular context (the website), so it contains only
+                        relevant terminology and vocabulary.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <control>Search depth</control>
+                        : the depth of the search can be specified, for example: not only getting the contents of a
+                        website but doing it for all the websites that have their links in the main page too.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <control>Customizable output</control>
+                        : CeWL has options to customize the output, some basic examples are: limiting word length,
+                        include meta tags, ignore numbers.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <control>Extra features</control>
+                        : enumerate usernames and extract emails.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <control>Efficiency</control>
+                        : given its capabilities for customizing the output, CeWL can end up generating small but very
+                        relevant lists.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        <control>Integration</control>
+                        : like any other command line application, it can easily be piped or integrated to other
+                        utilities.
+                    </p>
+                </li>
+            </list>
+        </chapter>
+        <chapter title="Output customization" id="output_customization">
+            <chapter title="Search depth" id="search_depth">
+                <p>
+                    For example, only two links as depth:
+                </p>
+                <code-block lang="bash">
+                    cewl http://MACHINE_IP -d 2 -w output1.txt
+                </code-block>
+            </chapter>
+            <chapter title="Word length" id="word_length">
+                <p>For example, only words with a length between 5 and 10:</p>
+                <code-block lang="bash">
+                    cewl http://MACHINE_IP -m 5 -x 10 -w output2.txt
+                </code-block>
+            </chapter>
+            <chapter title="Auth" id="auth">
+                <p>
+                    If the targeted website has a login form, the <code>-a</code> flag can be used for a
+                    <emphasis>form-based-authentication</emphasis>
+                    .
+                </p>
+            </chapter>
+            <chapter title="Customizable extensions" id="customizable_extensions">
+                <p>
+                    The <code>--with-numbers</code> flag appends numbers to the words. The <code>--extension</code>
+                    appends a custom extension.
+                </p>
+            </chapter>
+            <chapter title="Follow links" id="follow_links">
+                <p>
+                    By default, CeWL does not follow external links, to change this behavior use the
+                    <code>--offsite</code> flag.
+                </p>
+            </chapter>
+        </chapter>
+    </chapter>
+
+    <chapter title="Logic" id="logic">
+        <chapter title="What to do" id="what-to-do">
+            <p>
+                We are going to be working with the THM VM. We have to use our new knowledge to log in into
+                <path>http://MACHINE_IP/login.php</path>
+                .
+            </p>
+            <img src="04a.png" alt="Target website"/>
+        </chapter>
+        <chapter title="Generating password list" id="generating_password_list">
+            <p>
+                Using this command:
+            </p>
+            <code-block lang="bash">
+                cewl -d 2 -m 5 -w passwords.txt http://MACHINE_IP --with-numbers
+            </code-block>
+            <p>
+                We get:
+            </p>
+            <img src="04b.png" alt="Password generation output"/>
+        </chapter>
+        <chapter title="Generating username list" id="generating_username_list">
+            <p>
+                Using this command:
+            </p>
+            <code-block lang="bash">
+                cewl -d 0 -m 5 -w usernames.txt http://10.10.10.158/team.php --lowercase
+            </code-block>
+            <p>
+                We get:
+            </p>
+            <img src="04c.png" alt="Username generation command output"/>
+        </chapter>
+        <chapter title="Brute forcing" id="brute_forcing">
+            <p>
+                For the brute force operation we are going to be using a tool called
+                <control>Wfuzz</control>
+                . This utility allows us to find resources, directories, scripts and more, from a given website. It can
+                also apply brute force to GET and POST parameters, brute force usernames and passwords, and more.
+            </p>
+            <p>
+                We use this command:
+            </p>
+            <code-block lang="bash">
+                wfuzz -c -z file,usernames.txt -z file,passwords.txt --hs "Please enter the correct credentials" -u
+                http://MACHINE_IP/login.php -d "username=FUZZ&amp;password=FUZ2Z"
+            </code-block>
+            <deflist type="wide">
+                <def id="wfuzz-arg1">
+                    <title><code>-z file,usernames.txt</code></title>
+                    <p>loads the usernames generated by CeWL.</p>
+                </def>
+                <def id="wfuzz-arg2">
+                    <title><code>-z file,passwords.txt</code></title>
+                    <p>loads the passwords generated by CeWL.</p>
+                </def>
+                <def id="wfuzz-arg3">
+                    <title><code>--hs "Please enter the correct credentials"</code></title>
+                    <p>Hides responses that contain the specified message.</p>
+                </def>
+                <def id="wfuzz-arg4">
+                    <title><code>-u</code></title>
+                    <p>target's URL.</p>
+                </def>
+                <def id="wfuzz-arg5">
+                    <title><code>-d "username=FUZZ&amp;password=FUZ2Z"</code></title>
+                    <p>
+                        Specifies the POST format, where <code>FUZZ</code> gets replaced by the usernames and <code>FUZ2Z</code>
+                        by the passwords.
+                    </p>
+                </def>
+            </deflist>
+            <p>And get the following output:</p>
+            <img src="04d.png" alt="Wfuzz output"/>
+        </chapter>
+    </chapter>
+
+    <chapter title="Solution" id="solution" collapsible="true">
+        <table>
+            <tr>
+                <td>Information</td>
+                <td>Value</td>
+            </tr>
+            <tr>
+                <td>username:password</td>
+                <td><code>isaias:Happiness</code></td>
+            </tr>
+            <tr>
+                <td>Flag</td>
+                <td><code>THM{m3rrY4nt4rct1crAft$}</code></td>
+            </tr>
+        </table>
+    </chapter>
+</topic>

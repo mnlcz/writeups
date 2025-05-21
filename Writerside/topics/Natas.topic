@@ -8,16 +8,15 @@
         Natas
     </title>
     <chapter title="Level 00" id="level-00">
-        <p>Understand general workflow of the room. Natas war room does not use ssh like Bandit, instead it uses web
-            pages. Each
-            webpage's URL is provided by the instructions. The goal is to find the password to the next room.</p>
+        <p>Understand the general workflow of the room. Natas war room does not use ssh like Bandit, instead it uses web
+            pages. The instructions provide each webpage's URL. The goal is to find the password to the next room.</p>
         <list>
             <li>Because this is the first room, the password is provided with the instructions.</li>
             <li>Follow the instructions to find the next room's password.</li>
         </list>
         <chapter title="Inspecting the page" id="inspecting-the-page">
             <p>The instructions for this game are vague, it only says to look for it on the website. If the user looks
-                at the html for
+                at the HTML for
                 the page, there is a line commented that looks like this:</p>
 
             <code-block lang="html">
@@ -28,25 +27,25 @@
     <chapter title="Level 00 to Level 01" id="level-00-to-level-01">
         <p>Using the password from the last room, the user can log in into the website. The instructions are the same,
             find the
-            next password somewhere in the webpage.</p>
+            next password somewhere on the webpage.</p>
         <list>
             <li>Inspect the page.</li>
             <li>Find the password.</li>
         </list>
-        <chapter title="Force inspect element on page" id="force-inspect-element-on-page">
-            <p>The website has blocked the use of right click. In order to enter devtools the user can use the key F12.
+        <chapter title="Force inspect element on the page" id="force-inspect-element-on-page">
+            <p>The website has blocked the use of right click. To enter devtools, the user can use the key F12.
                 Then, the only
-                thing left is to find the password in the html.</p>
+                thing left is to find the password in the HTML.</p>
         </chapter>
     </chapter>
     <chapter title="Level 01 to Level 02" id="level-01-to-level-02">
-        <p>Use credentials to log in and inspect the html.</p>
+        <p>Use credentials to log in and inspect the HTML.</p>
         <list>
             <li>Inspect the page.</li>
             <li>Find the password.</li>
         </list>
         <chapter title="Image manipulation" id="image-manipulation">
-            <p>The html does not contain a comment with the password. Instead, it contains an image that has a size of 1
+            <p>The HTML does not contain a comment with the password. Instead, it contains an image that has a size of 1
                 px by 1 px.
                 After following the resource of the image, the user should take a look at the url:</p>
 
@@ -66,7 +65,7 @@
             <li>Find the password.</li>
         </list>
         <chapter title="Web crawlers" id="web-crawlers">
-            <p>The key to this room is to pay attention to the comment left on the html:</p>
+            <p>The key to this room is to pay attention to the comment left on the HTML:</p>
 
             <code-block lang="html">
 
@@ -93,7 +92,7 @@
             <code-block lang="html">
                 http://natas3.natas.labs.overthewire.org/robots.txt
             </code-block>
-            <p>There the user can see what parts of the website the creator don't want indexed by crawlers. Going there
+            <p>There the user can see what parts of the website the creator doesn't want indexed by crawlers. Going there
                 will give the
                 user the password.</p>
         </chapter>
@@ -189,14 +188,14 @@
             <li>Find the password.</li>
         </list>
         <chapter title="Inspection 06" id="inspection-06">
-            <p>Looking at the html, a particular comment stands out:</p>
+            <p>Looking at the HTML, a particular comment stands out:</p>
 
             <code-block lang="html">
                 &lt;?--
 hint: password for webuser natas8 is in /etc/natas_webpass/natas8 
 --&gt;
             </code-block>
-            <p>Trying out the home and about links show the user that the url changes:</p>
+            <p>Trying out the home and about links shows the user that the url changes:</p>
 
             <code-block lang="http">
                 http://natas7.natas.labs.overthewire.org/index.php?page=home
@@ -209,9 +208,9 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </code-block>
         </chapter>
         <chapter title="Getting the password for natas8" id="getting-the-password-for-natas8">
-            <p>If the user remembers the comment in the html and the error message received while playing with the url,
+            <p>If the user remembers the comment in the HTML and the error message received while playing with the url,
                 it will be no
-                surprise that combining both things will give result in the password:</p>
+                surprise that combining both things will give a result in the password:</p>
 
             <code-block lang="http">
                 .../index.php?page=/etc/natas_webpass/natas8
@@ -229,7 +228,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <chapter title="Source code" id="source-code">
                 <p>Inspection via
                     <shortcut>CTRL+U</shortcut>
-                    gives no relevant information. Neither does devtools. Inspection via the link given by the page
+                    gives no relevant information. Neither do devtools. Inspection via the link given by the page
                     has this relevant code snippet:
                 </p>
                 <code-block lang="php" src="otw/natas/07-08.index.php"/>
@@ -309,7 +308,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <code-block lang="http">
                 http://natas9.natas.labs.overthewire.org/?needle=example
             </code-block>
-            <p>To inject php code the user has to add semicolons <code>;</code> to &quot;finish&quot; the
+            <p>To inject php code, the user has to add semicolons <code>;</code> to &quot;finish&quot; the
                 <code>grep</code> execution that runs on the server.</p>
 
             <code-block lang="http">
@@ -325,7 +324,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         <chapter title="Getting password for natas10" id="getting-password-for-natas10">
             <p>The user has to remember some information given by OverTheWire at the beginning:</p>
             <tip>
-                <p>All passwords are also stored in /etc/natas_webpass/. E.g. the password for natas5 is stored in the
+                <p>All passwords are also stored in /etc/natas_webpass/. E.g., the password for natas5 is stored in the
                     file
                     /etc/natas_webpass/natas5 and only readable by natas4 and natas5.</p>
             </tip>
@@ -354,12 +353,12 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <code-block lang="php" src="otw/natas/09-10.index.php"/>
             <p>Thoughts:</p>
             <list>
-                <li>It looks like now it checks for presence of semicolon and symbols used for code injection.</li>
+                <li>It looks like now it checks for the presence of semicolon and symbols used for code injection.</li>
                 <li>Even though it checks for symbols, it's still using <code>passthru()</code>.</li>
             </list>
         </chapter>
         <chapter title="PHP code injection 09" id="php-code-injection-09">
-            <p>After some failed attempts, turns out the regex is unavoidable. So user will have to work with the fact
+            <p>After some failed attempts, it turns out the regex is unavoidable. So user will have to work with the fact
                 that <code>$key</code> will
                 reach the <code>grep</code> as a regular string.</p>
             <p>User can research about <code>grep</code>, tldr: it can accept multiple files as haystack.</p>
@@ -376,7 +375,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <code-block lang="bash">
                 grep -i SOMETHING /etc/natas_webpass/natas11 dictionary.txt
             </code-block>
-            <p>The last thing to do is to put some character that will match with the password, this is trial and
+            <p>The last thing to do is to put some character that will match with the password; this is trial and
                 error.</p>
 
             <code-block lang="bash">
@@ -432,7 +431,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </code-block>
         </chapter>
         <chapter title="Inspection 10" id="inspection-10">
-            <p>This time the php code available in the view source link provided has a fair amount of lines. The logic
+            <p>This time the php code available in the view source link provided has a fair number of lines. The logic
                 can be divided
                 into the following actions:</p>
             <code-block lang="php" src="otw/natas/10-11.index.php" include-lines="3-9"/>
@@ -463,7 +462,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Resolution 10" id="resolution-10">
             <chapter title="Getting the key" id="getting-the-key">
-                <p>The first thing to achieve is getting the value of the key. To do this, user should first focus on
+                <p>The first thing to achieve is to get the value of the key. To do this, user should first focus on
                     this particular line
                     of code from the <code>saveDate()</code> function:</p>
 
@@ -503,7 +502,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li><code>$key[0] = '{' ^ 's'</code></li>
                     <li><code>$key[1] = '&quot;' ^ 'o'</code></li>
                 </list>
-                <p>With this information, user can create a quick PHP script that cracks the key:</p>
+                <p>With this information, the user can create a quick PHP script that cracks the key:</p>
                 <code-block lang="php" src="otw/natas/10-11.resolution.php" include-lines="1-11"/>
                 <p>The output will be:</p>
 
@@ -531,11 +530,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <code-block lang="php" src="otw/natas/10-11.resolution.php" include-lines="13-22"/>
             </chapter>
             <chapter title="Getting the correct cookie" id="getting-the-correct-cookie">
-                <p>With the key, the user can now easily traverse the <code>loadData()</code> process backwards in order
+                <p>With the key, the user can now easily traverse the <code>loadData()</code> process backwards 
                     to get the correct cookie.</p>
                 <list type="decimal">
                     <li>Creating the array that will end up showing the password.</li>
-                    <li>Encode with json.</li>
+                    <li>Encode with JSON.</li>
                     <li>Encrypt with XOR.</li>
                     <li>Encode with base64.</li>
                 </list>
@@ -548,14 +547,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     <chapter title="Level 11 to Level 12" id="level-11-to-level-12">
         <p>This time the user is welcomed with the instructions of uploading a <code>.jpeg</code> of up to 1KB. The page
             provides two buttons:
-            one for browsing the filesystem and other for uploading the file.</p>
+            one for browsing the filesystem and the other for uploading the file.</p>
         <list>
             <li>Test the uploader.</li>
             <li>Inspect the resources.</li>
             <li>Find what needs to be done.</li>
             <li>Get the password.</li>
         </list>
-        <chapter title="Testing the uploader 11" id="testing-the-uploader-11">
+        <chapter title="Testing uploader 11" id="testing-the-uploader-11">
             <list>
                 <li>Not uploading anything shows an error.</li>
                 <li>Uploading any file changes its name and forces its extension to <code>.jpg</code>.</li>
@@ -565,13 +564,13 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Inspection 11" id="inspection-11">
             <chapter title="HTML inspection 11" id="html-inspection-11">
-                <p>The html inspection shows two odd lines with <code>type=&quot;hidden</code>:</p>
+                <p>The HTML inspection shows two odd lines with <code>type=&quot;hidden</code>:</p>
 
                 <code-block lang="html" src="otw/natas/11-12.index.html"/>
                 <p>The <code>.jpg</code> changes each time the user refreshes the page.</p>
             </chapter>
             <chapter title="PHP inspection 11" id="php-inspection-11">
-                <p>The PHP inspection shows, as usual, a fair amount of functions. The flow of execution looks something
+                <p>The PHP inspection shows, as usual, a fair number of functions. The flow of execution looks something
                     like:</p>
                 <list type="decimal">
                     <li>Checks if superglobal <code>$_POST</code> contains the key <code>filename</code>.</li>
@@ -581,12 +580,12 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>If it contains that key, randomly generates a path using multiple functions. It ends up looking
                         like <code>upload/random_string.filename_ext</code>.
                     </li>
-                    <li>If file isn't too big and passes <code>move_uploaded_file()</code> the file gets uploaded.</li>
+                    <li>If a file isn't too big and passes <code>move_uploaded_file()</code> the file gets uploaded.</li>
                 </list>
             </chapter>
         </chapter>
         <chapter title="Random path creation logic" id="random-path-creation-logic">
-            <p>The path creation uses 3 functions:</p>
+            <p>The path creation uses three functions:</p>
             <tabs>
                 <tab title="genRandomString" id="genrandomstring">
                     <code-block lang="php" src="otw/natas/11-12.index.php" include-lines="3-13"/>
@@ -599,13 +598,13 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <tip>
                         Generates a path that follows this format:
                         <path>$dir/random_string.$ext</path>
-                        while file doesn't exist.
+                        while a file doesn't exist.
                     </tip>
                 </tab>
                 <tab title="makeRandomPathFromFilename" id="makerandompathfromfilename">
                     <code-block lang="php" src="otw/natas/11-12.index.php" include-lines="23-26"/>
                     <note>
-                        The file given as parameter is only used for its extension. The function <code>pathinfo</code>
+                        The file given as a parameter is only used for its extension. The function <code>pathinfo</code>
                         with the option <code>PATHINFO_EXTENSION</code> ignores everything except the extension.
                     </note>
                     <tip>
@@ -618,7 +617,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         <chapter title="Resolution 11" id="resolution-11">
             <p>Taking into consideration that no matter what file the user uploads it always ends up being a
                 <code>.jpg</code>, and remembering
-                that the only place this is defined is in the html, the user can try manipulating this resource on the
+                that the only place this is defined is in the HTML, the user can try manipulating this resource on the
                 frontend to see
                 what happens.</p>
 
@@ -644,7 +643,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
     </chapter>
     <chapter title="Level 12 to Level 13" id="level-12-to-level-13">
-        <p>The website looks almost like the previous one, the only difference is that this time it has a message saying
+        <p>The website looks almost like the previous one; the only difference is that this time it has a message saying
             it only
             accepts image files.</p>
         <list>
@@ -652,20 +651,20 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <li>Inspect the resources.</li>
             <li>Get the password.</li>
         </list>
-        <chapter title="Testing the uploader 12" id="testing-the-uploader-12">
+        <chapter title="Testing uploader 12" id="testing-the-uploader-12">
             <list>
-                <li>Uploading a php file doesn't seem to work.</li>
-                <li>Changing the file extension on the html doesn't work either.</li>
+                <li>Uploading a PHP file doesn't seem to work.</li>
+                <li>Changing the file extension on the HTML doesn't work either.</li>
             </list>
         </chapter>
         <chapter title="Inspection 12" id="inspection-12">
             <chapter title="HTML inspection 12" id="html-inspection-12">
-                <p>The html doesn't seem to contain relevant information. Changing the file extension there does not
+                <p>The HTML doesn't seem to contain relevant information. Changing the file extension there does not
                     affect how the backend
                     gets the file.</p>
             </chapter>
             <chapter title="PHP inspection 12" id="php-inspection-12">
-                <p>There seems to be the same functions as previous room.</p>
+                <p>There seem to be the same functions as the previous room.</p>
                 <list>
                     <li><code>getRandomString()</code>: has the same implementation.</li>
                     <li><code>makeRandomPath($dir, $ext)</code>: has the same implementation.</li>
@@ -692,12 +691,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </title>
                 <p>Doing more research about the <code>exif_imagetype()</code> function gave me the following info:</p>
                 <list>
-                    <li>In order to determine if a file is an image,
-                        <control>it reads the first 8 bytes</control>
-                        .
+                    <li>To determine if a file is an image,
+                        <control>it reads the first eight bytes</control>.
                     </li>
                     <li>The logic behind the functions does not care about the file extension.</li>
-                    <li>The algorithm checks for a valid image data in addition to the headers.</li>
+                    <li>The algorithm checks for valid image data in addition to the headers.</li>
                 </list>
                 <p>Some examples of the first bytes:</p>
                 <table>
@@ -755,13 +753,13 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
     </chapter>
     <chapter title="Level 13 to Level 14" id="level-13-to-level-14">
-        <p>This time the page contains a form asking for user and password. It also contains the usual link that allows
+        <p>This time the page contains a form asking for the user and password. It also contains the usual link that allows
             the user to
             see a part of the source code.</p>
         <list>
             <li>Try the form.</li>
             <li>Inspect the resources.</li>
-            <li>Find end goal.</li>
+            <li>Find the end goal.</li>
             <li>Get the password.</li>
         </list>
         <chapter title="Testing form 13" id="testing-form-13">
@@ -794,7 +792,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>Opens a MySQL connection and selects natas14 database.</li>
                     <li>The <code>$query</code> variable contains the query.</li>
                     <li>
-                        <control>If the result of the query has more than 0 rows it shows the password.</control>
+                        <control>If the result of the query has more than zero rows, it shows the password.</control>
                     </li>
                 </list>
             </chapter>
@@ -802,7 +800,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         <chapter title="Resolution 13" id="resolution-13">
             <p>My first idea would be to try to inject SQL code into the form to &quot;cancel&quot; the
                 <code>WHERE</code> clausule or make it <code>TRUE</code>
-                always. The SQL after inject has to perform this operation:</p>
+                always. The SQL after injection has to perform this operation:</p>
 
             <code-block lang="sql">
                 SELECT * FROM user
@@ -852,11 +850,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     </chapter>
     <chapter title="Level 14 to Level 15" id="level-14-to-level-15">
         <p>This time the form only has a username field. There is an extra button that says &quot;Check
-            existence&quot;.</p>
+            existence&quot;</p>
         <list>
             <li>Try the form.</li>
             <li>Inspect the resources.</li>
-            <li>Find end goal.</li>
+            <li>Find the end goal.</li>
             <li>Get the password.</li>
         </list>
         <chapter title="Testing form 14" id="testing-form-14">
@@ -889,9 +887,9 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
         <chapter title="Resolution 14" id="resolution-14">
-            <p>The plan is simple: considering the only information I get as response is if the user exists, I can brute
+            <p>The plan is simple: considering the only information I get as a response is if the user exists, I can brute
                 force the
-                password by injecting a clause that checks for it, the end result should be this query:</p>
+                password by injecting a clause that checks for it, the result should be this query:</p>
 
             <code-block lang="sql">
                 SELECT * FROM users
@@ -923,14 +921,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>Defines the credentials and the logic of the web request, taking into consideration the
                         credentials.
                     </li>
-                    <li>Defines a string with all lowercase, uppercase and numbers. In order to later use it to test
+                    <li>Defines a string with all lowercase, uppercase and numbers. To later use it to test
                         char by char.
                     </li>
                     <li>Set up the looping process for testing the chars, it should run until the goal string reaches
                         the length constraints.
                     </li>
                     <li>Test each char, injecting it into the SQL query.</li>
-                    <li>Check if is valid by parsing the HTML output given as response. If it is, update the string that
+                    <li>Check if it is valid by parsing the HTML output given as a response. If it is, update the string that
                         holds the final
                         value.
                     </li>
@@ -941,7 +939,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     <chapter title="Level 15 to Level 16" id="level-15-to-level-16">
         <p>The website is similar to the one in <a anchor="level-08-to-level-09">Level 08 to Level 09</a>, it has only
             one form field with the
-            label &quot;Find words containing&quot;. It also has the following message:</p>
+            label &quot;Find words containing&quot; It also has the following message:</p>
         <code-block lang="html">
             For security reasons, we now filter even more on certain characters.
         </code-block>
@@ -990,7 +988,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
         <chapter title="Resolution 15" id="resolution-15">
-            <p>Taking into consideration the vulnerability explained in the inspection. I can brute force the password
+            <p>Taking into consideration the vulnerability explained in the inspection. I can brutely force the password
                 by testing each
                 character, like the previous level.</p>
             <p>Consider this input:</p>
@@ -1000,7 +998,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </code-block>
             <p>The <code>grep</code> command will look for the password for natas17 in <code>dictionary.txt</code>. Of
                 course this won't return anything. But
-                if instead of the whole password I test for just a part of it:</p>
+                if instead of the whole password, I test for just a part of it:</p>
 
             <code-block lang="bash">
                 grep -i $(grep a /etc/natas_webpass/natas17) dictionary.txt
@@ -1019,16 +1017,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 grep -i &quot;&quot; dictionary.txt
             </code-block>
             <p>Which will return the whole contents of <code>dictionary.txt</code>.</p>
-            <p>Using this knowledge the brute force operation will test char by char and confirm it by looking at the
+            <p>Using this knowledge, the brute force operation will test char by char and confirm it by looking at the
                 HTML output:</p>
             <list>
                 <li>If tested string is correct:
-                    <control>no list on the webpage</control>
-                    .
+                    <control>no list on the webpage</control>.
                 </li>
                 <li>If tested is not correct:
-                    <control>list on the webpage</control>
-                    .
+                    <control>list on the webpage</control>.
                 </li>
             </list>
             <p>To make things easier, instead of just sending the shell command, I can send a string I know exists on
@@ -1038,7 +1034,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <code-block lang="bash">
                 grep -i &quot;example&quot; dictionary.txt
             </code-block>
-            <p>The file <code>dictionary.txt</code> has this words that match:</p>
+            <p>The file <code>dictionary.txt</code> has these words that match:</p>
 
             <code-block lang="text">
                 counterexample
@@ -1052,12 +1048,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <p>This time:</p>
             <list>
                 <li>If the tested string is correct:
-                    <control>no list on the webpage</control>
-                    .
+                    <control>no list on the webpage</control>.
                 </li>
                 <li>If the tested string is not correct:
                     <control>
-                        <emphasis>counterexample</emphasis>
+                        <emphasis>Counterexample</emphasis>
                         on the webpage
                     </control>
                     .
@@ -1088,7 +1083,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         <code-block lang="generic" src="otw/natas/15-16.resolution.pl" include-lines="28-46"/>
                         <note>
                             Given how <code>grep</code> is being used, the tested character could be at the beginning or
-                            the end of the password. That's why the checker runs 2 times.
+                            the end of the password. That's why the checker runs two times.
                         </note>
                     </tab>
                 </tabs>
@@ -1123,27 +1118,27 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
         </chapter>
         <chapter title="Resolution 16" id="resolution-16">
-            <p>The first thing is to understand the problem. The SQL injection vulnerability still exists, the problem
+            <p>The first thing is to understand the problem. The SQL injection vulnerability still exists. The problem
                 is that I don't
-                have any apparent way of checking the result on the website.</p>
+                have any clear way of checking the result on the website.</p>
             <p>A key focus is to understand that the website
                 <control>is still</control>
                 vulnerable to SQL. So, I can use SQL code to kind of &quot;give me
                 a hint&quot; on the frontend if what I am trying is correct.
             </p>
             <p>One way of doing this is with the <code>SLEEP</code> command. It pauses the serving of the response an X
-                amount of seconds.
+                 number of seconds.
                 I can use this to confirm if the brute force operation is correct or not.</p>
             <tldr>
                 <p>Response takes too long: something</p>
                 <p>Response is fast: something else</p>
             </tldr>
-            <chapter title="Overview of the SQL injection 16" id="overview-of-the-sql-injection-16">
+            <chapter title="Overview of SQL injection 16" id="overview-of-the-sql-injection-16">
                 <p>The SQL code that will eventually run on the server:</p>
                 <code-block lang="sql" src="otw/natas/16-17.resolution.sql"/>
             </chapter>
             <chapter title="Brute-forcing 16" id="bruteforce-16">
-                <p>They key factor is the comparison between the response times. First I define a function that
+                <p>The key factor is the comparison between the response times. First, I define a function that
                     calculates it:</p>
                 <code-block lang="generic" src="otw/natas/16-17.resolution.pl" include-lines="1-9"/>
                 <list>
@@ -1172,8 +1167,8 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         <chapter title="Test form 17" id="test-form-17">
             <p>Basic tests:</p>
             <list>
-                <li>Not providing any value and submitting logs in the user regardless.</li>
-                <li>There seems to be only two valid user groups: regular and admin.</li>
+                <li>Not providing any value and submitting logs to the user regardless.</li>
+                <li>There seem to be only two valid user groups: regular and admin.</li>
                 <li>Trying to reload the page after logging in forces the login details to be sent again.</li>
             </list>
         </chapter>
@@ -1210,14 +1205,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         If it doesn't exist,
                         PHP creates it.
                     </li>
-                    <li>It checks for the user that is currently in the session, if it's the admin, prints the
+                    <li>It checks for the user currently in the session if it's the admin, prints the
                         password.
                     </li>
                 </list>
             </chapter>
         </chapter>
         <chapter title="Resolution 17" id="resolution-17">
-            <p>It is posible to send the cookie and its value in the headers. My first strategy is to bruteforce it.</p>
+            <p>It is possible to send the cookie and its value in the headers. My first strategy is to bruteforce it.</p>
             <chapter title="Brute-forcing 17" id="bruteforce-17">
                 <tabs>
                     <tab title="Request handler" id="request-handler-17">
@@ -1231,12 +1226,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <tldr>
                     <p>Define the total possible values (1 to 640).</p>
                     <p>Make the request with the current value in iteration as the cookie.</p>
-                    <p>If the html response contains the phrase
-                        <emphasis>"You are an admin"</emphasis>
-                        , the cookie was correct.
+                    <p>If the HTML response contains the phrase
+                        <emphasis>"You are an admin,"</emphasis> the cookie was correct.
                     </p>
                     <p>When the correct cookie is found, prints the password.</p>
-                    <p>(OPTIONAL) to display only the password and not the whole html, parse it with a regex. Focus
+                    <p>(OPTIONAL) to display only the password and not the whole HTML, parse it with a regex. Focus
                         on the print format defined in the PHP file and the fact that all passwords are length 32.
                     </p>
                 </tldr>
@@ -1244,11 +1238,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
     </chapter>
     <chapter title="Level 18 to Level 19" id="level-18-to-level-19">
-        <p>Same page as the previous level, this time it has additional information:</p>
+        <p>The same page as the previous level, this time it has additional information:</p>
         <tip>
             <p>This page uses mostly the same code as the previous level, but session IDs are no longer sequential.</p>
         </tip>
-        <p>The general plan to follow:</p>
+        <p>The general plan is as follows:</p>
         <list>
             <li>Test the form.</li>
             <li>Inspect the resources, focusing on the cookies.</li>
@@ -1388,7 +1382,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <li>Bruteforce the <code>number</code> part, maybe considering the max limit of 640 set on previous
                     level.
                 </li>
-                <li>Parse the html response to confirm the result.</li>
+                <li>Parse the HTML response to confirm the result.</li>
             </list>
             <chapter title="Brute-forcing 18" id="bruteforce-18">
                 <tabs>
@@ -1401,10 +1395,9 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </tabs>
                 <tldr>
                     <p>Hex encodes the string <code>ITER_NUMBER-admin</code>.</p>
-                    <p>Makes the request, using the hex string as cookie.</p>
+                    <p>Makes the request, using the hex string as a cookie.</p>
                     <p>If the response contains the string
-                        <emphasis>"You are an admin"</emphasis>
-                        . Uses a regex to extract the password and stops execution.
+                        <emphasis>"You are an admin."</emphasis> Uses a regex to extract the password and stops execution.
                     </p>
                 </tldr>
             </chapter>
@@ -1446,13 +1439,13 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </table>
             <p>Thoughts:</p>
             <list>
-                <li>To make the cookie change I had to delete it. The submission of the form doesn't seem to affect it
+                <li>To make the cookie change, I had to delete it. The submission of the form doesn't seem to affect it
                     if it is already
                     set.
                 </li>
-                <li>There is some randomness, trying the same input after deleting the cookie give a different result.
+                <li>There is some randomness, trying the same input after deleting the cookie gives a different result.
                 </li>
-                <li>Cookies for the same name don't seem to have anything in common.</li>
+                <li>Cookies of the same name don't seem to have anything in common.</li>
             </list>
         </chapter>
         <chapter title="Inspection 19" id="inspection-19">
@@ -1493,14 +1486,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="13-33"/>
                         <p>Overview:</p>
                         <list type="decimal">
-                            <li>Check if session is valid (only contains numbers, letters or dash).</li>
+                            <li>Check if the session is valid (only contains numbers, letters or dash).</li>
                             <li>If valid, saves it into
                                 <path>$session_save_path/mysess_$sid</path>
                                 .
                             </li>
                             <li>Sorts the session data by keys in ascending order.</li>
                             <li>Saves the sorted session data in the file previously created.</li>
-                            <li>The file is given permissions of read and write for the owner.</li>
+                            <li>The file is given permission to read and write for the owner.</li>
                         </list>
                     </tab>
                     <tab title="myread" id="myread">
@@ -1515,7 +1508,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         </list>
                     </tab>
                 </tabs>
-                <p>There is two more pieces of relevant code. First:</p>
+                <p>There are two more pieces of relevant code. First:</p>
                 <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="57-61"/>
                 <p>This allows the printing of relevant information during the execution of the script. It is set by a
                     GET request with the
@@ -1534,7 +1527,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <tabs>
                     <tab title="Session configuration" id="session-configuration">
                         <p>
-                            The session configuration (what allows me to send multiple request without changing
+                            The session configuration (what allows me to send multiple requests without changing
                             cookies):
                         </p>
                         <br/>
@@ -1557,7 +1550,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <chapter title="Session handler injection 19" id="session-handler-injection-19">
                 <p>The key vulnerability is present in <code>myread()</code>:</p>
                 <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="47-53"/>
-                <p>Particularly in this two lines:</p>
+                <p>Particularly in these two lines:</p>
                 <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="51-52"/>
                 <p>The code splits the data in new lines, without sanitization. Meaning <code>test\nadmin 1</code>, will
                     translate to:</p>
@@ -1611,20 +1604,20 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <li>The form does not seem to affect the original website.</li>
                 <li>
                     <control>The form is vulnerable to CSS injection.</control>
-                    . Example, putting this on the font-size form: <code>200%; font-style: italic</code> makes the font
+                    Example, putting this on the font-size form: <code>200%; font-style: italic</code> makes the font
                     italic.
                 </li>
             </list>
         </chapter>
         <chapter title="Inspection 20" id="inspection-20">
             <chapter title="HTML inspection 20" id="html-inspection-20">
-                <p>Nothing catches my attention on the html from the original website.</p>
+                <p>Nothing catches my attention on the HTML from the original website.</p>
                 <p>On the experimental one, the interesting thing is the common comment that says the head tag has
                     nothing to do with the level, is not present.</p>
             </chapter>
             <chapter title="PHP inspection 20" id="php-inspection-20">
                 <p>
-                    The original website has only one function definition, and is the same as in <a href="Natas.topic"
+                    The original website has only one function definition and is the same as in <a href="Natas.topic"
                                                                                                     anchor="php-inspection-19">Level
                     19 to 20</a>. Here is the code:
                 </p>
@@ -1664,7 +1657,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Resolution 20" id="resolution-20">
             <chapter title="Preparation 20" id="preparation-20">
-                <p>First, lets clarify what the goal is. The only way to get the password lies on the original website's
+                <p>First, let's clarify what the goal is. The only way to get the password lies on the original website's
                     code:</p>
                 <code-block lang="php" src="otw/natas/19-20.index.php" include-lines="4-8"/>
                 <p id="session-values-definition">The session values get edited here:</p>
@@ -1694,7 +1687,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <p>The first thing to do is define the two URLs.</p>
                 <code-block lang="shell" src="otw/natas/20-21.resolution.ps1" include-lines="5,6"/>
                 <tip>
-                    The <code>submit=1</code> is needed for the check that is shown <a
+                    The <code>submit=1</code> is needed for the check shown <a
                         summary="The session values get edited here" href="Natas.topic"
                         anchor="session-values-definition">here</a>.
                 </tip>
@@ -1735,7 +1728,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
     </chapter>
     <chapter title="Level 21 to Level 22" id="level-21-to-level-22">
-        <p>The page is empty, it only shows the link to inspect the PHP source code.</p>
+        <p>The page is empty; it only shows the link to inspect the PHP source code.</p>
         <list>
             <li>Inspect the resources.</li>
             <li>Find the vulnerability and understand how to exploit it.</li>
@@ -1747,7 +1740,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             </chapter>
             <chapter title="PHP inspection 21" id="php-inspection-21">
                 <p>
-                    The code can be separated in two parts. First it checks for a particular key in the PHP super-global
+                    The code can be separated into two parts. First it checks for a particular key in the PHP super-global
                     <code>$_GET</code>:
                 </p>
                 <code-block lang="php" src="otw/natas/21-22.index.php" include-lines="1-10"/>
@@ -1760,7 +1753,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Resolution 21" id="resolution-21">
             <p>Since there is no way of manipulating the <code>$_SESSION</code> super-global. The key thing to do is
-                avoid the redirection.</p>
+                 to avoid the redirection.</p>
             <p>Check this particular line of code from the
                 <path>index.php</path>
                 file:
@@ -1789,8 +1782,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     </chapter>
     <chapter title="Level 22 to Level 23" id="level-22-to-level-23">
         <p>The page contains a form with a single field called
-            <control>password</control>
-            .
+            <control>password</control>.
         </p>
         <list>
             <li>Inspect the resources.</li>
@@ -1799,7 +1791,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </list>
         <chapter title="Inspection 22" id="inspection-22">
             <chapter title="HTML inspection 22" id="html-inspection-22">
-                <p>Nothing out of the ordinary. Here is the form though:</p>
+                <p>Nothing out of the ordinary. Here is the form, though:</p>
                 <code-block lang="html" src="otw/natas/22-23.index.html"/>
             </chapter>
             <chapter title="PHP inspection 22" id="php-inspection-22">
@@ -1820,15 +1812,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         .
                     </li>
                     <li>The password size has to be greater than 10. Important to clarify,
-                        <control>size</control>
-                        , not length.
+                        <control>size</control>, not length.
                     </li>
                 </list>
             </chapter>
         </chapter>
         <chapter title="Resolution 22" id="resolution-22">
             <chapter title="Preparation 22" id="preparation-22">
-                <p>The goal is simple, submit a password that follows both conditions previously stated.</p>
+                <p>The goal is straightforward, submit a password that follows both conditions previously stated.</p>
                 <p>For the first check, the password has to contain the word "iloveyou" somewhere. I previously said
                     that <code>strstr</code> returns a string. For PHP that counts as a truthy value.</p>
                 <p>For the second condition, some information about PHP type juggling is needed.</p>
@@ -1860,8 +1851,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     </chapter>
     <chapter title="Level 23 to Level 24" id="level-23-to-level-24">
         <p>Same layout as the previous level, a form with only one field called
-            <control>password</control>
-            .
+            <control>password</control>.
         </p>
         <list>
             <li>Inspect the resources.</li>
@@ -1891,11 +1881,10 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Resolution 23" id="resolution-23">
             <chapter title="Preparation 23" id="preparation-23">
-                <p>The goal is simple, surpass the if statement that holds the password.</p>
+                <p>The goal is straightforward, surpass the if statement that holds the password.</p>
                 <code-block lang="php" src="otw/natas/23-24.index.php" include-lines="3"/>
                 <p>For this to happen,
-                    <control>both strings have to be equal</control>
-                    . If equal, <code>strcmp</code> returns 0, applying the negation operation to 0 turns it into a
+                    <control>both strings have to be equal</control>. If equal, <code>strcmp</code> returns 0, applying the negation operation to 0 turns it into a
                     truthy value.
                 </p>
                 <p>Another way would be to somehow
@@ -1932,7 +1921,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </list>
         <chapter title="Inspection 24" id="inspection-24">
             <chapter title="HTML inspection 24" id="html-inspection-24">
-                <p>Nothing interesting. Here is the form though:</p>
+                <p>Nothing interesting. Here is the form, though:</p>
                 <code-block lang="html" src="otw/natas/24-25.index.html"/>
             </chapter>
             <chapter title="PHP inspection 24" id="php-inspection-24">
@@ -1944,8 +1933,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         (parent directory)
                         and
                         <path>.</path>
-                        (current directory)
-                        . Here is the definition:
+                        (current directory). Here is the definition:
                     </p>
                     <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="30-39"/>
                 </chapter>
@@ -1954,7 +1942,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="62-69"/>
                     <p>The <code>setLanguage</code> function is defined here:</p>
                     <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="2-8"/>
-                    <tip>By default, the language is set to english.</tip>
+                    <tip>By default, the language is set to English.</tip>
                     <p>The function makes use of a custom include logic, defined here:</p>
                     <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="10-28"/>
                     <p>Overview:</p>
@@ -1965,7 +1953,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                                 ), if that's the case, it fixes the given path.
                             </p>
                             <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="11-15"/>
-                            <p>If it finds a directory traversal attempt it also calls a custom log function:</p>
+                            <p>If it finds a directory traversal attempt, it also calls a custom log function:</p>
                             <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="41-48"/>
                             <tip>Saves a description, the datetime of the traversal, the user's
                                 <code>HTTP_USER_AGENT</code> present on the header of the request, and it saves this
@@ -1984,11 +1972,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                             <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="17-20"/>
                         </li>
                         <li>
-                            <p>If the file passed all the checks and is present on the directory, it returns it:</p>
+                            <p>If the file passed all the checks and is present in the directory, it returns it:</p>
                             <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="23-26"/>
                         </li>
                         <li>
-                            <p>If it reaches this point it automatically returns 0, meaning function failure. This will
+                            <p>If it reaches this point, it automatically returns 0, meaning function failure. This will
                                 make the check made in <code>setLanguage</code> fail, and fallback into setting
                                 english as the language.</p>
                         </li>
@@ -1998,7 +1986,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
         <chapter title="Resolution 24" id="resolution-24">
             <chapter title="Preparation 24" id="preparation-24">
-                <p>My first idea would be to try trick this particular check:</p>
+                <p>My first idea would be to try to trick this particular check:</p>
                 <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="12-15"/>
                 <p>Mainly because it's a check that directly modifies the file and does not interfere with the execution
                     of the script.</p>
@@ -2017,7 +2005,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     , and show everything with the later execution of <code>listFiles</code>.
                 </p>
                 <p>With this knowledge, I can change the path into pointing to the location where the log files are
-                    saved. But to get this first I need to grab the cookie for the session, so let's start with the
+                    saved. But to get this first, I need to grab the cookie for the session, so let's start with the
                     code:</p>
                 <tabs>
                     <tab title="Initial configuration" id="initial-configuration">
@@ -2034,7 +2022,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         <list type="decimal">
                             <li>Wait for the <code>GET</code> request to finish, so I can make use of the cookie.</li>
                             <li>
-                                <p>Update the header with the required configurations. Pay extra attention on this
+                                <p>Update the header with the required configurations. Pay extra attention to this
                                     particular line:</p>
                                 <code-block lang="javascript" src="otw/natas/24-25.resolution.js"
                                             include-lines="45-46"/>
@@ -2043,9 +2031,9 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                                 <code-block lang="php" src="otw/natas/24-25.index.php" include-lines="43"/>
                                 <p>The user agent can be easily manipulated in the header of the request. Considering
                                     its value will end up on the log file and that
-                                    <control>it will be interpreted by PHP</control>
-                                    I can inject PHP code directly into it, to easily extract the password from its
-                                    location, it won't be accessible until next step though.
+                                    <control>it will be interpreted by PHP,</control>
+                                    I can inject PHP code directly into it to easily extract the password from its
+                                    location; it won't be accessible until the next step, though.
                                 </p>
                             </li>
                             <li>
@@ -2064,7 +2052,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
     </chapter>
     <chapter title="Level 25 to Level 26" id="level-25-to-level-26">
-        <p>This time there is a form with 4 fields and a button that says
+        <p>This time there is a form with four fields and a button that says
             <ui-path>DRAW!</ui-path>
             .
         </p>
@@ -2075,7 +2063,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <li>Get the password.</li>
         </list>
         <chapter title="Testing form 25" id="testing-form-25">
-            <p>The form has "Draw a line" as title, and contains 4 fields, named: X1, Y1, X2 and Y2. Submitting it shows
+            <p>The form has "Draw a line" as the title and contains four fields, named: X1, Y1, X2 and Y2. Submitting it shows
                 a warning message with a large
                 square. Some tests:</p>
             <table>
@@ -2103,7 +2091,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </tr>
                 <tr>
                     <td>&lt;ANYTHING&gt;</td>
-                    <td><p>Same message. But it stacks, one on top of each-other.</p></td>
+                    <td><p>Same message. But it stacks, one on top of each other.</p></td>
                     <td>Black square, it goes down as the warning messages stack.</td>
                 </tr>
                 <tr>
@@ -2114,7 +2102,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <tr>
                     <td>&lt;SPAMMING&gt;</td>
                     <td>
-                        <p>A new message appears at the bottom: Cannot modify header information - headers already sent
+                        <p>A new message appears at the bottom: Cannot modify header information—headers already sent
                             by (output started at
                             <path>/var/www/natas/natas26/index.php:80</path>
                             ) in
@@ -2135,7 +2123,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <p>There are two cookies. The usual <code>PHPSESSID</code> and a new one called <code>drawing</code>.
                 </p>
                 <list>
-                    <li>The new cookie appears after the first submit.</li>
+                    <li>The new cookie appears after the first submitting.</li>
                     <li>The new cookie grows with each submission.</li>
                     <li>The image path seems to be
                         <path>img/natas26_PHPSESSID.png</path>
@@ -2146,7 +2134,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
             <chapter title="PHP inspection 25" id="php-inspection-25">
                 <p>There is a lot to cover, the main flow of execution goes like this:</p>
                 <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="95-106"/>
-                <p>Here are the definition for the functions:</p>
+                <p>Here is the definition for the functions:</p>
                 <tabs>
                     <tab title="drawImage" id="draw-image">
                         <code-block lang="php" src="otw/natas/25-26.index.php" include-lines="38-68"/>
@@ -2172,13 +2160,12 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <p>This gives me the information that the <code>drawing</code> cookie, it's just a PHP serialized value
                     with a base64 encoding.</p>
                 <p>I can make use of the <code>Logger</code> class to play around with its properties,
-                    <control>injecting PHP code</control>
-                    , then serialize it and encode it:
+                    <control>injecting PHP code</control>, then serialize it and encode it:
                 </p>
                 <code-block lang="php" src="otw/natas/25-26.resolution.php" collapsible="true"
                             collapsed-title="Custom Logger.php"/>
                 <p>The execution of that custom script will output the serialized and encoded version of the <code>Logger</code>,
-                    with its injections. This will be use later as a value for the drawing cookie.</p>
+                    with its injections. This will be used later as a value for the drawing cookie.</p>
             </chapter>
             <chapter title="Getting the password for natas27" id="getting-the-password-for-natas27">
                 <p>Let's summarize the obtained knowledge and resources:</p>
@@ -2187,7 +2174,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>The cookie is a base64-encoded and serialized PHP object.</li>
                     <li>I have a custom, valid value for the cookie with injected code.</li>
                     <li>
-                        <p>I also have the location of the final file, because it has been injected into the serialized
+                        <p>I also have the location of the final file because it has been injected into the serialized
                             object:</p>
                         <code-block lang="php" src="otw/natas/25-26.resolution.php" include-lines="12"/>
                         <p>I opted for a path that will be accessible later. The
@@ -2224,7 +2211,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
         </chapter>
     </chapter>
     <chapter title="Level 26 to Level 27" id="level-26-to-level-27">
-        <p>The page contains a form with username and password.</p>
+        <p>The page contains a form with a username and password.</p>
         <list>
             <li>Test the form.</li>
             <li>Inspect the resources.</li>
@@ -2299,17 +2286,17 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </tabs>
                 <p>Database design:</p>
                 <code-block lang="sql" src="otw/natas/26-27.index.php" include-lines="8-11"/>
-                <note>The code contains a comment saying the database get cleared every 5 minutes.</note>
+                <note>The code contains a comment saying the database gets cleared every 5 minutes.</note>
                 <p>The main flow of execution:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="77-101"/>
                 <tldr>
-                    <p>- Check for form submission.</p>
-                    <p>- If not submitted, displays it and finishes flow of execution.</p>
-                    <p>- If submitted, continues.</p>
-                    <p>- Starts MySQL connection.</p>
-                    <p>- Check credentials, if valid shows information, if invalid shows message.</p>
-                    <p>- If it's a new user, creates it.</p>
-                    <p>- Close MySQL connection.</p>
+                    <p>— Check for form submission.</p>
+                    <p>— If not submitted, displays it and finishes the flow of execution.</p>
+                    <p>— If submitted, continues.</p>
+                    <p>— Starts MySQL connection.</p>
+                    <p>— Check credentials, if valid shows information if invalid shows message.</p>
+                    <p>— If it's a new user, creates it.</p>
+                    <p>— Close MySQL connection.</p>
                 </tldr>
             </chapter>
         </chapter>
@@ -2331,8 +2318,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>
                         <p>
                             <control>Prone to SQL injection in certain queries:</control>
-                            if used incorrectly (not all user inputs are escaped or queries are constructed in a
-                            dangerous way), attackers could still inject SQL code.
+                            if used incorrectly (not all user inputs are escaped or queries are constructed dangerously), attackers could still inject SQL code.
                         </p>
                     </li>
                     <li>
@@ -2343,7 +2329,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         </p>
                     </li>
                 </list>
-                <p>Another possible strategy would be to focus on the trimming that is made when sending a username with
+                <p>Another possible strategy would be to focus on the trimming made when sending a username with
                     a length greater than the one defined on the code:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="9"/>
                 <p>Sending a really large string, like:</p>
@@ -2351,7 +2337,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     "natas28 a"
                 </code-block>
                 <p>Will trim the extra characters and turn it into <code>"natas28"</code>, it has to end with something
-                    different from a whitespace to avoid this check:</p>
+                    different from whitespace to avoid this check:</p>
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="61-64"/>
                 <p>By this point there will be two entries on the database for user <code>natas28</code> one with the
                     real password and the other one with the password I chose, for this particular case it will be an
@@ -2368,12 +2354,11 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <code-block lang="php" src="otw/natas/26-27.index.php" include-lines="49" collapsible="true"
                             collapsed-title="special function used in dumpData"/>
                 <tip>The function <code>mysqli_fetch_assoc</code> fetches
-                    <control>only one row of data</control>
-                    .
+                    <control>only one row of data</control>.
                 </tip>
             </chapter>
             <chapter title="Getting the password for natas28" id="getting-the-password-for-natas28">
-                <p>The strategy (in code) will be really similar from the one previously stated, with just a quick fix
+                <p>The strategy (in code) will be really similar to the one previously stated, with just a quick fix
                     that will be explained in short.</p>
                 <p>First, here is the only request definition that will be used:</p>
                 <code-block lang="javascript" src="otw/natas/26-27.resolution.js" include-lines="21-40"
@@ -2393,19 +2378,19 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
     <chapter title="Level 27 to Level 28" id="level-27-to-level-28">
         <p>
             The page contains a search form field with a button for submitting the data. It looks like it outputs a list
-            of computer related jokes.
+            of computer-related jokes.
         </p>
         <list>
             <li>Test the form.</li>
-            <li>Maybe inspect the resources, there is no PHP code available this time though.</li>
+            <li>Maybe inspect the resources. There is no PHP code available this time, though.</li>
             <li>Find the vulnerability and understand how to exploit it.</li>
             <li>Get the password.</li>
         </list>
         <chapter title="Testing form 27" id="testing-form-27">
             <p>Some thoughts:</p>
             <list>
-                <li>The results don't seem to be consistent. Multiple blank submissions return different jokes.</li>
-                <li>It looks like the output tries to match with the input given in the form. See test table below.</li>
+                <li>The results don't seem consistent. Multiple blank submissions return different jokes.</li>
+                <li>It looks like the output tries to match with the input given in the form. See the test table below.</li>
                 <li>The output jokes seem to contain non-alphanumeric characters.</li>
             </list>
             <p>And some basic tests:</p>
@@ -2423,7 +2408,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <tr>
                     <td>C++</td>
                     <td>"When your hammer is C++, everything begins to look like a thumb."</td>
-                    <td>That seems to be the only C++ joke. Multiple submission always return the same joke.</td>
+                    <td>That seems to be the only C++ joke. Multiple submissions always return the same joke.</td>
                 </tr>
                 <tr>
                     <td>natas29</td>
@@ -2485,7 +2470,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                         <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="59-64"/>
                     </tab>
                 </tabs>
-                <p>I also performed various test using special characters instead of the encoded argument:</p>
+                <p>I also performed various tests using special characters instead of the encoded argument:</p>
                 <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="69-77"/>
                 <p>And got this particular error message in the response's content.</p>
                 <code-block lang="text">
@@ -2509,14 +2494,14 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                             <control>Padding length:</control>
                             the number of padding bytes added is equal to the number of bytes needed to fill the last
                             block to the block size. For example, if the block size is 16 bytes and the last block has
-                            10 bytes, 6 bytes of padding will be added.
+                            10 bytes, six bytes of padding will be added.
                         </p>
                     </li>
                     <li>
                         <p>
                             <control>Padding value:</control>
                             each padding byte is set to the value of the number of padding bytes added. Continuing with
-                            the previous example, if 6 bytes of padding are added, each of those 6 bytes will have the
+                            the previous example, if six bytes of padding are added, each of those six bytes will have the
                             value <code>0x06</code>.
                         </p>
                     </li>
@@ -2534,7 +2519,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     <li>
                         <p>
                             <control>ECB (Electronic Codebook):</control>
-                            the most basic mode. the plain text is processed block by block and each block is encrypted
+                            the most basic mode. the plain text is processed block by block, and each block is encrypted
                             using a single key.
                         </p>
                     </li>
@@ -2543,13 +2528,13 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                             <control>CBC (Cipher block chaining):</control>
                             advancement made on ECB, the previous cipher block is given as input to the next encryption
                             algorithm after XOR with the original plaintext block. In a nutshell here, a cipher block is
-                            produced by encrypting an XOR output of the previous cipher block and present plaintext
+                            produced by encrypting an XOR output of the previous cipher block and presenting a plaintext
                             block.
                         </p>
                     </li>
                 </list>
                 <p>I prompted ChatGPT about methods of differentiating both of them, and how can I find out which one is
-                    being used, here is what I got:</p>
+                    being used; here is what I got:</p>
                 <list type="decimal">
                     <li>
                         <control>Pattern Analysis</control>
@@ -2589,25 +2574,24 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </list>
             </chapter>
             <chapter title="Identification 27" id="identification-27">
-                <p>Given the information about the pattern analysis, the first thing to do is inspect the encrypted text
+                <p>Given the information about the pattern analysis, the first thing to do is to inspect the encrypted text
                     for multiple inputs. I'll do it like this:</p>
                 <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="79-83"/>
                 <tip>
-                    The query values will be the single character 'a', increasing in repetition (first one a single 'a',
+                    The query values will be the single character 'a,' increasing in repetition (first one a single 'a,'
                     then two, and so on).
                 </tip>
-                <p>And I get this results:</p>
+                <p>And I get this result:</p>
                 <code-block lang="text" src="otw/natas/27-28.resolution.responses1"/>
                 <p>
-                    With this pattern repetition and the lack of an apparent IV string at the beginning. I can conclude
-                    that the cypher mode used is
-                    <control>ECB</control>
-                    .
+                    With this pattern repetition and the lack of a clear IV string at the beginning. I can conclude
+                    that the cipher mode used is
+                    <control>ECB</control>.
                 </p>
                 <p>
-                    The next thing to do now is to find the size of each block. To do this I'll perform multiple
-                    request with queries varying in length and inspect the length of the encrypted string. If I notice a
-                    change in length that must mean a new block is added.
+                    The next thing to do now is to find the size of each block. To do this, I'll perform multiple
+                     requests with queries varying in length and inspect the length of the encrypted string. If I notice a
+                    change in length, that must mean a new block is added.
                 </p>
                 <p>Here is the code used:</p>
                 <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="85-98"/>
@@ -2618,17 +2602,16 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </p>
                 <p>
                     From these results I can identify when the length changed, here is some compiled data from the
-                    results file:
+                    result file:
                 </p>
                 <code-block lang="text" src="otw/natas/27-28.resolution.responses2" include-lines="14,31,48,65,82"/>
                 <p>
-                    It seems that something odd happens at the beginning, it may have something to do with the prepended
+                    It seems that something odd happens at the beginning; it may have something to do with the prepended
                     text, that information can be discarded. The relevant pattern here is that after that, all changes
                     occur after 16 characters.
                 </p>
                 <p>It is correct to assume by this point that
-                    <control>the blocks are of size 16</control>
-                    .
+                    <control>the blocks are of size 16</control>.
                 </p>
                 <p>A proof of this can be seen from this simple test:</p>
                 <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="101-109" collapsible="true"
@@ -2641,11 +2624,10 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </tip>
                 <p>
                     The next thing I decided to do is inspect the queries. Even though the method
-                    <code>get_urlparam</code> already decodes it into a readable hex format (the base64 data is non
-                    human-readable), we can use PowerShell to display it in a cleaner way.
+                    <code>get_urlparam</code> already decodes it into a readable hex format (the base64 data is non-human-readable), we can use PowerShell to display it in a cleaner way.
                 </p>
                 <p>
-                    Given that we are going to use PowerShell for the base64 decoding. I have to change <code>get_urlparam</code>
+                    Given that, we are going to use PowerShell for the base64 decoding. I have to change <code>get_urlparam</code>
                     to only urldecode the original string:
                 </p>
                 <code-block lang="ruby" src="otw/natas/27-28.resolution.rb" include-lines="119-122"/>
@@ -2672,24 +2654,24 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <code-block lang="text" src="otw/natas/27-28.resolution.hex" include-lines="27-39"/>
                 <tip>This is the result of the second iteration.</tip>
                 <p>
-                    Considering all inputs contain the letter 'A'. It's no surprise that we will find repeating patterns
+                    Considering all inputs contain the letter A. It's no surprise that we will find repeating patterns
                     on all iterations. Particularly this:
                 </p>
                 <code-block lang="text" src="otw/natas/27-28.resolution.hex" include-lines="27-31,35"/>
                 <p>
                     That set of bytes keeps appearing. Two times for the second iteration, three times for the third one
-                    and so on. I'm not going to keep extending the explanation so the takeaway is that those set of
+                    and so on. I'm not going to keep extending the explanation, so the takeaway is that those set of
                     bytes
                     represent the letter "A" 16 times.
                 </p>
                 <p>
-                    Another interesting thing I found is that, if we inspect some of the outputs in detail (for the sake
-                    of simplicity just the relevant ones):
+                    Another interesting thing I found is that, if we inspect some outputs in detail (for the sake
+                    of simplicity, just the relevant ones):
                 </p>
                 <code-block lang="text" src="otw/natas/27-28.resolution.responses3" include-lines="8-12"/>
                 <p>
                     We can notice that when the input reaches
-                    <control>length 10</control>
+                    <control>length 10, </control>
                     the prepended text gets larger. Let's compare them just to see it clearly:
                 </p>
                 <compare first-title="Before reaching length 10" second-title="After reaching length 10"
@@ -2719,11 +2701,10 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 <code-block id="response4b" lang="text" src="otw/natas/27-28.resolution.responses4"
                             include-lines="73,81,82"/>
                 <p>
-                    They have similarities with each other, but completely different from the rest of characters. We can
+                    They have similarities with each other but are completely different from the rest of the characters. We can
                     see that they all have one thing in common: two of them are used for terminating a string and the
                     other one for escaping characters, tldr:
-                    <control>they all are interpreted differently by the database</control>
-                    .
+                    <control>they all are interpreted differently by the database</control>.
                 </p>
                 <p>
                     Taking all the previous information into consideration, we can assume that behind the scenes the
@@ -2763,7 +2744,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </p>
                 <code-block lang="mermaid" src="otw/natas/27-28.diagram.mermaid"/>
                 <deflist type="wide">
-                    <def title="Common Prepended Block" id="common-prepended-block">
+                    <def title="Commonly Prepended Block" id="common-prepended-block">
                         Block added at the beginning of every instance, it has no
                         correlation with any user input.
                     </def>
@@ -2789,8 +2770,8 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     operates and the way the user input directly affects the returned data.
                 </p>
                 <p>
-                    As always, the first thing to do is try the common <code>' OR 1=1 --</code> query. But, there is a
-                    problem, where should this query go? To answer this question we have to go back to the block
+                    As always, the first thing to do is try the common <code>' OR 1=1 --</code> query. But there is a
+                    problem, where should this query go? To answer this question, we have to go back to the block
                     diagram.
                 </p>
                 <code-block lang="mermaid" src="otw/natas/27-28.diagram.mermaid"/>
@@ -2800,7 +2781,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     operator.
                 </p>
                 <p>
-                    An easier way to understand the plan is to take a look at how will the blocks will end up if we use
+                    An easier way to understand the plan is to take a look at how the blocks will end up if we use
                     the previous example of the string of length 9 plus a special character.
                 </p>
                 <code-block lang="mermaid" src="otw/natas/27-28.diagram2.mermaid"/>
@@ -2817,7 +2798,7 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                 </p>
                 <code-block lang="mermaid" src="otw/natas/27-28.diagram3.mermaid"/>
                 <p>
-                    But, if you paid attention to what I previously said, you'll know this won't work. Because, even
+                    But if you paid attention to what I previously said, you'll know this won't work. Because, even
                     though the character <code>'</code> is in a different block,
                     <control>it will be escaped</control>
                     when all blocks are combined post decoding, encryption and all that.
@@ -2826,16 +2807,15 @@ hint: password for webuser natas8 is in /etc/natas_webpass/natas8
                     So, the goal now is to
                     <emphasis>somehow</emphasis>
                     replace the escaping character for something else or just
-                    <control>replace the whole block</control>
-                    . Why? Take a look at this:
+                    <control>replace the whole block</control>. Why? Take a look at this:
                 </p>
                 <code-block lang="mermaid" src="otw/natas/27-28.diagram4.mermaid"/>
                 <p>
-                    This time, instead of the escaping character we have just another 'A', this means the <code>'</code>
+                    This time, instead of the escaping character we have just another A, this means the <code>'</code>
                     from the next block will pass through, allowing the SQL injection to act.
                 </p>
                 <p>
-                    Now that the goal is clear, we can go back to regular text. The diagrams were useful, but the real
+                    Now that the goal is clear, we can go back to a regular text. The diagrams were useful, but the real
                     representation of the blocks is just text mashed up together.
                 </p>
                 <p>

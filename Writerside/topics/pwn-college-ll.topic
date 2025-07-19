@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Linux Luminarium" id="pwn-college-ll">
+
+    <chapter title="Modules" id="modules">
+        <p>
+            The dojo contains the following modules.
+        </p>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>Link</td>
+                <td>Status</td>
+            </tr>
+            <tr>
+                <td>Hello Hackers</td>
+                <td><a href="https://pwn.college/linux-luminarium/hello/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Pondering Paths</td>
+                <td><a href="https://pwn.college/linux-luminarium/paths/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Comprehending Commands</td>
+                <td><a href="https://pwn.college/linux-luminarium/commands/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Digesting Documentation</td>
+                <td><a href="https://pwn.college/linux-luminarium/man/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>File Globbing</td>
+                <td><a href="https://pwn.college/linux-luminarium/globbing/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Practicing Piping</td>
+                <td><a href="https://pwn.college/linux-luminarium/piping/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Shell Variables</td>
+                <td><a href="https://pwn.college/linux-luminarium/variables/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Data Manipulation</td>
+                <td><a href="https://pwn.college/linux-luminarium/data/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Processes and Jobs</td>
+                <td><a href="https://pwn.college/linux-luminarium/processes/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Perceiving Permissions</td>
+                <td><a href="https://pwn.college/linux-luminarium/permissions/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Untangling Users</td>
+                <td><a href="https://pwn.college/linux-luminarium/users/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Chaining Commands</td>
+                <td><a href="https://pwn.college/linux-luminarium/chaining/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Pondering PATH</td>
+                <td><a href="https://pwn.college/linux-luminarium/path/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Silly Shenanigans</td>
+                <td><a href="https://pwn.college/linux-luminarium/shenanigans/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Daring Destruction</td>
+                <td><a href="https://pwn.college/linux-luminarium/destruction/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+        </table>
+    </chapter>
+</topic>

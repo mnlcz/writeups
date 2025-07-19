@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Using the Dojo" id="pwn-gs-usingthedojo">
+
+    <p>This module contains challenges that teach the user how to interact with the platform.</p>
+    <list type="bullet">
+        <li>Using the
+            <control>Dojo Workspace</control>
+            .
+        </li>
+        <li>Using the
+            <control>Dojo Desktop</control>
+            .
+        </li>
+        <li>⭐Using SSH.</li>
+    </list>
+
+    <chapter title="Lectures" id="lectures">
+        <chapter title="Configuring SSH" id="configuring-ssh">
+            <p>On Windows I'll be using the
+                <emphasis>ssh-agent</emphasis>
+                . I had to configure the service to start manually:
+            </p>
+            <code-block lang="PowerShell">
+            Set-Service ssh-agent -StartupType Manual
+        </code-block>
+            <p>
+                And then run:
+            </p>
+            <code-block lang="PowerShell">
+            Start-Service ssh-agent
+        </code-block>
+            <p>With the agent up and running I created an ssh key following the instructions provided on the website.
+                Then
+                I registered it on the agent using:</p>
+            <code-block lang="PowerShell">
+            ssh-add LOCATION
+        </code-block>
+        </chapter>
+
+        <chapter title="Heads up for the Virtual Machine" id="heads-up-for-the-virtual-machine">
+            <p>In later kernel-focused challenges it will be required to solve them in a virtual machine. The virtual
+                machine can be interacted with using the <code>vm</code> command.</p>
+        </chapter>
+    </chapter>
+
+    <chapter title="Challenges" id="challenges">
+        <chapter title="Using the VSCode workspace" id="using-the-vscode-workspace">
+            <p>
+                Simple task solvable on the website. No notes needed as it only requires for the user to open up a new
+                terminal window on VSCode.
+            </p>
+        </chapter>
+        <chapter title="Using the GUI desktop" id="using-the-gui-desktop">
+            <p>
+                Same case as the previous one. Simple task that does not require any writeup or explanation.
+            </p>
+        </chapter>
+        <chapter title="Pasting into the GUI desktop" id="pasting-into-the-gui-desktop">
+            <p>
+                This challenge tells the user how to manage the clipboard between the emulated desktop and the host PC
+                as they have their own clipboard.
+            </p>
+        </chapter>
+        <chapter title="Restarting challenges" id="restarting-challenges">
+            <p>
+                This challenge teaches the user how to restart a particular challenge in case of need. For example if
+                the user irreparably breaks the workflow of the challenge in their attempts of solving it. Just closing
+                the workspace (in case of the GUI desktop) and pressing the start button again will do.
+            </p>
+        </chapter>
+        <chapter title="Getting help" id="getting-help">
+            <p>
+                This challenge gives the user a bunch of ways to get help. Like asking the discord, researching online,
+                but the most important in this particular case is using the
+                <control>SENSAI</control>
+                LLM provided by
+                the creators of the website.
+            </p>
+        </chapter>
+        <chapter title="Challenge programs" id="challenge-programs">
+            <p>
+                This is the first challenge that follows the kind of like the intended workflow of pwn.college.
+                As it requires that the user interact with the
+                <path>/challenge</path>
+                directory, more generally: with the commandline interface of the provided workspace.
+            </p>
+            <p>
+                It's a fairly simple challenge, the only thing to do is run the specified file.
+            </p>
+        </chapter>
+        <chapter title="The flag file" id="the-flag-file">
+            <p>
+                This challenge serves as an introduction to the
+                <path>/flag</path>
+                file, the one that contains the flags
+                as the name suggest. The real goal of any challenge is to somehow
+                <emphasis>read</emphasis>
+                the contents
+                of this file.
+            </p>
+        </chapter>
+        <chapter title="Using practice mode" id="using-practice-mode">
+            <p>
+                This challenge serves as an introduction to the
+                <control>practice mode</control>
+                . An alternative mode on which the user has additional features (<code>sudo</code>) for debugging
+                purposes.
+            </p>
+        </chapter>
+        <chapter title="Persistent home directory 1 and 2" id="persistent-home-directory">
+            <p>
+                This challenge tells the user about the persistence of the home directory, explaining that it's shared
+                between different challenges, allowing the user to keep notes or references from previously solved ones.
+            </p>
+        </chapter>
+    </chapter>
+</topic>

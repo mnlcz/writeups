@@ -21,12 +21,13 @@ topics on cybersecurity">Over The Wire</a>
         <!--    Add several topics that are most important for this section.    -->
         <primary>
             <title>On the making</title>
-            <a href="HackTheBox.topic" type="container" summary="Hack The Box (HTB) offers a wide range of challenges, including vulnerable machines, capture-the-flag (CTF) tasks, and real-world labs.">HackTheBox</a>
+            <a href="pwn-college.topic" type="lock" summary="pwn.college is an education platform for students (and other interested parties) to learn about, and practice, core cybersecurity.">pwn.college</a>
         </primary>
 
         <secondary>
             <title>Maybe in the future</title>
             <a href="WeChall.topic" type="world" summary="Old school site that compiles multiple cybersecurity challenges">WeChall</a>
+            <a href="HackTheBox.topic" type="container" summary="Hack The Box (HTB) offers a wide range of challenges, including vulnerable machines, capture-the-flag (CTF) tasks, and real-world labs.">HackTheBox</a>
         </secondary>
     </section-starting-page>
 </topic>

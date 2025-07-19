@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="pwn.college" id="pwn-college">
+
+    <p>Write-ups and solutions to the "dojos" and workspaces provided by <a href="https://pwn.college/">pwn.college</a>.
+    </p>
+
+    <chapter title="Getting Started" id="getting-started">
+        <p>
+            The following dojos are the ones the website suggests the users start on, given that they are smaller in
+            content and take a more high-level approach. They also serve as a tool to get familiar with the website.
+        </p>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>Link (website)</td>
+                <td>Done</td>
+            </tr>
+            <tr>
+                <td>Getting Started</td>
+                <td><a href="https://pwn.college/welcome/">Click here</a></td>
+                <td>✔</td>
+            </tr>
+            <tr>
+                <td>Linux Luminarium</td>
+                <td><a href="https://pwn.college/linux-luminarium/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Computing 101</td>
+                <td><a href="https://pwn.college/computing-101/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+            <tr>
+                <td>Playing With Programs</td>
+                <td><a href="https://pwn.college/fundamentals/">Click here</a></td>
+                <td>❌</td>
+            </tr>
+        </table>
+    </chapter>
+</topic>

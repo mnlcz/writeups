@@ -20,6 +20,12 @@
             </toc-element>
         </toc-element>
     </toc-element>
+    <toc-element topic="pwn-college.topic">
+        <toc-element topic="pwn-gs.topic">
+            <toc-element topic="pwn-gs-usingthedojo.topic"/>
+            <toc-element topic="pwn-college-ll.topic"/>
+        </toc-element>
+    </toc-element>
     <toc-element topic="HackTheBox.topic"/>
     <toc-element topic="WeChall.topic"/>
 </instance-profile>

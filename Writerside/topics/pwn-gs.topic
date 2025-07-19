@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Getting Started" id="pwn-gs">
+
+    <p>The goal of this dojo is to give the user a crash course on how to use the website</p>
+    <chapter title="How dojos work" id="how-dojos-work">
+        <p>The core idea behind the dojo is to capture
+            <control>flags</control>
+            . Each flag ara data token like most other websites, and
+            they can be used to redeem points.
+        </p>
+        <p>
+            Each dojo might contain multiple
+            <control>
+                modules
+            </control>
+            . Each module might contain several
+            <control>challenges</control>
+            , and each challenge gives a flag.
+        </p>
+    </chapter>
+    <chapter title="Modules" id="modules">
+        <p>
+            The dojo contains the following modules.
+        </p>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>Link</td>
+                <td>Status</td>
+            </tr>
+            <tr>
+                <td>Using the Dojo</td>
+                <td><a href="https://pwn.college/welcome/welcome/">Click here</a> </td>
+                <td>✔</td>
+            </tr>
+            <tr>
+                <td>Joining the Discord</td>
+                <td><a href="https://pwn.college/welcome/discord/">Click here</a> </td>
+                <td>✔</td>
+            </tr>
+        </table>
+    </chapter>
+</topic>

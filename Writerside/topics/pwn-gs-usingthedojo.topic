@@ -24,19 +24,19 @@
                 <emphasis>ssh-agent</emphasis>
                 . I had to configure the service to start manually:
             </p>
-            <code-block lang="PowerShell">
+            <code-block lang="shell">
             Set-Service ssh-agent -StartupType Manual
         </code-block>
             <p>
                 And then run:
             </p>
-            <code-block lang="PowerShell">
+            <code-block lang="shell">
             Start-Service ssh-agent
         </code-block>
             <p>With the agent up and running I created an ssh key following the instructions provided on the website.
                 Then
                 I registered it on the agent using:</p>
-            <code-block lang="PowerShell">
+            <code-block lang="shell">
             ssh-add LOCATION
         </code-block>
         </chapter>

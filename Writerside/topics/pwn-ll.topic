@@ -3,7 +3,10 @@
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
 <topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-       title="Linux Luminarium" id="pwn-college-ll">
+       title="Linux Luminarium" id="pwn-ll" help-id="pwn-college-ll">
+    <p>
+        This dojo serves as a basic introduction to Linux.
+    </p>
 
     <chapter title="Modules" id="modules">
         <p>
@@ -18,22 +21,22 @@
             <tr>
                 <td>Hello Hackers</td>
                 <td><a href="https://pwn.college/linux-luminarium/hello/">Click here</a></td>
-                <td>❌</td>
+                <td>✔</td>
             </tr>
             <tr>
                 <td>Pondering Paths</td>
                 <td><a href="https://pwn.college/linux-luminarium/paths/">Click here</a></td>
-                <td>❌</td>
+                <td>✔</td>
             </tr>
             <tr>
                 <td>Comprehending Commands</td>
                 <td><a href="https://pwn.college/linux-luminarium/commands/">Click here</a></td>
-                <td>❌</td>
+                <td>✔</td>
             </tr>
             <tr>
                 <td>Digesting Documentation</td>
                 <td><a href="https://pwn.college/linux-luminarium/man/">Click here</a></td>
-                <td>❌</td>
+                <td>✔</td>
             </tr>
             <tr>
                 <td>File Globbing</td>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="File Globbing" id="pwn-ll-fileglobbing">
+
+    <p>
+        This module teaches the user the concepts of globbing and command expansion.
+    </p>
+    <p>
+        Like the previous module, this one doesn't provide any original lecture material, but it suggests taking a look
+        at the following:
+        <a href="https://www.gnu.org/software/bash/manual/html_node/Shell-Expansions.html">Shell Expansions</a>.
+    </p>
+
+    <chapter title="Challenges" id="challenges">
+        <chapter title="Matching with *" id="matching-with">
+            <p>
+                The <code>*</code> glob acts as a
+                <control>wildcard</control>
+                . When the shell sees this character
+                in any argument it will try to replace that argument with
+                <emphasis>any files that match the pattern</emphasis>
+                .
+            </p>
+            <code-block lang="bash">
+                touch file_a
+                touch file_b
+                echo Look: file_*
+                # => Look: file_a file_b
+            </code-block>
+            <p>
+                This challenge requires the user to change directories using globbing to keep the argument length less
+                than what the description specifies.
+            </p>
+        </chapter>
+        <chapter title="Matching with ?" id="matching-with-2">
+            <p>
+                The <code>?</code> character is treated as a
+                <control>single-character wildcard</control>
+                .
+            </p>
+            <p>
+                The logic behind this challenge matches the previous one, the user has to use globbing to change
+                directories to the specified one and run the command located there.</p>
+        </chapter>
+        <chapter title="Matching with []" id="matching-with-1">
+            <p>
+                The square brackets act as a limited form of <code>?</code>, instead of matching any character it only
+                matches the ones specified inside the brackets. For example:
+            </p>
+            <code-block lang="bash">
+                touch file_a
+                touch file_b
+                touch file_c
+                echo Look: file_[ab]
+                # => Look: file_a file_b
+            </code-block>
+            <p>
+                The logic behind this challenge is to run the specified command with a single argument that
+                bracket-globs multiple files.
+            </p>
+        </chapter>
+        <chapter title="Matching paths with []" id="matching-paths-with">
+            <p>
+                This challenge explain the usage of <code>[]</code> to expand entire paths instead of just files.
+                For example:
+            </p>
+            <code-block lang="bash">
+                ls
+                # => file_a file_b file_c
+                echo Look: /home/hacker/file_[ab]
+                # Look: /home/hacker/file_a /home/hacker/file_b
+            </code-block>
+            <p>The logic is the same as the previous challenge.</p>
+        </chapter>
+        <chapter title="Multiple globs" id="multiple-globs">
+            <p>
+                Self-explanatory, it wants the user to use multiple globs at the same time, matching the pattern
+                specified in the challenge description.
+            </p>
+        </chapter>
+        <chapter title="Mixing globs" id="mixing-globs">
+            <p>
+                Self-explanatory, the user has to mix globs in order to match the pattern specified in the challenge
+                description.</p>
+        </chapter>
+        <chapter title="Exclusionary globbing" id="exclusionary-globbing">
+            <p>
+                Introduction to excluding results in a glob using <code>[]</code>. If the first character in the
+                brackets is <code>!</code> or <code>^</code>, the glob inverts, matching results that don't align
+                with the pattern specified.
+            </p>
+            <note>
+                <p>
+                    It's recommended to use <code>^</code> even though it's not supported on older versions, as
+                    <code>!</code> has a different meaning in bash if it isn't at the beginning.
+                </p>
+            </note>
+            <p>
+                Simple example:
+            </p>
+            <code-block lang="bash">
+                ls
+                # => file_a file_b file_c
+                echo Look: file_[^ab]
+                # => Look: file_c
+            </code-block>
+            <p>
+                The logic for this challenge is to run the specified command with all files that do not match the
+                specified pattern.
+            </p>
+        </chapter>
+        <chapter title="Tab completion" id="tab-completion">
+            <p>
+                This challenge introduces tab completion and how sometimes it's better to use that instead of
+                <code>*</code>.
+            </p>
+        </chapter>
+        <chapter title="Multiple options for tab completion" id="multiple-options-for-tab-completion">
+            <p>
+                Self-explanatory, multiple usage of
+                <shortcut>TAB</shortcut>
+                given a completion with multiple results.
+            </p>
+        </chapter>
+        <chapter title="Tab completion on commands" id="tab-completion-on-commands">
+            <p>Self-explanatory, the user has to run a specific command autocompleting its name.</p>
+        </chapter>
+    </chapter>
+</topic>

@@ -23,7 +23,13 @@
     <toc-element topic="pwn-college.topic">
         <toc-element topic="pwn-gs.topic">
             <toc-element topic="pwn-gs-usingthedojo.topic"/>
-            <toc-element topic="pwn-college-ll.topic"/>
+            <toc-element topic="pwn-ll.topic">
+                <toc-element topic="pwn-ll-hello.topic"/>
+                <toc-element topic="pwn-ll-paths.topic"/>
+                <toc-element topic="pwn-ll-compcommands.topic"/>
+                <toc-element topic="pwn-ll-digdoc.topic"/>
+                <toc-element topic="pwn-ll-fileglobbing.topic"/>
+            </toc-element>
         </toc-element>
     </toc-element>
     <toc-element topic="HackTheBox.topic"/>

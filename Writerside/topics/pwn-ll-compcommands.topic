@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Comprehending commands" id="pwn-ll-compcommands">
+
+    <p>
+        This module will expose the user to a bunch of useful commands.
+    </p>
+
+    <chapter title="Lecture" id="lecture">
+        <p>
+            The lecture is about symbolic links. But it starts by giving an overview of the different types a file could
+            fall into.
+        </p>
+
+        <chapter title="File types" id="file-types">
+            <p>
+                It introduces the <code>ls</code> command with the following flag:
+            </p>
+            <code-block lang="Bash">
+           ls -ld PATH_TO_FILE 
+        </code-block>
+            <p>
+                This flag makes the command output details about the specified file, with the first of them being the
+                type.
+                Here is an example of a possible output:
+            </p>
+            <code-block lang="Shell">
+            $ ls -ld Desktop/
+            drwxr-xr-x 1 hacker hacker 0 Jul 19 20:43 Desktop/
+        </code-block>
+            <p>
+                The syntax matches the following table:
+            </p>
+            <table>
+                <tr>
+                    <td>Character</td>
+                    <td>Type</td>
+                </tr>
+                <tr>
+                    <td><code>d</code></td>
+                    <td>Directory</td>
+                </tr>
+                <tr>
+                    <td><code>l</code></td>
+                    <td>Symbolic link</td>
+                </tr>
+                <tr>
+                    <td><code>p</code></td>
+                    <td>Pipe</td>
+                </tr>
+                <tr>
+                    <td><code>c</code></td>
+                    <td>Character device file. (like a microphone)</td>
+                </tr>
+                <tr>
+                    <td><code>b</code></td>
+                    <td>Block device file. (like a hard drive)</td>
+                </tr>
+                <tr>
+                    <td><code>s</code></td>
+                    <td>Unix socket. (a local network connection encapsulated in a file)</td>
+                </tr>
+            </table>
+        </chapter>
+        <chapter title="Symbolic links" id="symbolic-links">
+            <p>
+                A symbolic or soft link is a special type of file that references another file. They are created with
+                the
+                <code>ln -s</code> command.
+            </p>
+            <code-block lang="Shell">
+                ln [-s|--symbolic] /path/to/file_or_directory path/to/symlink
+            </code-block>
+        </chapter>
+        <chapter title="Hard links" id="hard-links">
+            <p>
+                A hard link references the original file directly instead of using its own file like the symbolic links.
+                It counts as a valid reference to the original file as it is backed by the same data.
+            </p>
+            <p>
+                Hard links are created using the <code>ln</code> command as well, but without the <code>-s</code> flag.
+            </p>
+            <code-block lang="Shell">
+               ln /path/to/file path/to/hardlink 
+            </code-block>
+        </chapter>
+    </chapter>
+    <chapter title="Challenges" id="challenges">
+        <chapter title="cat: not the pet, but the command!" id="cat-not-the-pet-but-the-command">
+            <p>
+                This challenge serves as an introduction to the <code>cat</code> command.
+            </p>
+        </chapter>
+        <chapter title="catting absolute paths" id="catting-absolute-paths">
+            <p>
+                Same as before but with absolute paths.
+            </p>
+        </chapter>
+        <chapter title="more catting practice" id="more-catting-practice">
+            <p>
+                Same as before but the location of the flag is unknown. The user has to find it and get it using
+                <code>cat</code> with the absolute path.
+            </p>
+        </chapter>
+        <chapter title="grepping for a needle in a haystack" id="grepping-for-a-needle-in-a-haystack">
+            <p>
+                This challenge serves as an introduction to the <code>grep</code> command.
+            </p>
+            <code-block lang="Bash">
+                grep SEARCH_STRING /path/to/file
+            </code-block>
+            <p>
+                The flags always starts with 'pwn.college'. So that's going to be the 'needle' for the command.
+            </p>
+        </chapter>
+        <chapter title="comparing files" id="comparing-files">
+            <p>
+                Introduction to the <code>diff</code> command. There are two files with a bunch of fake flags, one of
+                them contains the real one, the user has to compare them and retrieve the real flag.
+            </p>
+        </chapter>
+        <chapter title="listing files" id="listing-files">
+            <p>
+                Introduction to the <code>ls</code> command. The user has to list a particular directory and run the
+                executable file there.
+            </p>
+        </chapter>
+        <chapter title="touching files" id="touching-files">
+            <p>
+                Introduction to the <code>touch</code> command. The user has to create two files and then run
+                another one specified in the challenge's description.
+            </p>
+        </chapter>
+        <chapter title="removing files" id="removing-files">
+            <p>
+                Introduction to the <code>rm</code> command. The user has to remove the file specified in the
+                description and then run
+                <path>/challenge/check</path>
+                .
+            </p>
+        </chapter>
+        <chapter title="moving files" id="moving-files">
+            <p>
+                Introduction to the <code>mv</code> command.
+            </p>
+        </chapter>
+        <chapter title="hidden files" id="hidden-files">
+            <p>
+                Introduction to hidden files and the usage of <code>ls -a</code>. The user has to find the hidden file
+                and then read its contents to retrieve the flag.
+            </p>
+        </chapter>
+        <chapter title="An Epic Filesystem Quest" id="an-epic-filesystem-quest">
+            <p>
+                This challenge wants the user to use all the knowledge gained in the previous challenges. The flag is
+                hidden in an empty file, and the location of that file is unknown. The description contains some hints
+                on where to find it.
+            </p>
+        </chapter>
+        <chapter title="making directories" id="making-directories">
+            <p>
+                Introduction to the <code>mkdir</code> command.
+            </p>
+        </chapter>
+        <chapter title="finding files" id="finding-files">
+            <p>
+                Introduction to the <code>find</code> command. The user has to search for the flag file and then use
+                <code>cat</code> on it.
+            </p>
+        </chapter>
+        <chapter title="linking files" id="linking-files">
+            <p>
+                Challenge related to the topic learned on the lecture: symlinks. The user has to create a symlink to
+                <path>/flag</path>
+                in order to be able to get the flag with the executable file specified.
+            </p>
+        </chapter>
+    </chapter>
+</topic>

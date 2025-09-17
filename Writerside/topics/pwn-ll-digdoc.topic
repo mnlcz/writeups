@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Digesting Documentation" id="pwn-ll-digdoc">
+
+    <p>
+        This module will introduce the user to the process of looking for help online, one of the most important Linux
+        skills.
+    </p>
+    <p>
+        The module does not include a lecture, but it provides the following resource:
+        <a href="https://man7.org/linux/man-pages/">Linux man pages online</a>.
+    </p>
+
+    <chapter title="Challenges" id="challenges">
+        <chapter title="Learning From Documentation" id="learning-from-documentation">
+            <p>Introduction to understanding command arguments given its documentation.</p>
+        </chapter>
+        <chapter title="Learning Complex Usage" id="learning-complex-usage">
+            <p>Introduction to using command arguments that require more complex arguments, like specific values:</p>
+            <code-block lang="Bash">
+                command --flag FLAGVALUE
+            </code-block>
+            <p>The command used for this challenge has its own documentation regarding its flags.</p>
+        </chapter>
+        <chapter title="Reading Manuals" id="reading-manuals">
+            <p>Introduction to reading documentation with the <code>man</code> command.</p>
+            <p>To get the flag, the user has to read the manpage for the <code>challenge</code> command.</p>
+        </chapter>
+        <chapter title="Searching Manuals" id="searching-manuals">
+            <p>
+                Another challenge related to the <code>man</code> command. This time introduces the usage of
+                <code>/</code> and <code>n</code> to search and cycle between results.
+            </p>
+        </chapter>
+        <chapter title="Searching For Manuals" id="searching-for-manuals">
+            <p>
+                Another challenge using <code>man</code>. This one requires to read <code>man</code>'s own manpage to
+                find the correct functionality to retrieve the flag, as the manpage for the <code>challenge</code>
+                command is hidden.
+            </p>
+            <p>
+                After reading the documentation, I came to the conclusion that the flag <code>-k</code> is the correct
+                one for the job. It looks for the specified string in the manpages
+                <emphasis>short description</emphasis>
+                .
+            </p>
+            <code-block lang="Bash">
+                man -k challenge
+            </code-block>
+        </chapter>
+        <chapter title="Helpful Programs" id="helpful-programs">
+            <p>
+                This challenge introduces the common scenario on which a particular command doesn't have a manpage.
+                In these cases, it's common to use arguments like: <code>--help</code>, <code>-h</code>,
+                <code>-?</code>.
+            </p>
+            <p>
+                The user has to retrieve the flag from the <code>challenge</code> command using the correct arguments.
+            </p>
+        </chapter>
+        <chapter title="Help for Builtins" id="help-for-builtins">
+            <p>
+                This challenge introduces the scenario of reading documentation via the
+                <emphasis>builtins</emphasis>
+                .
+                Builtins are programs that are built into the shell and act as any other command. Here is an example:
+            </p>
+            <code-block lang="Bash">
+                help cd
+            </code-block>
+            <p>
+                The user has to use the <code>help</code> builtin to get the documentation for the
+                <code>challenge</code> command.
+            </p>
+        </chapter>
+    </chapter>
+</topic>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Pondering paths" id="pwn-ll-paths">
+
+    <p>
+        This module serves as an introduction to Linux file paths. It starts by giving a brief explanation on the idea
+        behind the filesystem being a 'tree' with a root of
+        <path>/</path>
+        .
+    </p>
+
+    <chapter title="Challenges" id="challenges">
+        <chapter title="The Root" id="the-root">
+            <p>
+                This challenge gives an introduction to the root directory. It wants the user execute a specified
+                program to
+                retrieve the flag using the appropriate command.
+            </p>
+        </chapter>
+        <chapter title="Program and absolute paths" id="program-and-absolute-paths">
+            <p>
+                Same idea as the previous challenge but with the desired program being in a subdirectory.
+            </p>
+        </chapter>
+        <chapter title="Position thy self" id="position-thy-self">
+            Introduction to the <code>cd</code> command. This time the program requires the user to be in a specific
+            directory in order to get the flag.
+        </chapter>
+        <chapter title="Position elsewhere" id="position-elsewhere">
+            <p>Same idea as the previous challenge but with a different location.</p>
+        </chapter>
+        <chapter title="Position yet elsewhere" id="position-yet-elsewhere">
+            <p>Same idea as the previous challenge but with a different location.</p>
+        </chapter>
+        <chapter title="Implicit relative paths from /" id="implicit-relative-paths-from">
+            <p>
+                Introduction to relative paths and the usage of the current working directory, as this time the program
+                that
+                gives the flag requires a specific relative path.
+            </p>
+        </chapter>
+        <chapter title="Explicit relative paths from /" id="explicit-relative-paths-from">
+            <p>
+                Same case as the previous one, but this time it requires the usage of the special paths
+                <path>.</path>
+                and <code>..</code> to make an explicit reference.
+            </p>
+        </chapter>
+        <chapter title="Implicit relative path" id="implicit-relative-path">
+            <p>
+                Another challenge requiring the usage of the <code>.</code> special path, as in this challenge the user
+                has
+                to run the program while being in the same directory.
+            </p>
+        </chapter>
+        <chapter title="Home sweet home" id="home-sweet-home">
+            <p>Brief explanation of the home directory and the usage of the shorthand character <code>~</code></p>.
+            <p>
+                This time the program will copy the flag into any specified file but with some constraints regarding the
+                provided path. It requires the user to use the knowledge acquired from the previous challenges.
+            </p>
+        </chapter>
+    </chapter>
+</topic>

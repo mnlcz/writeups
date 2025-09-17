@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Hello Hackers" id="pwn-ll-hello">
+
+    <p>
+        This module will teach the user the very basics of working with the command line in Linux. This is a very
+        introductory topic, and it's advised to skip it if the user is already comfortable with the OS. Regardless, I
+        opted for doing it.
+    </p>
+
+    <chapter title="Challenges" id="challenges">
+        <chapter title="Intro to Commands" id="intro-to-commands">
+            <p>
+                Very basic challenge that introduces simple commands, like <code>whoami</code>.
+            </p>
+        </chapter>
+        <chapter title="Intro to Arguments" id="intro-to-arguments">
+            <p>
+                Introduction to arguments with the <code>echo</code> command. Then it expects the user to user the
+                specified
+                argument on the custom <code>hello</code> command.
+            </p>
+        </chapter>
+        <chapter title="Command History" id="command-history">
+            <p>
+                Introduction to command history (
+                <shortcut>UP</shortcut>
+                and
+                <shortcut>DOWN</shortcut>
+                ).
+            </p>
+        </chapter>
+    </chapter>
+</topic>

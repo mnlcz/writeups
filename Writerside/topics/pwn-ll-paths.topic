@@ -57,7 +57,7 @@
             </p>
         </chapter>
         <chapter title="Home sweet home" id="home-sweet-home">
-            <p>Brief explanation of the home directory and the usage of the shorthand character <code>~</code></p>.
+            <p>Brief explanation of the home directory and the usage of the shorthand character <code>~</code>.</p>
             <p>
                 This time the program will copy the flag into any specified file but with some constraints regarding the
                 provided path. It requires the user to use the knowledge acquired from the previous challenges.
